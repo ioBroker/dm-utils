@@ -3,6 +3,8 @@ import { ApiVersion, DeviceRefresh, DeviceStatus, RetVal } from "./common";
 
 type ActionType = "api" | "adapter";
 
+export type Color = "primary" | "secondary" | string & {}; // color (you can use primary, secondary or color rgb value or hex)
+
 export interface ActionBase<T extends ActionType> {
     id: string;
     /**
@@ -11,8 +13,8 @@ export interface ActionBase<T extends ActionType> {
     icon: string; // base64 or url
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends "api" ? boolean : never;
-    color?: string; // icon color (you can use primary, secondary or color rgb value or hex)
-    backgroundColor?: string; // background color of button (you can use primary, secondary or color rgb value or hex)
+    color?: Color;
+    backgroundColor?: Color; // background color of button (you can use primary, secondary or color rgb value or hex)
 }
 
 export interface InstanceAction<T extends ActionType = "api"> extends ActionBase<T> {
@@ -36,8 +38,8 @@ export interface DeviceInfo<T extends ActionType = "api"> {
     icon?: string; // base64 or url
     manufacturer?: ioBroker.StringOrTranslated;
     model?: ioBroker.StringOrTranslated;
-    color?: string; // color of name
-    backgroundColor?: string; // background color of card (you can use primary, secondary or color rgb value or hex)
+    color?: Color; // color of name
+    backgroundColor?: Color; // background color of card (you can use primary, secondary or color rgb value or hex)
     name: ioBroker.StringOrTranslated;
     status?: DeviceStatus | DeviceStatus[];
     actions?: DeviceAction<T>[];
