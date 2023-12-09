@@ -8,12 +8,12 @@ export type DeviceStatus =
            * This can either be the name of a font awesome icon (e.g. "fa-signal") or the URL to an icon.
            */
           icon?: string;
-          battery?: number | boolean| 'charging' | string & {}; // in percent (0-100), or string 'charging',
+          battery?: number | boolean| "charging" | string & {}; // in percent (0-100), or string 'charging',
                                                                 // or string '10V',
                                                                 // or string '10mV',
                                                                 // or string '100' in mV
                                                                 // or boolean true (means OK) or false (Battery warning)
-          connection: 'connected' | 'disconnected',
+          connection: "connected" | "disconnected",
           rssi?: number; // in dBm
           warning?: ioBroker.StringOrTranslated | boolean; // warning text or just boolean true (means warning)
       };
