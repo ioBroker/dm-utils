@@ -22,7 +22,7 @@ export interface ActionBase<T extends ActionType> {
 export interface ControlBase {
     id: string; // unique id of control for one device. Controls must be unique for one device
     type: "button" | "switch" | "slider" | "select" | "icon" | "color";
-    state?: string | number | boolean | null; // actual state for all types except button
+    state?: ioBroker.State; // actual state for all types except button
     stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if state changed, GUI will request update of control
 
     icon?: string; // base64 or url - icon could be by all types except select
@@ -38,8 +38,8 @@ export interface ControlBase {
 }
 
 export interface DeviceControl<T extends ActionType = "api"> extends ActionBase<T> {
-    handler?: T extends "api" ? never : (deviceId: string, actionId: string, state: ControlState, context: MessageContext) => RetVal<ErrorResponse | ControlState>;
-    getStateHandler?: T extends "api" ? never : (deviceId: string, actionId: string, context: MessageContext) => RetVal<ErrorResponse | ControlState>;
+    handler?: T extends "api" ? never : (deviceId: string, actionId: string, state: ControlState, context: MessageContext) => RetVal<ErrorResponse | ioBroker.State>;
+    getStateHandler?: T extends "api" ? never : (deviceId: string, actionId: string, context: MessageContext) => RetVal<ErrorResponse | ioBroker.State>;
 }
 
 export interface InstanceAction<T extends ActionType = "api"> extends ActionBase<T> {

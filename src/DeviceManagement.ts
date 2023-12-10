@@ -99,7 +99,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         controlId: string,
         newState: ControlState,
         context: MessageContext,
-    ): RetVal<ErrorResponse | ControlState> {
+    ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
             this.log.warn(`Device control ${controlId} was called before listDevices()`);
             return { error: { code: 201, message: `Device control ${controlId} was called before listDevices()` } };
@@ -135,7 +135,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         deviceId: string,
         controlId: string,
         context: MessageContext,
-    ): RetVal<ErrorResponse | ControlState> {
+    ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
             this.log.warn(`Device control ${controlId} was called before listDevices()`);
             return { error: { code: 201, message: `Device control ${controlId} was called before listDevices()` } };
@@ -403,7 +403,7 @@ export class MessageContext implements ActionContext {
         });
     }
 
-    sendControlResult(deviceId: string, controlId: string, result: ErrorResponse | ControlState): void {
+    sendControlResult(deviceId: string, controlId: string, result: ErrorResponse | ioBroker.State): void {
         if (typeof result === "object" && "error" in result) {
             this.send("result", {
                 result: {
