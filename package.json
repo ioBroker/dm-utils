@@ -1,6 +1,6 @@
 {
   "name": "@iobroker/dm-utils",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "ioBroker Device Manager utilities for backend",
   "main": "build/index.js",
   "publishConfig": {
