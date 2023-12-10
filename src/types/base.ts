@@ -38,7 +38,7 @@ export interface ControlBase {
     options?: { label: ioBroker.StringOrTranslated, value: ControlState, icon?: string, color?: Color }[]; // only for select
 }
 
-export interface DeviceControl<T extends ActionType = "api"> extends ActionBase<T> {
+export interface DeviceControl<T extends ActionType = "api"> extends ControlBase {
     handler?: T extends "api" ? never : (deviceId: string, actionId: string, state: ControlState, context: MessageContext) => RetVal<ErrorResponse | ioBroker.State>;
     getStateHandler?: T extends "api" ? never : (deviceId: string, actionId: string, context: MessageContext) => RetVal<ErrorResponse | ioBroker.State>;
 }
