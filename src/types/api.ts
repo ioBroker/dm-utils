@@ -5,3 +5,4 @@ export type InstanceAction = base.InstanceAction<"api">;
 export type DeviceAction = base.DeviceAction<"api">;
 export type InstanceDetails = base.InstanceDetails<"api">;
 export type DeviceInfo = base.DeviceInfo<"api">;
+export type DeviceControl = base.ControlBase<"api">;

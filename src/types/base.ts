@@ -1,20 +1,45 @@
-import { ActionContext } from "..";
+import { ActionContext, ErrorResponse, MessageContext } from "..";
 import { ApiVersion, DeviceRefresh, DeviceStatus, RetVal } from "./common";
 
 type ActionType = "api" | "adapter";
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type Color = "primary" | "secondary" | string & {}; // color (you can use primary, secondary or color rgb value or hex)
 
+export type ControlState = string | number | boolean | null;
+
 export interface ActionBase<T extends ActionType> {
     id: string;
     /**
-     * This can either be the name of a font awesome icon (e.g. "fa-signal") or the URL to an icon.
+     * This can either be base64 or the URL to an icon.
      */
     icon: string; // base64 or url
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends "api" ? boolean : never;
     color?: Color;
     backgroundColor?: Color; // background color of button (you can use primary, secondary or color rgb value or hex)
+}
+
+export interface ControlBase<T extends ActionType> {
+    id: string; // unique id of control for one device. Controls must be unique for one device
+    type: "button" | "switch" | "slider" | "select" | "icon" | "color";
+    state?: string | number | boolean | null; // actual state for all types except button
+    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if state changed, GUI will request update of control
+
+    icon?: string; // base64 or url - icon could be by all types except select
+    iconOn?: string; // base64 or url - by type button, switch, slider, icon
+    min?: number; // only for slider
+    max?: number; // only for slider
+    label?: ioBroker.StringOrTranslated;
+    labelOn?: ioBroker.StringOrTranslated;
+    description?: ioBroker.StringOrTranslated;
+    color?: Color;
+    colorOn?: Color;
+    options?: { label: ioBroker.StringOrTranslated, value: ControlState, icon?: string, color?: Color }[]; // only for select
+}
+
+export interface DeviceControl<T extends ActionType = "api"> extends ActionBase<T> {
+    handler?: T extends "api" ? never : (deviceId: string, actionId: string, state: ControlState, context: MessageContext) => RetVal<ErrorResponse | ControlState>;
+    getStateHandler?: T extends "api" ? never : (deviceId: string, actionId: string, context: MessageContext) => RetVal<ErrorResponse | ControlState>;
 }
 
 export interface InstanceAction<T extends ActionType = "api"> extends ActionBase<T> {
@@ -43,5 +68,6 @@ export interface DeviceInfo<T extends ActionType = "api"> {
     name: ioBroker.StringOrTranslated;
     status?: DeviceStatus | DeviceStatus[];
     actions?: DeviceAction<T>[];
+    controls?: DeviceControl<T>[];
     hasDetails?: boolean;
 }

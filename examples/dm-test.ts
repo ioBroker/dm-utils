@@ -1,4 +1,5 @@
-import { ActionContext, DeviceDetails, DeviceInfo, DeviceManagement, DeviceRefresh } from "../src";
+import { ActionContext, DeviceDetails, DeviceManagement, DeviceRefresh } from "../src";
+import * as base from "../src/types/base";
 
 const demoFormSchema = {
     type: "tabs",
@@ -73,7 +74,7 @@ const demoFormSchema = {
 };
 
 class DmTestDeviceManagement extends DeviceManagement {
-    protected async listDevices(): Promise<DeviceInfo[]> {
+    protected async listDevices(): Promise<base.DeviceInfo<"adapter">[]> {
         return [
             { id: "test-123", name: "Test 123", status: "connected" },
             { id: "test-345", name: "Test 345", status: "disconnected", hasDetails: true, actions: [] },
@@ -95,7 +96,6 @@ class DmTestDeviceManagement extends DeviceManagement {
                         id: "forward",
                         icon: "forward",
                         description: "Forward",
-                        disabled: true,
                     },
                 ],
             },
