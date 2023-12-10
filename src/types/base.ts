@@ -34,6 +34,7 @@ export interface ControlBase {
     description?: ioBroker.StringOrTranslated;
     color?: Color;
     colorOn?: Color;
+    controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
     options?: { label: ioBroker.StringOrTranslated, value: ControlState, icon?: string, color?: Color }[]; // only for select
 }
 

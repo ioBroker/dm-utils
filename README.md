@@ -59,6 +59,14 @@ When the user clicks on an action (i.e., a button in the UI),
 the `DeviceManagement` implementation's `handleXxxAction()` is called, and the adapter can perform arbitrary actions
 (see below for details).
 
+### Controls
+
+The device manager tab allows the user to control devices too. If devices are controllable, the device manager tab shows a control elements in the device card.
+
+When the user clicks on a control (i.e., a button in the UI),
+the `DeviceManagement` implementation's `handleXxxAction()` is called, and the adapter can perform arbitrary actions
+(see below for details).
+
 ### Communication
 
 The communication between the `ioBroker.device-manager` tab and the adapter happens through `sendTo`.
@@ -165,7 +173,7 @@ See below for how to interact with the user.
 
 ### `handleDeviceAction(deviceId: string, actionId: string, context: ActionContext)
 
-This method is called when to user clicks on an action (i.e., button) for a device.
+This method is called when the user clicks on an action (i.e., button) for a device.
 
 The parameters of this method are:
 - `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
@@ -174,13 +182,42 @@ The parameters of this method are:
 
 The returned object must contain:
 - `refresh` (string / boolean): the following values are allowed:
-  - `"device"`: if you want the device details to be reloaded after this action
-  - `"instance"`: if you want the entire device list to be reloaded after this action
-  - `false`: if you don't want anything to be refreshed (important: this is a boolean, not a string!)
+    - `"device"`: if you want the device details to be reloaded after this action
+    - `"instance"`: if you want the entire device list to be reloaded after this action
+    - `false`: if you don't want anything to be refreshed (important: this is a boolean, not a string!)
 
 This method can be implemented asynchronously and can take a lot of time to complete.
 
 See below for how to interact with the user.
+
+### `handleDeviceControl(deviceId: string, controlId: string, state: ControlState, context: MessageContext)
+
+This method is called when the user clicks on a control (i.e., slider) in the device card.
+
+The parameters of this method are:
+- `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
+- `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`
+- `state` (string | number | boolean): new state for the control, that will be sent to real device
+- `context` (object): object containing helper methods that can be used when executing the action
+
+The returned object must contain:
+- `state`: ioBroker state object
+
+This method can be implemented asynchronously and can take a lot of time to complete.
+
+### `handleDeviceControlState(deviceId: string, controlId: string, context: MessageContext)
+
+This method is called when GUI requests the update of the state.
+
+The parameters of this method are:
+- `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
+- `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`
+- `context` (object): object containing helper methods that can be used when executing the action
+
+The returned object must contain:
+- `state`: ioBroker state object
+
+This method can be implemented asynchronously and can take a lot of time to complete.
 
 ## Action sequences
 
@@ -259,6 +296,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 ## Changelog
 ### **WORK IN PROGRESS**
 * (bluefox) added some fields to DeviceInfo interface
+* (bluefox) added control possibilities
 
 ## License
 MIT License
