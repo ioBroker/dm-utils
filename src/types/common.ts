@@ -8,7 +8,7 @@ export type DeviceStatus =
            * This can either be the name of a font awesome icon (e.g. "fa-signal") or the URL to an icon.
            */
           icon?: string;
-          // @ts-ignore
+          // @ts-expect-error
           battery?: number | boolean| "charging" | string & Record<string, never>; // in percent (0-100), or string 'charging',
                                                                 // or string '10V',
                                                                 // or string '10mV',
