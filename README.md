@@ -294,7 +294,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 0.1.1 (2023-12-10)
+### **WORK IN PROGRESS**
 * (bluefox) added some fields to DeviceInfo interface
 * (bluefox) added control possibilities
 
