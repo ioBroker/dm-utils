@@ -1,12 +1,12 @@
 # dm-utils
 
-Utility classes for ioBroker adapters to support [ioBroker.dm](https://github.com/UncleSamSwiss/ioBroker.dm).
+Utility classes for ioBroker adapters to support [ioBroker.device-manager](https://github.com/ioBroker/ioBroker.device-manager).
 
 ## How to use
 
-Add in your 'io-package.json' the property 'deviceManager: true' to 'common.supportedMessages'.
-Note: If you don't have a 'common.supportedMessages' property yet, you have to add it.
-Also, if you don't have a 'common.messagebox: true' property yet, you have to add it.
+Add in your `io-package.json` the property `deviceManager: true` to `common.supportedMessages`.
+Note: If you don't have a `common.supportedMessages` property yet, you have to add it.
+Also, if you don't have a `common.messagebox: true` property yet, you have to add it.
 
 In your ioBroker adapter, add a subclass of `DeviceManagement` and override the methods you need (see next chapters):
 
@@ -55,13 +55,15 @@ The device manager tab allows the user to interact with the adapter instance in 
 - Actions per instance are shown above the list and should contain actions like "Search devices" or "Pair new device".
 - Actions per device are shown in the device list inside an instance and should contain actions like "Edit settings" or "Remove".
 
-When the user clicks on an action (i.e. a button in the UI), the `DeviceManagement` implementation's `handleXxxAction()` is called and the adapter can perform arbitrary actions (see below for details).
+When the user clicks on an action (i.e., a button in the UI),
+the `DeviceManagement` implementation's `handleXxxAction()` is called, and the adapter can perform arbitrary actions
+(see below for details).
 
 ### Communication
 
-The communication between the ioBroker.dm tab and the adapter happens through `sendTo`.
+The communication between the `ioBroker.device-manager` tab and the adapter happens through `sendTo`.
 
-**IMPORANT:** make sure your adapter doesn't handle `sendTo` messages starting with `dm:`, otherwise the communication will not work.
+**IMPORTANT:** make sure your adapter doesn't handle `sendTo` messages starting with `dm:`, otherwise the communication will not work.
 
 ### Access adapter methods
 
@@ -104,7 +106,7 @@ In most cases, you will get all states of your instance and fill the array with 
 Every array entry is an object of type `DeviceInfo` which has the following properties:
 
 - `id` (string): a unique (human readable) identifier of the device (it must be unique for your adapter instance only)
-- `name` (string or translations): the human readable name of this device
+- `name` (string or translations): the human-readable name of this device
 - `status` (optional): the current status of the device, which can be one of:
   - `"disconnected"`
   - `"connected"`
@@ -148,7 +150,7 @@ Please keep in mind that there is no "Save" button, so in most cases, the form s
 
 ### `handleInstanceAction(actionId: string, context: ActionContext)
 
-This method is called when to user clicks on an action (i.e. button) for an adapter instance.
+This method is called when to user clicks on an action (i.e., button) for an adapter instance.
 
 The parameters of this method are:
 - `actionId` (string): the `id` that was given in `getInstanceInfo()` --> `actions[].id`
@@ -163,7 +165,7 @@ See below for how to interact with the user.
 
 ### `handleDeviceAction(deviceId: string, actionId: string, context: ActionContext)
 
-This method is called when to user clicks on an action (i.e. button) for a device.
+This method is called when to user clicks on an action (i.e., button) for a device.
 
 The parameters of this method are:
 - `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
@@ -184,9 +186,9 @@ See below for how to interact with the user.
 
 To allow your adapter to interact with the user, you can use "actions".
 
-As described above, there are actions on the instance and on devices. The behavior of both methods are similar.
+As described above, there are actions on the instance and on devices. The behavior of both methods is similar.
 
-Inside an action method (`handleInstanceAction()` or `handleDeviceAction()`) you can perform arbitrary actions, like talking to a device or API and you can interact with the user. For interactions, there are methods you can call on `context`:
+Inside an action method (`handleInstanceAction()` or `handleDeviceAction()`) you can perform arbitrary actions, like talking to a device or API, and you can interact with the user. For interactions, there are methods you can call on `context`:
 
 ### `showMessage(text: ioBroker.StringOrTranslated)`
 
@@ -199,7 +201,7 @@ This asynchronous method returns (or rather: the Promise is resolved) once the u
 
 ### `showConfirmation(text: ioBroker.StringOrTranslated)`
 
-Let's the user confirm an action by showing a message with an "OK" and "Cancel" button.
+Lets the user confirm an action by showing a message with an "OK" and "Cancel" button.
 
 The method has the following parameter:
 - `text` (string or translation): the text to show to the user
@@ -249,6 +251,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
       - `label` (string, optional): change the label to the right of the progress bar
 - `close()`
   - Closes the progress dialog (and allows you to open other dialogs)
+  
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
