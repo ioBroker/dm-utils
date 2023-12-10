@@ -19,7 +19,7 @@ export interface ActionBase<T extends ActionType> {
     backgroundColor?: Color; // background color of button (you can use primary, secondary or color rgb value or hex)
 }
 
-export interface ControlBase<T extends ActionType> {
+export interface ControlBase {
     id: string; // unique id of control for one device. Controls must be unique for one device
     type: "button" | "switch" | "slider" | "select" | "icon" | "color";
     state?: string | number | boolean | null; // actual state for all types except button
