@@ -2,7 +2,7 @@ import { ActionContext } from "..";
 import { ApiVersion, DeviceRefresh, DeviceStatus, RetVal } from "./common";
 
 type ActionType = "api" | "adapter";
-
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type Color = "primary" | "secondary" | string & {}; // color (you can use primary, secondary or color rgb value or hex)
 
 export interface ActionBase<T extends ActionType> {
