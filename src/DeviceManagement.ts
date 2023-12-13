@@ -11,6 +11,7 @@ import {
     JsonFormSchema,
     RefreshResponse,
     RetVal,
+    ErrorCodes,
 } from "./types";
 import * as api from "./types/api";
 import { ControlState, DeviceControl } from "./types/base";
@@ -41,21 +42,21 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
 
     protected handleInstanceAction(
         actionId: string,
-        context: ActionContext,
+        context?: ActionContext,
     ): RetVal<ErrorResponse> | RetVal<RefreshResponse> {
         if (!this.instanceInfo) {
             this.log.warn(`Instance action ${actionId} was called before getInstanceInfo()`);
-            return { error: { code: 101, message: `Instance action ${actionId} was called before getInstanceInfo()` } };
+            return { error: { code: ErrorCodes.E_INSTANCE_ACTION_NOT_INITIALIZED, message: `Instance action ${actionId} was called before getInstanceInfo()` } };
         }
         const action = this.instanceInfo.actions?.find((a) => a.id === actionId);
         if (!action) {
             this.log.warn(`Instance action ${actionId} is unknown`);
-            return { error: { code: 102, message: `Instance action ${actionId} is unknown` } };
+            return { error: { code: ErrorCodes.E_INSTANCE_ACTION_UNKNOWN, message: `Instance action ${actionId} is unknown` } };
         }
         if (!action.handler) {
             this.log.warn(`Instance action ${actionId} is disabled because it has no handler`);
             return {
-                error: { code: 103, message: `Instance action ${actionId} is disabled because it has no handler` },
+                error: { code: ErrorCodes.E_INSTANCE_ACTION_NO_HANDLER, message: `Instance action ${actionId} is disabled because it has no handler` },
             };
         }
         return action.handler(context);
@@ -64,29 +65,29 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     protected handleDeviceAction(
         deviceId: string,
         actionId: string,
-        context: ActionContext,
+        context?: ActionContext,
     ): RetVal<ErrorResponse> | RetVal<RefreshResponse> {
         if (!this.devices) {
             this.log.warn(`Device action ${actionId} was called before listDevices()`);
-            return { error: { code: 201, message: `Device action ${actionId} was called before listDevices()` } };
+            return { error: { code: ErrorCodes.E_DEVICE_ACTION_NOT_INITIALIZED, message: `Device action ${actionId} was called before listDevices()` } };
         }
         const device = this.devices.get(deviceId);
         if (!device) {
             this.log.warn(`Device action ${actionId} was called on unknown device: ${deviceId}`);
             return {
-                error: { code: 202, message: `Device action ${actionId} was called on unknown device: ${deviceId}` },
+                error: { code: ErrorCodes.E_DEVICE_ACTION_DEVICE_UNKNOWN, message: `Device action ${actionId} was called on unknown device: ${deviceId}` },
             };
         }
         const action = device.actions?.find((a) => a.id === actionId);
         if (!action) {
             this.log.warn(`Device action ${actionId} doesn't exist on device ${deviceId}`);
-            return { error: { code: 203, message: `Device action ${actionId} doesn't exist on device ${deviceId}` } };
+            return { error: { code: ErrorCodes.E_DEVICE_ACTION_UNKNOWN, message: `Device action ${actionId} doesn't exist on device ${deviceId}` } };
         }
         if (!action.handler) {
             this.log.warn(`Device action ${actionId} on ${deviceId} is disabled because it has no handler`);
             return {
                 error: {
-                    code: 204,
+                    code: ErrorCodes.E_DEVICE_ACTION_NO_HANDLER,
                     message: `Device action ${actionId} on ${deviceId} is disabled because it has no handler`,
                 },
             };
@@ -98,30 +99,30 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         deviceId: string,
         controlId: string,
         newState: ControlState,
-        context: MessageContext,
+        context?: MessageContext,
     ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
             this.log.warn(`Device control ${controlId} was called before listDevices()`);
-            return { error: { code: 201, message: `Device control ${controlId} was called before listDevices()` } };
+            return { error: { code: ErrorCodes.E_DEVICE_CONTROL_NOT_INITIALIZED, message: `Device control ${controlId} was called before listDevices()` } };
         }
         const device = this.devices.get(deviceId);
         if (!device) {
             this.log.warn(`Device control ${controlId} was called on unknown device: ${deviceId}`);
             return {
-                error: { code: 202, message: `Device control ${controlId} was called on unknown device: ${deviceId}` },
+                error: { code: ErrorCodes.E_DEVICE_CONTROL_DEVICE_UNKNOWN, message: `Device control ${controlId} was called on unknown device: ${deviceId}` },
             };
         }
 
         const control = device.controls?.find((a) => a.id === controlId);
         if (!control) {
             this.log.warn(`Device control ${controlId} doesn't exist on device ${deviceId}`);
-            return { error: { code: 203, message: `Device control ${controlId} doesn't exist on device ${deviceId}` } };
+            return { error: { code: ErrorCodes.E_DEVICE_CONTROL_UNKNOWN, message: `Device control ${controlId} doesn't exist on device ${deviceId}` } };
         }
         if (!control.handler) {
             this.log.warn(`Device control ${controlId} on ${deviceId} is disabled because it has no handler`);
             return {
                 error: {
-                    code: 204,
+                    code: ErrorCodes.E_DEVICE_CONTROL_NO_HANDLER,
                     message: `Device control ${controlId} on ${deviceId} is disabled because it has no handler`,
                 },
             };
@@ -134,7 +135,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     protected handleDeviceControlState(
         deviceId: string,
         controlId: string,
-        context: MessageContext,
+        context?: MessageContext,
     ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
             this.log.warn(`Device control ${controlId} was called before listDevices()`);

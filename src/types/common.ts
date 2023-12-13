@@ -14,7 +14,7 @@ export type DeviceStatus =
                                                                 // or string '10mV',
                                                                 // or string '100' in mV
                                                                 // or boolean true (means OK) or false (Battery warning)
-          connection: "connected" | "disconnected",
+          connection?: "connected" | "disconnected",
           rssi?: number; // in dBm
           warning?: ioBroker.StringOrTranslated | boolean; // warning text or just boolean true (means warning)
       };
