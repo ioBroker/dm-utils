@@ -21,7 +21,7 @@ export interface ActionBase<T extends ActionType> {
 
 export interface ControlBase {
     id: string; // unique id of control for one device. Controls must be unique for one device
-    type: "button" | "switch" | "slider" | "select" | "icon" | "color";
+    type: "button" | "switch" | "slider" | "select" | "icon" | "color" | "text" | "number" | "info";
     state?: ioBroker.State; // actual state for all types except button
     stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if state changed, GUI will request update of control
 
@@ -29,6 +29,7 @@ export interface ControlBase {
     iconOn?: string; // base64 or url - by type button, switch, slider, icon
     min?: number; // only for slider
     max?: number; // only for slider
+    unit?: string; // only for slider
     label?: ioBroker.StringOrTranslated;
     labelOn?: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
