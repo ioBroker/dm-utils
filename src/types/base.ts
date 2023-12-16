@@ -19,6 +19,14 @@ export interface ActionBase<T extends ActionType> {
     backgroundColor?: Color; // background color of button (you can use primary, secondary or color rgb value or hex)
 }
 
+export interface ChannelInfo {
+    name: ioBroker.StringOrTranslated;
+    icon?: string; // base64 or url
+    color?: Color; // color of name
+    backgroundColor?: Color; // background color of card (you can use primary, secondary or color rgb value or hex)
+    order?: number;
+}
+
 export interface ControlBase {
     id: string; // unique id of control for one device. Controls must be unique for one device
     type: "button" | "switch" | "slider" | "select" | "icon" | "color" | "text" | "number" | "info";
@@ -37,6 +45,7 @@ export interface ControlBase {
     colorOn?: Color;
     controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
     options?: { label: ioBroker.StringOrTranslated, value: ControlState, icon?: string, color?: Color }[]; // only for select
+    channel?: ChannelInfo;
 }
 
 export interface DeviceControl<T extends ActionType = "api"> extends ControlBase {
