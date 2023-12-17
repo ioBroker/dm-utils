@@ -294,6 +294,9 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) corrected control error
+
 ### 0.1.7 (2023-12-17)
 * (bluefox) added channel info
 

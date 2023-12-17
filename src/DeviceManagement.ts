@@ -138,28 +138,28 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         context?: MessageContext,
     ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
-            this.log.warn(`Device control ${controlId} was called before listDevices()`);
-            return { error: { code: 201, message: `Device control ${controlId} was called before listDevices()` } };
+            this.log.warn(`Device get state ${controlId} was called before listDevices()`);
+            return { error: { code: ErrorCodes.E_DEVICE_GET_STATE_NOT_INITIALIZED, message: `Device control ${controlId} was called before listDevices()` } };
         }
         const device = this.devices.get(deviceId);
         if (!device) {
-            this.log.warn(`Device control ${controlId} was called on unknown device: ${deviceId}`);
+            this.log.warn(`Device get state ${controlId} was called on unknown device: ${deviceId}`);
             return {
-                error: { code: 202, message: `Device control ${controlId} was called on unknown device: ${deviceId}` },
+                error: { code: ErrorCodes.E_DEVICE_GET_STATE_DEVICE_UNKNOWN, message: `Device control ${controlId} was called on unknown device: ${deviceId}` },
             };
         }
 
         const control = device.controls?.find((a) => a.id === controlId);
         if (!control) {
-            this.log.warn(`Device control ${controlId} doesn't exist on device ${deviceId}`);
-            return { error: { code: 203, message: `Device control ${controlId} doesn't exist on device ${deviceId}` } };
+            this.log.warn(`Device get state ${controlId} doesn't exist on device ${deviceId}`);
+            return { error: { code: ErrorCodes.E_DEVICE_GET_STATE_UNKNOWN, message: `Device control ${controlId} doesn't exist on device ${deviceId}` } };
         }
-        if (!control.handler) {
-            this.log.warn(`Device control ${controlId} on ${deviceId} is disabled because it has no handler`);
+        if (!control.getStateHandler) {
+            this.log.warn(`Device get state ${controlId} on ${deviceId} is disabled because it has no handler`);
             return {
                 error: {
-                    code: 204,
-                    message: `Device control ${controlId} on ${deviceId} is disabled because it has no handler`,
+                    code: ErrorCodes.E_DEVICE_GET_STATE_NO_HANDLER,
+                    message: `Device get state ${controlId} on ${deviceId} is disabled because it has no handler`,
                 },
             };
         }
