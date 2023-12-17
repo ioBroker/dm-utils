@@ -21,6 +21,7 @@ export interface ActionBase<T extends ActionType> {
 
 export interface ChannelInfo {
     name: ioBroker.StringOrTranslated;
+    description?: ioBroker.StringOrTranslated;
     icon?: string; // base64 or url
     color?: Color; // color of name
     backgroundColor?: Color; // background color of card (you can use primary, secondary or color rgb value or hex)
