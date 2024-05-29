@@ -294,7 +294,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.2.0 (2024-05-29)
 * (bluefox) enhanced type exports
 * (bluefox) added confirmation and input text options
 
