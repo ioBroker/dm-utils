@@ -12,11 +12,32 @@ export interface ActionBase<T extends ActionType> {
     /**
      * This can either be base64 or the URL to an icon.
      */
-    icon: string; // base64 or url
+    icon?: string; // base64 or url
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends "api" ? boolean : never;
     color?: Color;
     backgroundColor?: Color; // background color of button (you can use primary, secondary or color rgb value or hex)
+    /** If true, the user will be asked for confirmation before executing the action */
+    confirmation: boolean | ioBroker.StringOrTranslated; // if type StringOrTranslated, this text will be shown in the confirmation dialog
+    /** If defined, before the action is triggered, the non-empty text or number or checkbox will be asked */
+    inputBefore: {
+        /** This label will be shown for the text input */
+        label: ioBroker.StringOrTranslated;
+        /** This type of input will be shown. Default is type */
+        type?: "text" | "number" | "checkbox" | "select" | "slider" | "color";
+        /** If a type is "select", the options must be defined */
+        options?: { label: ioBroker.StringOrTranslated, value: string }[];
+        /** Default value for the input */
+        defaultValue?: string | number | boolean;
+        /** If true, the input could be empty */
+        allowEmptyValue?: boolean;
+        /** Minimum value for the input (number or slider) */
+        min?: number;
+        /** Maximum value for the input (number or slider) */
+        max?: number;
+        /** Step value for the input (number or slider) */
+        step?: number;
+    };
 }
 
 export interface ChannelInfo {
@@ -55,14 +76,14 @@ export interface DeviceControl<T extends ActionType = "api"> extends ControlBase
 }
 
 export interface InstanceAction<T extends ActionType = "api"> extends ActionBase<T> {
-    handler?: T extends "api" ? never : (context: ActionContext) => RetVal<{ refresh: boolean }>;
+    handler?: T extends "api" ? never : (context: ActionContext, options?: Record<string, any>) => RetVal<{ refresh: boolean }>;
     title: ioBroker.StringOrTranslated;
 }
 
 export interface DeviceAction<T extends ActionType = "api"> extends ActionBase<T> {
     handler?: T extends "api"
         ? never
-        : (deviceId: string, context: ActionContext) => RetVal<{ refresh: DeviceRefresh }>;
+        : (deviceId: string, context: ActionContext, options?: Record<string, any>) => RetVal<{ refresh: DeviceRefresh }>;
 }
 
 export interface InstanceDetails<T extends ActionType = "api"> {

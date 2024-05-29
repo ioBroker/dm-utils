@@ -37,12 +37,13 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     protected abstract listDevices(): RetVal<DeviceInfo[]>;
 
     protected getDeviceDetails(id: string): RetVal<DeviceDetails | null | { error: string }> {
-        return { id, schema: {} };
+        return { id, schema: {} as JsonFormSchema };
     }
 
     protected handleInstanceAction(
         actionId: string,
         context?: ActionContext,
+        options?: { value?: number | string | boolean; [key: string]: any },
     ): RetVal<ErrorResponse> | RetVal<RefreshResponse> {
         if (!this.instanceInfo) {
             this.log.warn(`Instance action ${actionId} was called before getInstanceInfo()`);
@@ -59,13 +60,14 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
                 error: { code: ErrorCodes.E_INSTANCE_ACTION_NO_HANDLER, message: `Instance action ${actionId} is disabled because it has no handler` },
             };
         }
-        return action.handler(context);
+        return action.handler(context, options);
     }
 
     protected handleDeviceAction(
         deviceId: string,
         actionId: string,
         context?: ActionContext,
+        options?: { value?: number | string | boolean; [key: string]: any },
     ): RetVal<ErrorResponse> | RetVal<RefreshResponse> {
         if (!this.devices) {
             this.log.warn(`Device action ${actionId} was called before listDevices()`);
@@ -92,7 +94,8 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
                 },
             };
         }
-        return action.handler(deviceId, context);
+
+        return action.handler(deviceId, context, options);
     }
 
     protected handleDeviceControl(
@@ -216,19 +219,19 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
                 return;
             }
             case "dm:instanceAction": {
-                const action = msg.message as { actionId: string };
+                const action = msg.message as { actionId: string, value: number | string | boolean };
                 const context = new MessageContext(msg, this.adapter);
                 this.contexts.set(msg._id, context);
-                const result = await this.handleInstanceAction(action.actionId, context);
+                const result = await this.handleInstanceAction(action.actionId, context, { value: action.value });
                 this.contexts.delete(msg._id);
                 context.sendFinalResult(result);
                 return;
             }
             case "dm:deviceAction": {
-                const action = msg.message as { actionId: string; deviceId: string };
+                const action = msg.message as { actionId: string; deviceId: string, value: number | string | boolean };
                 const context = new MessageContext(msg, this.adapter);
                 this.contexts.set(msg._id, context);
-                const result = await this.handleDeviceAction(action.deviceId, action.actionId, context);
+                const result = await this.handleDeviceAction(action.deviceId, action.actionId, context, { value: action.value });
                 this.contexts.delete(msg._id);
                 context.sendFinalResult(result);
                 return;

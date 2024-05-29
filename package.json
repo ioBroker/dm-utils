@@ -16,7 +16,7 @@
     "release-minor": "release-script minor --yes",
     "release-major": "release-script major --yes",
     "update-packages": "ncu --upgrade",
-    "npm": "npm i"
+    "npm": "npm i -f"
   },
   "author": "UncleSamSwiss",
   "license": "MIT",
@@ -27,8 +27,8 @@
     "@alcalzone/release-script": "^3.7.0",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@types/node": "^20.12.12",
-    "@typescript-eslint/eslint-plugin": "^7.10.0",
-    "@typescript-eslint/parser": "^7.10.0",
+    "@typescript-eslint/eslint-plugin": "^7.11.0",
+    "@typescript-eslint/parser": "^7.11.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "^3.2.5",
