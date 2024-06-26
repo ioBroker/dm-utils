@@ -18,9 +18,9 @@ export interface ActionBase<T extends ActionType> {
     color?: Color;
     backgroundColor?: Color; // background color of button (you can use primary, secondary or color rgb value or hex)
     /** If true, the user will be asked for confirmation before executing the action */
-    confirmation: boolean | ioBroker.StringOrTranslated; // if type StringOrTranslated, this text will be shown in the confirmation dialog
+    confirmation?: boolean | ioBroker.StringOrTranslated; // if type StringOrTranslated, this text will be shown in the confirmation dialog
     /** If defined, before the action is triggered, the non-empty text or number or checkbox will be asked */
-    inputBefore: {
+    inputBefore?: {
         /** This label will be shown for the text input */
         label: ioBroker.StringOrTranslated;
         /** This type of input will be shown. Default is type */
