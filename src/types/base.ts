@@ -12,13 +12,13 @@ export interface ActionBase<T extends ActionType> {
     /**
      * This can either be base64 or the URL to an icon.
      */
-    icon?: 'edit' | 'rename' | 'delete' | 'refresh' |
-        'newDevice' | 'new' | 'add' | 'discover' | 'search' |
-        'unpairDevice' | 'pairDevice' | 'identify' | 'play' |
-        'stop' | 'pause' | 'forward' | 'next' | 'rewind' |
-        'previous' | 'lamp' | 'light' | 'backlight' |
-        'dimmer' | 'socket' | 'settings' | 'users' | 'group' |
-        'user' | string; // base64 or url
+    icon?: "edit" | "rename" | "delete" | "refresh" |
+        "newDevice" | "new" | "add" | "discover" | "search" |
+        "unpairDevice" | "pairDevice" | "identify" | "play" |
+        "stop" | "pause" | "forward" | "next" | "rewind" |
+        "previous" | "lamp" | "light" | "backlight" |
+        "dimmer" | "socket" | "settings" | "users" | "group" |
+        "user" | string; // base64 or url
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends "api" ? boolean : never;
     color?: Color;
