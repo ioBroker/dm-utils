@@ -295,6 +295,10 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (bluefox) packages updated
+* (bluefox) Updated JSON config types
+
 ### 0.2.2 (2024-06-26)
 * (bluefox) packages updated
 
