@@ -53,9 +53,9 @@ export type ConfigItemType = 'tabs' | 'panel' | 'text' | 'number' | 'color' | 'c
     'staticText' | 'staticLink' | 'staticImage' | 'table' | 'accordion' | 'jsonEditor' | 'language' | 'certificate' |
     'certificates' | 'certCollection' | 'custom' | 'datePicker' | 'timePicker' | 'divider' | 'header' | 'cron' |
     'fileSelector' | 'file' | 'imageSendTo' | 'selectSendTo' | 'autocompleteSendTo' | 'textSendTo' | 'coordinates' | 'interface' | 'license' |
-    'checkLicense' | 'uuid' | 'port' | 'deviceManager' | 'topic';
+    'checkLicense' | 'uuid' | 'port' | 'deviceManager' | 'topic' | 'qrCode';
 
-type ConfigIconType = 'auth' | 'send' | 'web' | 'warning' | 'error' | 'info' | 'search' | 'book' | 'help' | 'upload' | 'user' | 'group' | string;
+type ConfigIconType = 'edit' | 'auth' | 'send' | 'web' | 'warning' | 'error' | 'info' | 'search' | 'book' | 'help' | 'upload' | 'user' | 'group' | 'delete' | 'refresh' | 'add' | 'unpair' | 'pair' | string;
 
 export interface ConfigItemConfirmData {
     condition: string;
@@ -207,6 +207,20 @@ export interface ConfigItemNumber extends ConfigItem {
     max?: number;
     step?: number;
     readOnly?: boolean;
+}
+
+export interface ConfigItemQrCode extends ConfigItem {
+    type: 'qrCode';
+    /** Data to show in the QR code */
+    data: string;
+    /** Size of the QR code */
+    size?: number;
+    /** Foreground color */
+    fgColor?: string;
+    /** Background color */
+    bgColor?: string;
+    /** QR code level */
+    level?: 'L' | 'M' | 'Q' | 'H';
 }
 
 export interface ConfigItemPassword extends ConfigItem {
@@ -700,7 +714,7 @@ export type ConfigItemAny = ConfigItemAlive | ConfigItemAutocomplete |
     ConfigItemInterface | ConfigItemJsonEditor | ConfigItemLicense | ConfigItemPassword |
     ConfigItemSetState | ConfigItemStaticDivider | ConfigItemStaticHeader |
     ConfigItemStaticImage | ConfigItemStaticText | ConfigItemTopic |
-    ConfigItemObjectId;
+    ConfigItemObjectId | ConfigItemQrCode;
 
 export type JsonFormSchema = ConfigItemPanel;
 
