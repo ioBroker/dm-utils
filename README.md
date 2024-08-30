@@ -295,7 +295,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.5.0 (2024-08-30)
 * (bluefox) Migrated to eslint 9
 
 ### 0.4.0 (2024-08-30)
