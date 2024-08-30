@@ -8,7 +8,6 @@ export type DeviceStatus =
            * This can either be the name of a font awesome icon (e.g. "fa-signal") or the URL to an icon.
            */
           icon?: string;
-          // eslint-disable-next-line @typescript-eslint/ban-types
           battery?: number | boolean | "charging" | string; // in percent (0-100), or string 'charging',
                                                                 // or string '10V',
                                                                 // or string '10mV',
@@ -110,15 +109,10 @@ export interface ConfigItem {
     width?: string | number;
 
     // generated from alsoDependsOn
-    // eslint-disable-next-line no-use-before-define
     confirmDependsOn?: ConfigItemIndexed[];
-    // eslint-disable-next-line no-use-before-define
     onChangeDependsOn?: ConfigItemIndexed[];
-    // eslint-disable-next-line no-use-before-define
     hiddenDependsOn?: ConfigItemIndexed[];
-    // eslint-disable-next-line no-use-before-define
     labelDependsOn?: ConfigItemIndexed[];
-    // eslint-disable-next-line no-use-before-define
     helpDependsOn?: ConfigItemIndexed[];
 }
 
@@ -159,7 +153,6 @@ export interface ConfigItemPanel extends ConfigItem {
     type: 'panel' | never;
     /** Label of tab */
     label?: ioBroker.StringOrTranslated;
-    // eslint-disable-next-line no-use-before-define
     items: Record<string, ConfigItemAny>;
     /** only possible as not part of tabs */
     collapsable?: boolean;
