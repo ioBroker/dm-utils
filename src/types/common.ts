@@ -53,7 +53,7 @@ export type ConfigItemType = 'tabs' | 'panel' | 'text' | 'number' | 'color' | 'c
     'staticText' | 'staticLink' | 'staticImage' | 'table' | 'accordion' | 'jsonEditor' | 'language' | 'certificate' |
     'certificates' | 'certCollection' | 'custom' | 'datePicker' | 'timePicker' | 'divider' | 'header' | 'cron' |
     'fileSelector' | 'file' | 'imageSendTo' | 'selectSendTo' | 'autocompleteSendTo' | 'textSendTo' | 'coordinates' | 'interface' | 'license' |
-    'checkLicense' | 'uuid' | 'port' | 'deviceManager' | 'topic' | 'qrCode';
+    'checkLicense' | 'uuid' | 'port' | 'deviceManager' | 'topic' | 'qrCode' | 'state';
 
 type ConfigIconType = 'edit' | 'auth' | 'send' | 'web' | 'warning' | 'error' | 'info' | 'search' | 'book' | 'help' | 'upload' | 'user' | 'group' | 'delete' | 'refresh' | 'add' | 'unpair' | 'pair' | string;
 
@@ -138,62 +138,92 @@ interface ConfigItemTableIndexed extends ConfigItem {
 
 export interface ConfigItemAlive extends ConfigItem {
     type: 'alive';
+    /** check if the instance is alive. If not defined, it will be used current instance. You can use `${data.number}` pattern in the text. */
     instance?: string;
+    /** default text is `Instance %s is alive`, where %s will be replaced by `ADAPTER.0`. The translation must exist in i18n files. */
     textAlive?: string;
+    /** default text is `Instance %s is not alive`, where %s will be replaced by `ADAPTER.0`. The translation must exist in i18n files. */
     textNotAlive?: string;
 }
 
 export interface ConfigItemSelectOption {
+    /** Label of option */
     label: ioBroker.StringOrTranslated;
+    /** Value of option */
     value: number | string;
+    /** Formula or boolean value to show or hide the option */
     hidden?: string | boolean;
 }
 
 export interface ConfigItemPanel extends ConfigItem {
     type: 'panel' | never;
+    /** Label of tab */
     label?: ioBroker.StringOrTranslated;
     // eslint-disable-next-line no-use-before-define
     items: Record<string, ConfigItemAny>;
+    /** only possible as not part of tabs */
     collapsable?: boolean;
+    /** color of collapsable header `primary` or `secondary` or nothing */
     color?: 'primary' | 'secondary';
+    /** CSS Styles in React format (`marginLeft` and not `margin-left`) for the Panel component */
     innerStyle?: CustomCSSProperties;
+    /** i18n definitions: true - load from a file, string - name of subdirectory, object - translations */
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
 }
 
 export interface ConfigItemPattern extends ConfigItem {
     type: 'pattern';
+    /** if true - show copy button */
     copyToClipboard?: boolean;
+    /** pattern like 'https://${data.ip}:${data.port}' */
     pattern: string;
 }
 
 export interface ConfigItemChip extends ConfigItem {
     type: 'chips';
+    /** if it is defined, so the option will be stored as string with delimiter instead of an array. E.g., by `delimiter=;` you will get `a;b;c` instead of `['a', 'b', 'c']` */
     delimiter?: string;
-    pattern: string;
 }
 
 export interface ConfigItemTabs extends ConfigItem {
     type: 'tabs';
+    /** Object with panels `{"tab1": {}, "tab2": {}...}` */
     items: Record<string, ConfigItemPanel>;
+    /** `bottom`, `end`, `start` or `top`. Only for panels that has `icon` attribute. Default: `start` */
     iconPosition?: 'bottom' | 'end' | 'start' | 'top';
+    /** CSS Styles in React format (`marginLeft` and not `margin-left`) for the Mui-Tabs component */
     tabsStyle?: CustomCSSProperties;
+    /** i18n definitions: true - load from a file, string - name of subdirectory, object - translations */
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
 }
 
 export interface ConfigItemText extends ConfigItem {
     type: 'text';
+    /** max length of the text in field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: number;
+    /** read-only field */
     readOnly?: boolean;
+    /** default is true. Set this attribute to `false` if trim is not desired. */
     trim?: boolean;
+    /** default is 1. Set this attribute to `2` or more if you want to have a textarea with more than one row. */
     minRows?: number;
+    /** max rows of textarea. Used only if `minRows` > 1. */
     maxRows?: number;
+    /** if true, the clear button will not be shown */
     noClearButton?: boolean;
+    /** if true, the text will be validated as JSON */
+    validateJson?: boolean;
+    /** if true, the JSON will be validated only if the value is not empty */
+    allowEmpty?: boolean;
+    /** the value is time in ms or a string. Used only with readOnly flag */
+    time?: boolean;
 }
 
 export interface ConfigItemColor extends ConfigItem {
     type: 'color';
+    /** if true, the clear button will not be shown */
     noClearButton?: boolean;
 }
 
@@ -229,6 +259,8 @@ export interface ConfigItemPassword extends ConfigItem {
     repeat?: boolean;
     /** true if allow viewing the password by toggling the view button (only for a new password while entering) */
     visible?: boolean;
+    /** The read-only flag. Visible is automatically true if readOnly is true */
+    readOnly?: boolean;
     /** max length of the text in field */
     maxLength?: number;
     /** @deprecated use maxLength */
@@ -279,6 +311,7 @@ export interface ConfigItemSlider extends ConfigItem {
 
 export interface ConfigItemTopic extends ConfigItem {
     type: 'topic';
+    /** max length of the text in field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: number;
@@ -327,6 +360,10 @@ export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
     label?: ioBroker.StringOrTranslated;
     /** link. Link could be dynamic like `#tab-objects/customs/${data.parentId} */
     href?: string;
+    /** target of the link: _self, _blank or window name. For relative links default is _self and for absolute - _blank */
+    target?: string;
+    /** If the GUI should be closed after a link was opened (only if the target is equal to '_self') */
+    close?: boolean;
     /** show a link as button */
     button?: boolean;
     /** type of button (`outlined`, `contained`, `text`) */
@@ -335,6 +372,8 @@ export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
     color?: 'primary' | 'secondary' | 'grey';
     /** if icon should be shown: `auth`, `send`, `web`, `warning`, `error`, `info`, `search`, `book`, `help`, `upload`. You can use `base64` icons (it starts with `data:image/svg+xml;base64,...`) or `jpg/png` images (ends with `.png`) . (Request via issue if you need more icons) */
     icon?: ConfigIconType;
+    /** styles for the button */
+    controlStyle: CustomCSSProperties;
 }
 
 export interface ConfigItemRoom extends ConfigItem {
@@ -353,8 +392,8 @@ export interface ConfigItemSelect extends ConfigItem {
     type: 'select';
     /** `[{label: {en: "option 1"}, value: 1}, ...]` or
      `[{"items": [{"label": "Val1", "value": 1}, {"label": "Val2", value: "2}], "name": "group1"}, {"items": [{"label": "Val3", "value": 3}, {"label": "Val4", value: "4}], "name": "group2"}, {"label": "Val5", "value": 5}]`
-    */
-     options: (ConfigItemSelectOption | {
+     */
+    options: (ConfigItemSelectOption | {
         items: ConfigItemSelectOption[];
         label: ioBroker.StringOrTranslated;
         value?: number | string;
@@ -392,6 +431,7 @@ export interface ConfigItemAutocompleteSendTo extends Omit<ConfigItem, 'data'> {
     options?: (string | ConfigItemSelectOption)[];
     data?: Record<string, any>;
     freeSolo?: boolean;
+    /** max length of the text in field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: string;
@@ -400,9 +440,13 @@ export interface ConfigItemAutocompleteSendTo extends Omit<ConfigItem, 'data'> {
 
 export interface ConfigItemAccordion extends ConfigItem {
     type: 'accordion';
+    /** Title shown on the accordion */
     titleAttr?: string;
+    /** If delete or add disabled, If noDelete is false, add, delete and move up/down should work */
     noDelete?: boolean;
+    /** If clone button should be shown. If true, the clone button will be shown. If attribute name, this name will be unique. */
     clone?: boolean | string;
+    /** Items of accordion */
     items: ConfigItemIndexed[];
 }
 
@@ -420,12 +464,19 @@ export interface ConfigItemHeader extends ConfigItem {
 
 export interface ConfigItemCoordinates extends ConfigItem {
     type: 'coordinates';
+    /** divider between latitude and longitude. Default "," (Used if longitudeName and latitudeName are not defined) */
     divider?: string;
+    /** init field with current coordinates if empty */
     autoInit?: boolean;
+    /** if defined, the longitude will be stored in this attribute, divider will be ignored */
     longitudeName?: string;
+    /** if defined, the latitude will be stored in this attribute, divider will be ignored */
     latitudeName?: string;
+    /** if defined, the checkbox with "Use system settings" will be shown and latitude, longitude will be read from system.config, a boolean will be saved to the given name */
     useSystemName?: string;
+    /** max length of the text in field */
     maxLength?: number;
+    /** @deprecated use maxLength */
     max?: number;
 }
 
@@ -443,6 +494,7 @@ export interface ConfigItemCustom extends ConfigItem {
 
 export interface ConfigItemDatePicker extends ConfigItem {
     type: 'datePicker';
+    /** max length of the text in field */
     maxLength?: number;
     /** @deprecated use maxLength */
     max?: number;
@@ -493,47 +545,109 @@ export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
     /** button tooltip */
     title?: ioBroker.StringOrTranslated;
     alsoDependsOn?: string[];
-    container?: 'text' | 'div';
+    container?: 'text' | 'div' | 'html';
     copyToClipboard?: boolean;
+    /** Styles for button itself */
+    controlStyle?: CustomCSSProperties;
+}
+
+export interface ConfigItemState extends ConfigItem {
+    type: 'state';
+    /** Which object ID should be taken for the controlling. The ID is without "adapter.X." prefix */
+    oid: string;
+    /** If true, the state will be taken from system.adapter.XX.I. and not from XX.I */
+    system?: boolean;
+    /** How the value of the state should be shown */
+    control?: 'text' | 'html' | 'input' | 'slider' | 'select' | 'button' | 'switch' | 'number';
+    /** If true, the state will be shown as switch, select, button, slider or text input. Used only if no control property is defined */
+    controlled?: boolean;
+    /** Add unit to the value */
+    unit?: string;
+    /** this text will be shown if the value is true */
+    trueText?: string;
+    /** Style of the text if the value is true */
+    trueTextStyle?: CustomCSSProperties;
+    /** this text will be shown if the value is false or if the control is a "button" */
+    falseText?: string;
+    /** Style of the text if the value is false or if the control is a "button" */
+    falseTextStyle?: CustomCSSProperties;
+    /** This image will be shown if the value is true */
+    trueImage?: string;
+    /** This image will be shown if the value is false or if the control is a "button" */
+    falseImage?: string;
+    /** Minimum value for control type slider or number */
+    min?: number;
+    /** Maximum value for control type slider or number */
+    max?: number;
+    /** Step value for control type slider or number */
+    step?: number;
+    /** delay in ms for slider or number */
+    controlDelay?: number;
+    /** Variant of button */
+    variant?: 'contained' | 'outlined' | 'text';
 }
 
 export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
     type: 'textSendTo';
     container?: 'text' | 'div';
+    /** if true - show copy to clipboard button */
     copyToClipboard?: boolean;
+    /** by change of which attributes, the command must be resent */
     alsoDependsOn?: string[];
+    /** sendTo command */
     command?: string;
+    /** string - `{"subject1": "${data.subject}", "options1": {"host": "${data.host}"}}`. This data will be sent to the backend */
     jsonData?: string;
+    /** object - `{"subject1": 1, "data": "static"}`. You can specify jsonData or data, but not both. This data will be sent to the backend if jsonData is not defined. */
     data?: Record<string, any>;
 }
 
 export interface ConfigItemSelectSendTo extends Omit<ConfigItem, 'data'> {
     type: 'selectSendTo';
+    /** allow manual editing. Without drop-down menu (if instance is offline). Default `true`. */
     manual?: boolean;
+    /** Multiple choice select */
     multiple?: boolean;
+    /** show item even if no label was found for it (by multiple), default=`true` */
     showAllValues?: boolean;
+    /** if true, the clear button will not be shown */
     noClearButton?: boolean;
+    /** sendTo command */
     command?: string;
+    /** string - `{"subject1": "${data.subject}", "options1": {"host": "${data.host}"}}`. This data will be sent to the backend */
     jsonData?: string;
+    /** object - `{"subject1": 1, "data": "static"}`. You can specify jsonData or data, but not both. This data will be sent to the backend if jsonData is not defined. */
     data?: Record<string, any>;
+    /** by change of which attributes, the command must be resent */
     alsoDependsOn?: string[];
 }
 
 export interface ConfigItemTable extends ConfigItem {
     type: 'table';
     items?: ConfigItemTableIndexed[];
+    /** If delete or add disabled, If noDelete is false, add, delete and move up/down should work */
     noDelete?: boolean;
     /** @deprecated don't use */
     objKeyName?: string;
     /** @deprecated don't use */
     objValueName?: string;
+    /** If add allowed even if filter is set */
     allowAddByFilter?: boolean;
+    /** The number of lines from which the second add button at the bottom of the table will be shown. Default 5 */
     showSecondAddAt?: number;
+    /** Show first plus button on top of the first column and not on the left. */
     showFirstAddOnTop?: boolean;
+    /** If clone button should be shown. If true, the clone button will be shown. If attribute name, this name will be unique. */
     clone?: boolean | string;
+    /** If export button should be shown. Export as csv file. */
     export?: boolean;
+    /** If import button should be shown. Import from csv file. */
     import?: boolean;
+    /** Show table in compact mode */
+    compact?: boolean;
+    /** Specify the 'attr' name of columns which need to be unique */
     uniqueColumns?: string[];
+    /** These items will be encrypted before saving with simple (not SHA) encryption method */
     encryptedAttributes?: string[];
 }
 
@@ -605,6 +719,10 @@ export interface ConfigItemUUID extends ConfigItem {
 
 export interface ConfigItemJsonEditor extends ConfigItem {
     type: 'jsonEditor';
+    /** if false, the text will be not validated as JSON */
+    validateJson?: boolean;
+    /** if true, the JSON will be validated only if the value is not empty */
+    allowEmpty?: boolean;
 }
 
 export interface ConfigItemInterface extends ConfigItem {
@@ -706,7 +824,7 @@ export type ConfigItemAny = ConfigItemAlive | ConfigItemAutocomplete |
     ConfigItemSlider | ConfigItemIP | ConfigItemUser | ConfigItemRoom | ConfigItemFunc |
     ConfigItemSelect | ConfigItemAccordion | ConfigItemCoordinates |
     ConfigItemDivider | ConfigItemHeader | ConfigItemCustom | ConfigItemDatePicker |
-    ConfigItemDeviceManager | ConfigItemLanguage | ConfigItemPort | ConfigItemSendTo |
+    ConfigItemDeviceManager | ConfigItemLanguage | ConfigItemPort | ConfigItemSendTo | ConfigItemState |
     ConfigItemTable | ConfigItemTimePicker | ConfigItemTextSendTo | ConfigItemSelectSendTo |
     ConfigItemCertCollection | ConfigItemCertificateSelect | ConfigItemCertificates | ConfigItemUUID |
     ConfigItemCheckLicense | ConfigItemPattern | ConfigItemChip | ConfigItemCRON | ConfigItemFile |
