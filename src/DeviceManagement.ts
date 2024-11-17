@@ -1,20 +1,20 @@
-import { AdapterInstance } from "@iobroker/adapter-core";
-import { ActionContext } from "./ActionContext";
-import { ProgressDialog } from "./ProgressDialog";
+import type { AdapterInstance } from '@iobroker/adapter-core';
+import type { ActionContext } from './ActionContext';
+import type { ProgressDialog } from './ProgressDialog';
 import {
-    ActionBase,
-    DeviceDetails,
-    DeviceInfo,
-    ErrorResponse,
-    InstanceDetails,
-    JsonFormData,
-    JsonFormSchema,
-    RefreshResponse,
-    RetVal,
+    type ActionBase,
+    type DeviceDetails,
+    type DeviceInfo,
+    type ErrorResponse,
+    type InstanceDetails,
+    type JsonFormData,
+    type JsonFormSchema,
+    type RefreshResponse,
+    type RetVal,
     ErrorCodes,
-} from "./types";
-import * as api from "./types/api";
-import { ControlState, DeviceControl } from "./types/base";
+} from './types';
+import type * as api from './types/api';
+import type { ControlState, DeviceControl } from './types/base';
 
 export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstance> {
     private instanceInfo?: InstanceDetails;
@@ -23,7 +23,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     private readonly contexts = new Map<number, MessageContext>();
 
     constructor(protected readonly adapter: T) {
-        adapter.on("message", this.onMessage.bind(this));
+        adapter.on('message', this.onMessage.bind(this));
     }
 
     protected get log(): ioBroker.Log {
@@ -31,7 +31,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     }
 
     protected getInstanceInfo(): RetVal<InstanceDetails> {
-        return { apiVersion: "v1" };
+        return { apiVersion: 'v1' };
     }
 
     protected abstract listDevices(): RetVal<DeviceInfo[]>;
@@ -47,17 +47,30 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     ): RetVal<ErrorResponse> | RetVal<RefreshResponse> {
         if (!this.instanceInfo) {
             this.log.warn(`Instance action ${actionId} was called before getInstanceInfo()`);
-            return { error: { code: ErrorCodes.E_INSTANCE_ACTION_NOT_INITIALIZED, message: `Instance action ${actionId} was called before getInstanceInfo()` } };
+            return {
+                error: {
+                    code: ErrorCodes.E_INSTANCE_ACTION_NOT_INITIALIZED,
+                    message: `Instance action ${actionId} was called before getInstanceInfo()`,
+                },
+            };
         }
-        const action = this.instanceInfo.actions?.find((a) => a.id === actionId);
+        const action = this.instanceInfo.actions?.find(a => a.id === actionId);
         if (!action) {
             this.log.warn(`Instance action ${actionId} is unknown`);
-            return { error: { code: ErrorCodes.E_INSTANCE_ACTION_UNKNOWN, message: `Instance action ${actionId} is unknown` } };
+            return {
+                error: {
+                    code: ErrorCodes.E_INSTANCE_ACTION_UNKNOWN,
+                    message: `Instance action ${actionId} is unknown`,
+                },
+            };
         }
         if (!action.handler) {
             this.log.warn(`Instance action ${actionId} is disabled because it has no handler`);
             return {
-                error: { code: ErrorCodes.E_INSTANCE_ACTION_NO_HANDLER, message: `Instance action ${actionId} is disabled because it has no handler` },
+                error: {
+                    code: ErrorCodes.E_INSTANCE_ACTION_NO_HANDLER,
+                    message: `Instance action ${actionId} is disabled because it has no handler`,
+                },
             };
         }
         return action.handler(context, options);
@@ -71,19 +84,32 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     ): RetVal<ErrorResponse> | RetVal<RefreshResponse> {
         if (!this.devices) {
             this.log.warn(`Device action ${actionId} was called before listDevices()`);
-            return { error: { code: ErrorCodes.E_DEVICE_ACTION_NOT_INITIALIZED, message: `Device action ${actionId} was called before listDevices()` } };
+            return {
+                error: {
+                    code: ErrorCodes.E_DEVICE_ACTION_NOT_INITIALIZED,
+                    message: `Device action ${actionId} was called before listDevices()`,
+                },
+            };
         }
         const device = this.devices.get(deviceId);
         if (!device) {
             this.log.warn(`Device action ${actionId} was called on unknown device: ${deviceId}`);
             return {
-                error: { code: ErrorCodes.E_DEVICE_ACTION_DEVICE_UNKNOWN, message: `Device action ${actionId} was called on unknown device: ${deviceId}` },
+                error: {
+                    code: ErrorCodes.E_DEVICE_ACTION_DEVICE_UNKNOWN,
+                    message: `Device action ${actionId} was called on unknown device: ${deviceId}`,
+                },
             };
         }
-        const action = device.actions?.find((a) => a.id === actionId);
+        const action = device.actions?.find(a => a.id === actionId);
         if (!action) {
             this.log.warn(`Device action ${actionId} doesn't exist on device ${deviceId}`);
-            return { error: { code: ErrorCodes.E_DEVICE_ACTION_UNKNOWN, message: `Device action ${actionId} doesn't exist on device ${deviceId}` } };
+            return {
+                error: {
+                    code: ErrorCodes.E_DEVICE_ACTION_UNKNOWN,
+                    message: `Device action ${actionId} doesn't exist on device ${deviceId}`,
+                },
+            };
         }
         if (!action.handler) {
             this.log.warn(`Device action ${actionId} on ${deviceId} is disabled because it has no handler`);
@@ -106,20 +132,33 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
             this.log.warn(`Device control ${controlId} was called before listDevices()`);
-            return { error: { code: ErrorCodes.E_DEVICE_CONTROL_NOT_INITIALIZED, message: `Device control ${controlId} was called before listDevices()` } };
+            return {
+                error: {
+                    code: ErrorCodes.E_DEVICE_CONTROL_NOT_INITIALIZED,
+                    message: `Device control ${controlId} was called before listDevices()`,
+                },
+            };
         }
         const device = this.devices.get(deviceId);
         if (!device) {
             this.log.warn(`Device control ${controlId} was called on unknown device: ${deviceId}`);
             return {
-                error: { code: ErrorCodes.E_DEVICE_CONTROL_DEVICE_UNKNOWN, message: `Device control ${controlId} was called on unknown device: ${deviceId}` },
+                error: {
+                    code: ErrorCodes.E_DEVICE_CONTROL_DEVICE_UNKNOWN,
+                    message: `Device control ${controlId} was called on unknown device: ${deviceId}`,
+                },
             };
         }
 
-        const control = device.controls?.find((a) => a.id === controlId);
+        const control = device.controls?.find(a => a.id === controlId);
         if (!control) {
             this.log.warn(`Device control ${controlId} doesn't exist on device ${deviceId}`);
-            return { error: { code: ErrorCodes.E_DEVICE_CONTROL_UNKNOWN, message: `Device control ${controlId} doesn't exist on device ${deviceId}` } };
+            return {
+                error: {
+                    code: ErrorCodes.E_DEVICE_CONTROL_UNKNOWN,
+                    message: `Device control ${controlId} doesn't exist on device ${deviceId}`,
+                },
+            };
         }
         if (!control.handler) {
             this.log.warn(`Device control ${controlId} on ${deviceId} is disabled because it has no handler`);
@@ -142,20 +181,33 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
             this.log.warn(`Device get state ${controlId} was called before listDevices()`);
-            return { error: { code: ErrorCodes.E_DEVICE_GET_STATE_NOT_INITIALIZED, message: `Device control ${controlId} was called before listDevices()` } };
+            return {
+                error: {
+                    code: ErrorCodes.E_DEVICE_GET_STATE_NOT_INITIALIZED,
+                    message: `Device control ${controlId} was called before listDevices()`,
+                },
+            };
         }
         const device = this.devices.get(deviceId);
         if (!device) {
             this.log.warn(`Device get state ${controlId} was called on unknown device: ${deviceId}`);
             return {
-                error: { code: ErrorCodes.E_DEVICE_GET_STATE_DEVICE_UNKNOWN, message: `Device control ${controlId} was called on unknown device: ${deviceId}` },
+                error: {
+                    code: ErrorCodes.E_DEVICE_GET_STATE_DEVICE_UNKNOWN,
+                    message: `Device control ${controlId} was called on unknown device: ${deviceId}`,
+                },
             };
         }
 
-        const control = device.controls?.find((a) => a.id === controlId);
+        const control = device.controls?.find(a => a.id === controlId);
         if (!control) {
             this.log.warn(`Device get state ${controlId} doesn't exist on device ${deviceId}`);
-            return { error: { code: ErrorCodes.E_DEVICE_GET_STATE_UNKNOWN, message: `Device control ${controlId} doesn't exist on device ${deviceId}` } };
+            return {
+                error: {
+                    code: ErrorCodes.E_DEVICE_GET_STATE_UNKNOWN,
+                    message: `Device control ${controlId} doesn't exist on device ${deviceId}`,
+                },
+            };
         }
         if (!control.getStateHandler) {
             this.log.warn(`Device get state ${controlId} on ${deviceId} is disabled because it has no handler`);
@@ -170,26 +222,25 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         return control.getStateHandler(deviceId, controlId, context);
     }
 
-
     private onMessage(obj: ioBroker.Message): void {
-        if (!obj.command.startsWith("dm:")) {
+        if (!obj.command.startsWith('dm:')) {
             return;
         }
-        this.handleMessage(obj).catch(this.log.error);
+        void this.handleMessage(obj).catch(this.log.error);
     }
 
     private async handleMessage(msg: ioBroker.Message): Promise<void> {
         this.log.debug(`DeviceManagement received: ${JSON.stringify(msg)}`);
         switch (msg.command) {
-            case "dm:instanceInfo": {
+            case 'dm:instanceInfo': {
                 this.instanceInfo = await this.getInstanceInfo();
                 this.sendReply<api.InstanceDetails>(
-                    {...this.instanceInfo, actions: this.convertActions(this.instanceInfo.actions)},
+                    { ...this.instanceInfo, actions: this.convertActions(this.instanceInfo.actions) },
                     msg,
                 );
                 return;
             }
-            case "dm:listDevices": {
+            case 'dm:listDevices': {
                 const deviceList = await this.listDevices();
 
                 this.devices = deviceList.reduce((map, value) => {
@@ -200,26 +251,23 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
                     return map;
                 }, new Map<string, DeviceInfo>());
 
-                const apiDeviceList: api.DeviceInfo[] = deviceList.map((d) => ({
+                const apiDeviceList: api.DeviceInfo[] = deviceList.map(d => ({
                     ...d,
                     actions: this.convertActions(d.actions),
                     controls: this.convertControls(d.controls),
                 }));
 
-                this.sendReply<api.DeviceInfo[]>(
-                    apiDeviceList,
-                    msg,
-                );
+                this.sendReply<api.DeviceInfo[]>(apiDeviceList, msg);
                 this.adapter.sendTo(msg.from, msg.command, this.devices, msg.callback);
                 return;
             }
-            case "dm:deviceDetails": {
+            case 'dm:deviceDetails': {
                 const details = await this.getDeviceDetails(msg.message as string);
                 this.adapter.sendTo(msg.from, msg.command, details, msg.callback);
                 return;
             }
-            case "dm:instanceAction": {
-                const action = msg.message as { actionId: string, value: number | string | boolean };
+            case 'dm:instanceAction': {
+                const action = msg.message as { actionId: string; value: number | string | boolean };
                 const context = new MessageContext(msg, this.adapter);
                 this.contexts.set(msg._id, context);
                 const result = await this.handleInstanceAction(action.actionId, context, { value: action.value });
@@ -227,27 +275,34 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
                 context.sendFinalResult(result);
                 return;
             }
-            case "dm:deviceAction": {
-                const action = msg.message as { actionId: string; deviceId: string, value: number | string | boolean };
+            case 'dm:deviceAction': {
+                const action = msg.message as { actionId: string; deviceId: string; value: number | string | boolean };
                 const context = new MessageContext(msg, this.adapter);
                 this.contexts.set(msg._id, context);
-                const result = await this.handleDeviceAction(action.deviceId, action.actionId, context, { value: action.value });
+                const result = await this.handleDeviceAction(action.deviceId, action.actionId, context, {
+                    value: action.value,
+                });
                 this.contexts.delete(msg._id);
                 context.sendFinalResult(result);
                 return;
             }
-            case "dm:deviceControl": {
+            case 'dm:deviceControl': {
                 const control = msg.message as { deviceId: string; controlId: string; state: ControlState };
                 const context = new MessageContext(msg, this.adapter);
                 this.contexts.set(msg._id, context);
-                const result = await this.handleDeviceControl(control.deviceId, control.controlId, control.state, context);
+                const result = await this.handleDeviceControl(
+                    control.deviceId,
+                    control.controlId,
+                    control.state,
+                    context,
+                );
                 this.contexts.delete(msg._id);
                 context.sendControlResult(control.deviceId, control.controlId, result);
                 return;
             }
 
-            case "dm:deviceControlState": {
-                const control = msg.message as { deviceId: string; controlId: string; };
+            case 'dm:deviceControlState': {
+                const control = msg.message as { deviceId: string; controlId: string };
                 const context = new MessageContext(msg, this.adapter);
                 this.contexts.set(msg._id, context);
                 const result = await this.handleDeviceControlState(control.deviceId, control.controlId, context);
@@ -255,12 +310,12 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
                 context.sendControlResult(control.deviceId, control.controlId, result);
                 return;
             }
-            case "dm:actionProgress": {
+            case 'dm:actionProgress': {
                 const { origin } = msg.message as { origin: number };
                 const context = this.contexts.get(origin);
                 if (!context) {
                     this.log.warn(`Unknown message origin: ${origin}`);
-                    this.sendReply({ error: "Unknown action origin" }, msg);
+                    this.sendReply({ error: 'Unknown action origin' }, msg);
                     return;
                 }
 
@@ -278,7 +333,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         // detect duplicate IDs
         const ids = new Set<string>();
 
-        actions.forEach((a) => {
+        actions.forEach(a => {
             if (ids.has(a.id)) {
                 throw new Error(`Action ID ${a.id} is used twice, this would lead to unexpected behavior`);
             }
@@ -289,7 +344,9 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         return actions.map((a: any) => ({ ...a, handler: undefined, disabled: !a.handler }));
     }
 
-    private convertControls<T extends DeviceControl<"adapter">, U extends DeviceControl<"api">>(controls?: T[]): undefined | U[] {
+    private convertControls<T extends DeviceControl<'adapter'>, U extends DeviceControl<'api'>>(
+        controls?: T[],
+    ): undefined | U[] {
         if (!controls) {
             return undefined;
         }
@@ -297,7 +354,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         // detect duplicate IDs
         const ids = new Set<string>();
 
-        controls.forEach((a) => {
+        controls.forEach(a => {
             if (ids.has(a.id)) {
                 throw new Error(`Control ID ${a.id} is used twice, this would lead to unexpected behavior`);
             }
@@ -327,10 +384,10 @@ export class MessageContext implements ActionContext {
 
     showMessage(text: ioBroker.StringOrTranslated): Promise<void> {
         this.checkPreconditions();
-        const promise = new Promise<void>((resolve) => {
+        const promise = new Promise<void>(resolve => {
             this.progressHandler = () => resolve();
         });
-        this.send("message", {
+        this.send('message', {
             message: text,
         });
         return promise;
@@ -338,10 +395,10 @@ export class MessageContext implements ActionContext {
 
     showConfirmation(text: ioBroker.StringOrTranslated): Promise<boolean> {
         this.checkPreconditions();
-        const promise = new Promise<boolean>((resolve) => {
-            this.progressHandler = (msg) => resolve(!!msg.confirm);
+        const promise = new Promise<boolean>(resolve => {
+            this.progressHandler = msg => resolve(!!msg.confirm);
         });
-        this.send("confirm", {
+        this.send('confirm', {
             confirm: text,
         });
         return promise;
@@ -352,10 +409,10 @@ export class MessageContext implements ActionContext {
         options?: { data?: JsonFormData; title?: string },
     ): Promise<JsonFormData | undefined> {
         this.checkPreconditions();
-        const promise = new Promise<JsonFormData | undefined>((resolve) => {
-            this.progressHandler = (msg) => resolve(msg.data);
+        const promise = new Promise<JsonFormData | undefined>(resolve => {
+            this.progressHandler = msg => resolve(msg.data);
         });
-        this.send("form", {
+        this.send('form', {
             form: { schema, ...options },
         });
         return promise;
@@ -369,47 +426,47 @@ export class MessageContext implements ActionContext {
         this.hasOpenProgressDialog = true;
         const dialog: ProgressDialog = {
             update: (update: { title?: string; indeterminate?: boolean; value?: number; label?: string }) => {
-                const promise = new Promise<void>((resolve) => {
+                const promise = new Promise<void>(resolve => {
                     this.progressHandler = () => resolve();
                 });
-                this.send("progress", {
+                this.send('progress', {
                     progress: { title, ...options, ...update, open: true },
                 });
                 return promise;
             },
 
             close: () => {
-                const promise = new Promise<void>((resolve) => {
+                const promise = new Promise<void>(resolve => {
                     this.progressHandler = () => {
                         this.hasOpenProgressDialog = false;
                         resolve();
                     };
                 });
-                this.send("progress", {
+                this.send('progress', {
                     progress: { open: false },
                 });
                 return promise;
             },
         };
 
-        const promise = new Promise<ProgressDialog>((resolve) => {
+        const promise = new Promise<ProgressDialog>(resolve => {
             this.progressHandler = () => resolve(dialog);
         });
-        this.send("progress", {
+        this.send('progress', {
             progress: { title, ...options, open: true },
         });
         return promise;
     }
 
     sendFinalResult(result: ErrorResponse | RefreshResponse): void {
-        this.send("result", {
+        this.send('result', {
             result,
         });
     }
 
     sendControlResult(deviceId: string, controlId: string, result: ErrorResponse | ioBroker.State): void {
-        if (typeof result === "object" && "error" in result) {
-            this.send("result", {
+        if (typeof result === 'object' && 'error' in result) {
+            this.send('result', {
                 result: {
                     error: result.error,
                     deviceId,
@@ -417,7 +474,7 @@ export class MessageContext implements ActionContext {
                 },
             });
         } else {
-            this.send("result", {
+            this.send('result', {
                 result: {
                     state: result,
                     deviceId,
@@ -429,7 +486,7 @@ export class MessageContext implements ActionContext {
 
     handleProgress(message: ioBroker.Message): void {
         const currentHandler = this.progressHandler;
-        if (currentHandler && typeof message.message !== "string") {
+        if (currentHandler && typeof message.message !== 'string') {
             this.lastMessage = message;
             this.progressHandler = undefined;
             currentHandler(message.message);
@@ -454,7 +511,7 @@ export class MessageContext implements ActionContext {
             {
                 ...message,
                 type,
-                origin: (this.lastMessage.message as any).origin || this.lastMessage._id,
+                origin: this.lastMessage.message.origin || this.lastMessage._id,
             },
             this.lastMessage.callback,
         );
