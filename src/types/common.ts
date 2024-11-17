@@ -1,24 +1,24 @@
-export type ApiVersion = "v1";
+export type ApiVersion = 'v1';
 
 export type DeviceStatus =
-    | "connected"
-    | "disconnected"
+    | 'connected'
+    | 'disconnected'
     | {
           /**
            * This can either be the name of a font awesome icon (e.g. "fa-signal") or the URL to an icon.
            */
           icon?: string;
-          battery?: number | boolean | "charging" | string; // in percent (0-100), or string 'charging',
-                                                                // or string '10V',
-                                                                // or string '10mV',
-                                                                // or string '100' in mV
-                                                                // or boolean true (means OK) or false (Battery warning)
-          connection?: "connected" | "disconnected",
+          battery?: number | boolean | 'charging'; // in percent (0-100), or string 'charging',
+          // or string '10V',
+          // or string '10mV',
+          // or string '100' in mV
+          // or boolean true (means OK) or false (Battery warning)
+          connection?: 'connected' | 'disconnected';
           rssi?: number; // in dBm
           warning?: ioBroker.StringOrTranslated | boolean; // warning text or just boolean true (means warning)
       };
 
-export type DeviceRefresh = "device" | "instance" | false | true;
+export type DeviceRefresh = 'device' | 'instance' | false | true;
 
 export type RefreshResponse = {
     refresh: DeviceRefresh;
@@ -40,21 +40,90 @@ interface ObjectBrowserCustomFilter {
     common?: {
         type?: ioBroker.CommonType | ioBroker.CommonType[];
         role?: string | string[];
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         custom?: '_' | '_dataSources' | true | string | string[];
     };
 }
 
 export type ObjectBrowserType = 'state' | 'instance' | 'channel' | 'device' | 'chart';
 
-// copied from json-config
-export type ConfigItemType = 'tabs' | 'panel' | 'text' | 'number' | 'color' | 'checkbox' | 'slider' | 'ip' | 'user' | 'room' | 'func' | 'select' |
-    'autocomplete' | 'image' | 'objectId' | 'password' | 'instance' | 'chips' | 'alive' | 'pattern' | 'sendto' | 'setState' |
-    'staticText' | 'staticLink' | 'staticImage' | 'table' | 'accordion' | 'jsonEditor' | 'language' | 'certificate' |
-    'certificates' | 'certCollection' | 'custom' | 'datePicker' | 'timePicker' | 'divider' | 'header' | 'cron' |
-    'fileSelector' | 'file' | 'imageSendTo' | 'selectSendTo' | 'autocompleteSendTo' | 'textSendTo' | 'coordinates' | 'interface' | 'license' |
-    'checkLicense' | 'uuid' | 'port' | 'deviceManager' | 'topic' | 'qrCode' | 'state';
+// -- START OF DYNAMIC GENERATED CODE FROM https://raw.githubusercontent.com/ioBroker/ioBroker.admin/master/packages/jsonConfig/src/types.d.ts
+export type ConfigItemType =
+    | 'tabs'
+    | 'panel'
+    | 'text'
+    | 'number'
+    | 'color'
+    | 'checkbox'
+    | 'slider'
+    | 'ip'
+    | 'user'
+    | 'room'
+    | 'func'
+    | 'select'
+    | 'autocomplete'
+    | 'image'
+    | 'objectId'
+    | 'password'
+    | 'instance'
+    | 'chips'
+    | 'alive'
+    | 'pattern'
+    | 'sendto'
+    | 'setState'
+    | 'staticText'
+    | 'staticLink'
+    | 'staticImage'
+    | 'table'
+    | 'accordion'
+    | 'jsonEditor'
+    | 'language'
+    | 'certificate'
+    | 'certificates'
+    | 'certCollection'
+    | 'custom'
+    | 'datePicker'
+    | 'timePicker'
+    | 'divider'
+    | 'header'
+    | 'cron'
+    | 'fileSelector'
+    | 'file'
+    | 'imageSendTo'
+    | 'selectSendTo'
+    | 'autocompleteSendTo'
+    | 'textSendTo'
+    | 'coordinates'
+    | 'interface'
+    | 'license'
+    | 'checkLicense'
+    | 'uuid'
+    | 'port'
+    | 'deviceManager'
+    | 'topic'
+    | 'qrCode'
+    | 'state';
 
-type ConfigIconType = 'edit' | 'auth' | 'send' | 'web' | 'warning' | 'error' | 'info' | 'search' | 'book' | 'help' | 'upload' | 'user' | 'group' | 'delete' | 'refresh' | 'add' | 'unpair' | 'pair' | string;
+type ConfigIconType =
+    | 'edit'
+    | 'auth'
+    | 'send'
+    | 'web'
+    | 'warning'
+    | 'error'
+    | 'info'
+    | 'search'
+    | 'book'
+    | 'help'
+    | 'upload'
+    | 'user'
+    | 'group'
+    | 'delete'
+    | 'refresh'
+    | 'add'
+    | 'unpair'
+    | 'pair'
+    | string;
 
 export interface ConfigItemConfirmData {
     condition: string;
@@ -150,6 +219,7 @@ export interface ConfigItemSelectOption {
 }
 
 export interface ConfigItemPanel extends ConfigItem {
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     type: 'panel' | never;
     /** Label of tab */
     label?: ioBroker.StringOrTranslated;
@@ -386,12 +456,15 @@ export interface ConfigItemSelect extends ConfigItem {
     /** `[{label: {en: "option 1"}, value: 1}, ...]` or
      `[{"items": [{"label": "Val1", "value": 1}, {"label": "Val2", value: "2}], "name": "group1"}, {"items": [{"label": "Val3", "value": 3}, {"label": "Val4", value: "4}], "name": "group2"}, {"label": "Val5", "value": 5}]`
      */
-    options: (ConfigItemSelectOption | {
-        items: ConfigItemSelectOption[];
-        label: ioBroker.StringOrTranslated;
-        value?: number | string;
-        hidden?: string | boolean;
-    })[];
+    options: (
+        | ConfigItemSelectOption
+        | {
+              items: ConfigItemSelectOption[];
+              label: ioBroker.StringOrTranslated;
+              value?: number | string;
+              hidden?: string | boolean;
+          }
+    )[];
     attr?: string;
 }
 
@@ -810,22 +883,63 @@ export interface ConfigItemFileSelector extends ConfigItem {
     noSize?: boolean;
 }
 
-export type ConfigItemAny = ConfigItemAlive | ConfigItemAutocomplete |
-    ConfigItemAutocompleteSendTo | ConfigItemPanel |
-    ConfigItemTabs | ConfigItemText |
-    ConfigItemNumber | ConfigItemColor | ConfigItemCheckbox |
-    ConfigItemSlider | ConfigItemIP | ConfigItemUser | ConfigItemRoom | ConfigItemFunc |
-    ConfigItemSelect | ConfigItemAccordion | ConfigItemCoordinates |
-    ConfigItemDivider | ConfigItemHeader | ConfigItemCustom | ConfigItemDatePicker |
-    ConfigItemDeviceManager | ConfigItemLanguage | ConfigItemPort | ConfigItemSendTo | ConfigItemState |
-    ConfigItemTable | ConfigItemTimePicker | ConfigItemTextSendTo | ConfigItemSelectSendTo |
-    ConfigItemCertCollection | ConfigItemCertificateSelect | ConfigItemCertificates | ConfigItemUUID |
-    ConfigItemCheckLicense | ConfigItemPattern | ConfigItemChip | ConfigItemCRON | ConfigItemFile |
-    ConfigItemFileSelector | ConfigItemImageSendTo | ConfigItemInstanceSelect | ConfigItemImageUpload |
-    ConfigItemInterface | ConfigItemJsonEditor | ConfigItemLicense | ConfigItemPassword |
-    ConfigItemSetState | ConfigItemStaticDivider | ConfigItemStaticHeader |
-    ConfigItemStaticImage | ConfigItemStaticText | ConfigItemTopic |
-    ConfigItemObjectId | ConfigItemQrCode;
+export type ConfigItemAny =
+    | ConfigItemAlive
+    | ConfigItemAutocomplete
+    | ConfigItemAutocompleteSendTo
+    | ConfigItemPanel
+    | ConfigItemTabs
+    | ConfigItemText
+    | ConfigItemNumber
+    | ConfigItemColor
+    | ConfigItemCheckbox
+    | ConfigItemSlider
+    | ConfigItemIP
+    | ConfigItemUser
+    | ConfigItemRoom
+    | ConfigItemFunc
+    | ConfigItemSelect
+    | ConfigItemAccordion
+    | ConfigItemCoordinates
+    | ConfigItemDivider
+    | ConfigItemHeader
+    | ConfigItemCustom
+    | ConfigItemDatePicker
+    | ConfigItemDeviceManager
+    | ConfigItemLanguage
+    | ConfigItemPort
+    | ConfigItemSendTo
+    | ConfigItemState
+    | ConfigItemTable
+    | ConfigItemTimePicker
+    | ConfigItemTextSendTo
+    | ConfigItemSelectSendTo
+    | ConfigItemCertCollection
+    | ConfigItemCertificateSelect
+    | ConfigItemCertificates
+    | ConfigItemUUID
+    | ConfigItemCheckLicense
+    | ConfigItemPattern
+    | ConfigItemChip
+    | ConfigItemCRON
+    | ConfigItemFile
+    | ConfigItemFileSelector
+    | ConfigItemImageSendTo
+    | ConfigItemInstanceSelect
+    | ConfigItemImageUpload
+    | ConfigItemInterface
+    | ConfigItemJsonEditor
+    | ConfigItemLicense
+    | ConfigItemPassword
+    | ConfigItemSetState
+    | ConfigItemStaticDivider
+    | ConfigItemStaticHeader
+    | ConfigItemStaticImage
+    | ConfigItemStaticText
+    | ConfigItemTopic
+    | ConfigItemObjectId
+    | ConfigItemQrCode;
+// -- START OF DYNAMIC GENERATED CODE
 
 export type JsonFormSchema = ConfigItemPanel;
 
