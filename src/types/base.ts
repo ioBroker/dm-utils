@@ -1,8 +1,8 @@
-import { ActionContext, ErrorResponse, MessageContext } from "..";
-import { ApiVersion, DeviceRefresh, DeviceStatus, RetVal } from "./common";
+import type { ActionContext, ErrorResponse, MessageContext } from '..';
+import type { ApiVersion, DeviceRefresh, DeviceStatus, RetVal } from './common';
 
-type ActionType = "api" | "adapter";
-export type Color = "primary" | "secondary" | string & {}; // color (you can use primary, secondary or color rgb value or hex)
+type ActionType = 'api' | 'adapter';
+export type Color = 'primary' | 'secondary' | (string & {}); // color (you can use primary, secondary or color rgb value or hex)
 
 export type ControlState = string | number | boolean | null;
 
@@ -11,15 +11,65 @@ export interface ActionBase<T extends ActionType> {
     /**
      * This can either be base64 or the URL to an icon.
      */
-    icon?: "edit" | "rename" | "delete" | "refresh" |
-        "newDevice" | "new" | "add" | "discover" | "search" |
-        "unpairDevice" | "pairDevice" | "identify" | "play" |
-        "stop" | "pause" | "forward" | "next" | "rewind" |
-        "previous" | "lamp" | "light" | "backlight" |
-        "dimmer" | "socket" | "settings" | "users" | "group" |
-        "user" | string; // base64 or url
+    icon?: // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'edit'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'rename'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'delete'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'refresh'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'newDevice'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'new'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'add'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'discover'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'search'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'unpairDevice'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'pairDevice'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'identify'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'play'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'stop'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'pause'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'forward'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'next'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'rewind'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'previous'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'lamp'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'light'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'backlight'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'dimmer'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'socket'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'settings'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'users'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'group'
+        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+        | 'user'
+        | string; // base64 or url
     description?: ioBroker.StringOrTranslated;
-    disabled?: T extends "api" ? boolean : never;
+    disabled?: T extends 'api' ? boolean : never;
     color?: Color;
     backgroundColor?: Color; // background color of button (you can use primary, secondary or color rgb value or hex)
     /** If true, the user will be asked for confirmation before executing the action */
@@ -29,9 +79,9 @@ export interface ActionBase<T extends ActionType> {
         /** This label will be shown for the text input */
         label: ioBroker.StringOrTranslated;
         /** This type of input will be shown. Default is type */
-        type?: "text" | "number" | "checkbox" | "select" | "slider" | "color";
+        type?: 'text' | 'number' | 'checkbox' | 'select' | 'slider' | 'color';
         /** If a type is "select", the options must be defined */
-        options?: { label: ioBroker.StringOrTranslated, value: string }[];
+        options?: { label: ioBroker.StringOrTranslated; value: string }[];
         /** Default value for the input */
         defaultValue?: string | number | boolean;
         /** If true, the input could be empty */
@@ -56,7 +106,7 @@ export interface ChannelInfo {
 
 export interface ControlBase {
     id: string; // unique id of control for one device. Controls must be unique for one device
-    type: "button" | "switch" | "slider" | "select" | "icon" | "color" | "text" | "number" | "info";
+    type: 'button' | 'switch' | 'slider' | 'select' | 'icon' | 'color' | 'text' | 'number' | 'info';
     state?: ioBroker.State; // actual state for all types except button
     stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if state changed, GUI will request update of control
 
@@ -71,32 +121,47 @@ export interface ControlBase {
     color?: Color;
     colorOn?: Color;
     controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
-    options?: { label: ioBroker.StringOrTranslated, value: ControlState, icon?: string, color?: Color }[]; // only for select
+    options?: { label: ioBroker.StringOrTranslated; value: ControlState; icon?: string; color?: Color }[]; // only for select
     channel?: ChannelInfo;
 }
 
-export interface DeviceControl<T extends ActionType = "api"> extends ControlBase {
-    handler?: T extends "api" ? never : (deviceId: string, actionId: string, state: ControlState, context: MessageContext) => RetVal<ErrorResponse | ioBroker.State>;
-    getStateHandler?: T extends "api" ? never : (deviceId: string, actionId: string, context: MessageContext) => RetVal<ErrorResponse | ioBroker.State>;
+export interface DeviceControl<T extends ActionType = 'api'> extends ControlBase {
+    handler?: T extends 'api'
+        ? never
+        : (
+              deviceId: string,
+              actionId: string,
+              state: ControlState,
+              context: MessageContext,
+          ) => RetVal<ErrorResponse | ioBroker.State>;
+    getStateHandler?: T extends 'api'
+        ? never
+        : (deviceId: string, actionId: string, context: MessageContext) => RetVal<ErrorResponse | ioBroker.State>;
 }
 
-export interface InstanceAction<T extends ActionType = "api"> extends ActionBase<T> {
-    handler?: T extends "api" ? never : (context: ActionContext, options?: Record<string, any>) => RetVal<{ refresh: boolean }>;
+export interface InstanceAction<T extends ActionType = 'api'> extends ActionBase<T> {
+    handler?: T extends 'api'
+        ? never
+        : (context: ActionContext, options?: Record<string, any>) => RetVal<{ refresh: boolean }>;
     title: ioBroker.StringOrTranslated;
 }
 
-export interface DeviceAction<T extends ActionType = "api"> extends ActionBase<T> {
-    handler?: T extends "api"
+export interface DeviceAction<T extends ActionType = 'api'> extends ActionBase<T> {
+    handler?: T extends 'api'
         ? never
-        : (deviceId: string, context: ActionContext, options?: Record<string, any>) => RetVal<{ refresh: DeviceRefresh }>;
+        : (
+              deviceId: string,
+              context: ActionContext,
+              options?: Record<string, any>,
+          ) => RetVal<{ refresh: DeviceRefresh }>;
 }
 
-export interface InstanceDetails<T extends ActionType = "api"> {
+export interface InstanceDetails<T extends ActionType = 'api'> {
     apiVersion: ApiVersion;
     actions?: InstanceAction<T>[];
 }
 
-export interface DeviceInfo<T extends ActionType = "api"> {
+export interface DeviceInfo<T extends ActionType = 'api'> {
     id: string;
     icon?: string; // base64 or url
     manufacturer?: ioBroker.StringOrTranslated;

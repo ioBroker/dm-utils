@@ -1,57 +1,27 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all,
-});
+import config from '@iobroker/eslint-config';
 
 export default [
+    ...config,
     {
-        ignores: [
-            "build/",
-            ".prettierrc.js",
-            "**/.eslintrc.js",
-            "examples/"
-        ],
+        languageOptions: {
+            parserOptions: {
+                projectService: {
+                    allowDefaultProject: ['*.mjs', 'examples/dm-test.ts'],
+                },
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
     },
-    ...compat.extends("plugin:@typescript-eslint/recommended"),
     {
-        settings: {},
+        // disable temporary the rule 'jsdoc/require-param' and enable 'jsdoc/require-jsdoc'
+        rules: {
+            'jsdoc/require-jsdoc': 'off',
+            'jsdoc/require-param': 'off',
 
-        rules: {
-            "@typescript-eslint/no-parameter-properties": "off",
-            "@typescript-eslint/no-explicit-any": "off",
-            "@typescript-eslint/no-use-before-define": ["error", {
-                functions: false,
-                typedefs: false,
-                classes: false,
-            }],
-            "@typescript-eslint/no-unused-vars": ["error", {
-                ignoreRestSiblings: true,
-                argsIgnorePattern: "^_",
-            }],
-            "@typescript-eslint/explicit-function-return-type": ["warn", {
-                allowExpressions: true,
-                allowTypedFunctionExpressions: true,
-            }],
-            "@typescript-eslint/no-object-literal-type-assertion": "off",
-            "@typescript-eslint/interface-name-prefix": "off",
-            "@typescript-eslint/no-non-null-assertion": "off",
-            "no-var": "error",
-            "prefer-const": "error",
-            "no-trailing-spaces": "error",
+            '@typescript-eslint/no-require-imports': 'off',
         },
     },
     {
-        files: ["**/*.test.ts", "**/*.tsx"],
-        rules: {
-            "@typescript-eslint/explicit-function-return-type": "off",
-        },
+        ignores: ['build/**/*', 'node_modules/**/*', 'tasks.js'],
     },
 ];

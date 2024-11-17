@@ -1,8 +1,8 @@
-import * as base from "./base";
+import type * as base from './base';
 
-export type ActionBase = base.ActionBase<"api">;
-export type InstanceAction = base.InstanceAction<"api">;
-export type DeviceAction = base.DeviceAction<"api">;
-export type InstanceDetails = base.InstanceDetails<"api">;
-export type DeviceInfo = base.DeviceInfo<"api">;
-export type DeviceControl = base.DeviceControl<"api">;
+export type ActionBase = base.ActionBase<'api'>;
+export type InstanceAction = base.InstanceAction<'api'>;
+export type DeviceAction = base.DeviceAction<'api'>;
+export type InstanceDetails = base.InstanceDetails<'api'>;
+export type DeviceInfo = base.DeviceInfo<'api'>;
+export type DeviceControl = base.DeviceControl<'api'>;

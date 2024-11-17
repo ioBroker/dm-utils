@@ -71,6 +71,7 @@ export type ConfigItemType =
     | 'pattern'
     | 'sendto'
     | 'setState'
+    | 'staticInfo'
     | 'staticText'
     | 'staticLink'
     | 'staticImage'
@@ -105,23 +106,41 @@ export type ConfigItemType =
     | 'state';
 
 type ConfigIconType =
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'edit'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'auth'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'send'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'web'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'warning'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'error'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'info'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'search'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'book'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'help'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'upload'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'user'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'group'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'delete'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'refresh'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'add'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'unpair'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'pair'
     | string;
 
@@ -136,19 +155,33 @@ export interface ConfigItemConfirmData {
 }
 
 export interface ConfigItem {
+    /** Type of the JSON config item */
     type: ConfigItemType;
-    sm?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-    md?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
-    lg?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+    /** Width of the control on "extra small" displays */
     xs?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+    /** Width of the control on "small" displays */
+    sm?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+    /** Width of the control on "medium" displays */
+    md?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+    /** Width of the control on "large" displays */
+    lg?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+    /** Width of the control on "extra large" displays */
+    xl?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+    /** If the control should be shown in a new line */
     newLine?: boolean;
+    /** Label of the control */
     label?: ioBroker.StringOrTranslated;
     /** @deprecated use label */
     text?: ioBroker.StringOrTranslated;
+    /** Formula or false to hide the control: "data.attr === 5" */
     hidden?: string | boolean;
+    /** If true and the control is hidden, the place of the control will be still reserved for it */
     hideOnlyControl?: boolean;
+    /** JS function to calculate if the control is disabled. You can write "true" too */
     disabled?: string | boolean;
+    /** Help text of the control */
     help?: ioBroker.StringOrTranslated;
+    /** Link that will be opened by clicking on the help text */
     helpLink?: string;
     style?: CustomCSSProperties;
     darkStyle?: CustomCSSProperties;
@@ -159,6 +192,8 @@ export interface ConfigItem {
     default?: boolean | number | string;
     defaultFunc?: string;
     defaultSendTo?: string;
+    /** Allow saving of configuration even with error */
+    allowSaveWithError?: boolean;
     data?: string | number | boolean;
     jsonData?: string;
     button?: ioBroker.StringOrTranslated;
@@ -268,6 +303,8 @@ export interface ConfigItemText extends ConfigItem {
     max?: number;
     /** read-only field */
     readOnly?: boolean;
+    /** show copy to clipboard button, but only if disabled or read-only */
+    copyToClipboard?: boolean;
     /** default is true. Set this attribute to `false` if trim is not desired. */
     trim?: boolean;
     /** default is 1. Set this attribute to `2` or more if you want to have a textarea with more than one row. */
@@ -292,6 +329,8 @@ export interface ConfigItemColor extends ConfigItem {
 
 export interface ConfigItemCheckbox extends ConfigItem {
     type: 'checkbox';
+    /** Same as disabled */
+    readOnly?: boolean;
 }
 
 export interface ConfigItemNumber extends ConfigItem {
@@ -336,7 +375,8 @@ export interface ConfigItemObjectId extends ConfigItem {
     types?: ObjectBrowserType | ObjectBrowserType[];
     /** Show only this root object and its children */
     root?: string;
-    /** Cannot be used together with `type` settings. It is an object and not a JSON string. Examples
+    /**
+     * Cannot be used together with `type` settings. It is an object and not a JSON string. Examples
      *  - `{common: {custom: true}}` - show only objects with some custom settings
      *  - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)
      *  - `{common: {custom: '_dataSources'}}` - show only objects of adapters `influxdb` or `sql` or `history`
@@ -396,6 +436,7 @@ export interface ConfigItemUser extends ConfigItem {
 
 export interface ConfigItemStaticDivider extends ConfigItem {
     type: 'divider';
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     color?: 'primary' | 'secondary' | string;
     height?: string | number;
 }
@@ -418,7 +459,7 @@ export interface ConfigItemStaticImage extends ConfigItem {
 export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
     type: 'staticText';
     /** multi-language text */
-    text: string;
+    text: ioBroker.StringOrTranslated;
     /** @deprecated use text */
     label?: ioBroker.StringOrTranslated;
     /** link. Link could be dynamic like `#tab-objects/customs/${data.parentId} */
@@ -436,7 +477,35 @@ export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
     /** if icon should be shown: `auth`, `send`, `web`, `warning`, `error`, `info`, `search`, `book`, `help`, `upload`. You can use `base64` icons (it starts with `data:image/svg+xml;base64,...`) or `jpg/png` images (ends with `.png`) . (Request via issue if you need more icons) */
     icon?: ConfigIconType;
     /** styles for the button */
-    controlStyle: CustomCSSProperties;
+    controlStyle?: CustomCSSProperties;
+}
+
+export interface ConfigItemStaticInfo extends Omit<ConfigItem, 'data'> {
+    type: 'staticInfo';
+    /** multi-language text or value */
+    data: ioBroker.StringOrTranslated | number | boolean;
+    /** Base64 icon */
+    labelIcon?: string;
+    /** Unit */
+    unit?: ioBroker.StringOrTranslated;
+    /** Normally the title and value are shown on the left and right of the line. With this flag, the value will appear just after the label*/
+    narrow?: boolean;
+    /** Add to label the colon at the end if not exist in label */
+    addColon?: boolean;
+    /** Value should blink when updated (true or color) */
+    blinkOnUpdate?: boolean | string;
+    /** Value should blink continuously (true or color) */
+    blink?: boolean | string;
+    /** Show copy to clipboard button for value */
+    copyToClipboard?: boolean;
+    /** Label style */
+    styleLabel?: CustomCSSProperties;
+    /** Value style */
+    styleValue?: CustomCSSProperties;
+    /** Unit style */
+    styleUnit?: CustomCSSProperties;
+    /** Font size */
+    size?: number | 'small' | 'normal' | 'large';
 }
 
 export interface ConfigItemRoom extends ConfigItem {
@@ -453,8 +522,9 @@ export interface ConfigItemFunc extends ConfigItem {
 
 export interface ConfigItemSelect extends ConfigItem {
     type: 'select';
-    /** `[{label: {en: "option 1"}, value: 1}, ...]` or
-     `[{"items": [{"label": "Val1", "value": 1}, {"label": "Val2", value: "2}], "name": "group1"}, {"items": [{"label": "Val3", "value": 3}, {"label": "Val4", value: "4}], "name": "group2"}, {"label": "Val5", "value": 5}]`
+    /**
+     * `[{label: {en: "option 1"}, value: 1}, ...]` or
+     * `[{"items": [{"label": "Val1", "value": 1}, {"label": "Val2", value: "2}], "name": "group1"}, {"items": [{"label": "Val3", "value": 3}, {"label": "Val4", value: "4}], "name": "group2"}, {"label": "Val5", "value": 5}]`
      */
     options: (
         | ConfigItemSelectOption
@@ -518,6 +588,7 @@ export interface ConfigItemAccordion extends ConfigItem {
 
 export interface ConfigItemDivider extends ConfigItem {
     type: 'divider';
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     color?: 'primary' | 'secondary' | string;
     height?: string | number;
 }
@@ -619,7 +690,7 @@ export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
 
 export interface ConfigItemState extends ConfigItem {
     type: 'state';
-    /** Which object ID should be taken for the controlling. The ID is without "adapter.X." prefix */
+    /** Describes, which object ID should be taken for the controlling. The ID is without "adapter.X." prefix */
     oid: string;
     /** If true, the state will be taken from system.adapter.XX.I. and not from XX.I */
     system?: boolean;
@@ -651,6 +722,8 @@ export interface ConfigItemState extends ConfigItem {
     controlDelay?: number;
     /** Variant of button */
     variant?: 'contained' | 'outlined' | 'text';
+    /** Defines if the control is read-only. Applied only to 'input', 'slider', 'select', 'button', 'switch', 'number' */
+    readOnly?: boolean;
 }
 
 export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
@@ -801,11 +874,11 @@ export interface ConfigItemInterface extends ConfigItem {
 
 export interface ConfigItemImageUpload extends ConfigItem {
     type: 'image';
-    /** name of file is structure name. In the below example `login-bg.png` is file name for `writeFile("myAdapter.INSTANCE", "login-bg.png")` */
+    /** name of a file is structure name. In the below example `login-bg.png` is file name for `writeFile("myAdapter.INSTANCE", "login-bg.png")` */
     filename?: string;
-    /** html accept attribute, like `{ 'image/**': [], 'application/pdf': ['.pdf'] }`, default `{ 'image/*': [] }` */
+    /** HTML accept attribute, like `{ 'image/**': [], 'application/pdf': ['.pdf'] }`, default `{ 'image/*': [] }` */
     accept?: Record<string, string[]>;
-    /** maximal size of file to upload */
+    /** maximal size of a file to upload */
     maxSize?: number;
     /** if true, the image will be saved as data-url in attribute, elsewise as binary in file storage */
     base64?: boolean;
@@ -934,14 +1007,62 @@ export type ConfigItemAny =
     | ConfigItemSetState
     | ConfigItemStaticDivider
     | ConfigItemStaticHeader
+    | ConfigItemStaticInfo
     | ConfigItemStaticImage
     | ConfigItemStaticText
     | ConfigItemTopic
     | ConfigItemObjectId
     | ConfigItemQrCode;
-// -- START OF DYNAMIC GENERATED CODE
 
-export type JsonFormSchema = ConfigItemPanel;
+// Notification GUI
+
+export type BackEndCommandType = 'nop' | 'refresh' | 'link' | 'message';
+
+export interface BackEndCommandGeneric {
+    command: BackEndCommandType;
+    /** New GUI schema */
+    schema?: ConfigItemPanel;
+    /** New GUI data */
+    data?: Record<string, any>;
+    refresh?: boolean;
+}
+
+export interface BackEndCommandNoOperation extends BackEndCommandGeneric {
+    command: 'nop';
+}
+
+export interface BackEndCommandRefresh extends BackEndCommandGeneric {
+    command: 'refresh';
+    /** If refresh the GUI */
+    fullRefresh?: boolean;
+}
+
+export interface BackEndCommandOpenLink extends BackEndCommandGeneric {
+    command: 'link';
+    /** Link url. Could be relative ('#blabla') or absolute ('https://blabla') */
+    url: string;
+    /** Target of the link. Default is `_self` for relative and '_blank' for absolute links */
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    target?: '_self' | '_blank' | string;
+    /** If GUI should be closed after the link was opened (Only for target='_self') */
+    close?: boolean;
+}
+
+export interface BackEndCommandMessage extends BackEndCommandGeneric {
+    command: 'message';
+    /** Message text */
+    message: ioBroker.StringOrTranslated;
+    /** If GUI should be closed after the message shown */
+    close?: boolean;
+    /** Type of message. Default is 'popup' */
+    variant: 'popup' | 'dialog';
+}
+
+export type BackEndCommand = BackEndCommandMessage | BackEndCommandOpenLink | BackEndCommandRefresh;
+
+// -- STOP OF DYNAMIC GENERATED CODE
+
+export type JsonFormSchema = ConfigItemPanel | ConfigItemTabs;
 
 export type JsonFormData = Record<string, any>;
 

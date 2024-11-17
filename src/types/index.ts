@@ -1,4 +1,4 @@
-export * from "./adapter";
-export * from "./common";
-export * from "./errorCodes";
-export { ChannelInfo, Color, ControlState, ControlBase } from "./base";
+export type * from './adapter';
+export type * from './common';
+export * from './errorCodes';
+export type { ChannelInfo, Color, ControlState, ControlBase } from './base';
