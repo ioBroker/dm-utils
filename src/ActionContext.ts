@@ -1,4 +1,4 @@
-import type { JsonFormData, JsonFormSchema } from '.';
+import type { ActionButton, JsonFormData, JsonFormSchema } from '.';
 import type { ProgressDialog } from './ProgressDialog';
 
 export interface ActionContext {
@@ -6,7 +6,7 @@ export interface ActionContext {
     showConfirmation(text: ioBroker.StringOrTranslated): Promise<boolean>;
     showForm(
         schema: JsonFormSchema,
-        options?: { data?: JsonFormData; title?: ioBroker.StringOrTranslated },
+        options?: { data?: JsonFormData; title?: ioBroker.StringOrTranslated; buttons?: ActionButton[] },
     ): Promise<JsonFormData | undefined>;
     openProgress(
         title: string,

@@ -295,6 +295,10 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+
+* (@GermanBluefox) Added configurable buttons for form
+
 ### 0.6.0 (2024-11-17)
 
 * (@GermanBluefox) used new ioBroker/eslint-config lib and changed prettifier settings

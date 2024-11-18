@@ -8,7 +8,7 @@
   },
   "types": "build/index.d.ts",
   "scripts": {
-    "build": "npm run updateCommonTs && tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json",
     "lint": "eslint .",
     "updateCommonTs": "node tasks.js",
     "prettier": "prettier -u -w examples src",
