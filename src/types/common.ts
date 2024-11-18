@@ -18,18 +18,15 @@ export type DeviceStatus =
           warning?: ioBroker.StringOrTranslated | boolean; // warning text or just boolean true (means warning)
       };
 
-export type ActionButton =
-    | {
-          label: ioBroker.StringOrTranslated;
-          type: 'apply' | 'cancel';
-          noTranslation?: boolean;
-          icon?: string;
-          variant?: 'contained' | 'outlined' | 'text';
-          style?: Record<string, number | string>;
-          color?: 'primary' | 'secondary';
-      }
-    | 'apply'
-    | 'cancel';
+export type ActionButton = {
+    label: ioBroker.StringOrTranslated;
+    type: 'apply' | 'cancel';
+    noTranslation?: boolean;
+    icon?: string;
+    variant?: 'contained' | 'outlined' | 'text';
+    style?: Record<string, number | string>;
+    color?: 'primary' | 'secondary';
+};
 
 export type DeviceRefresh = 'device' | 'instance' | false | true;
 

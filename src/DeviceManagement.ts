@@ -407,7 +407,11 @@ export class MessageContext implements ActionContext {
 
     showForm(
         schema: JsonFormSchema,
-        options?: { data?: JsonFormData; title?: ioBroker.StringOrTranslated; buttons?: ActionButton[] },
+        options?: {
+            data?: JsonFormData;
+            title?: ioBroker.StringOrTranslated;
+            buttons?: (ActionButton | 'apply' | 'cancel')[];
+        },
     ): Promise<JsonFormData | undefined> {
         this.checkPreconditions();
         const promise = new Promise<JsonFormData | undefined>(resolve => {
