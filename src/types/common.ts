@@ -8,7 +8,8 @@ export type DeviceStatus =
            * This can either be the name of a font awesome icon (e.g. "fa-signal") or the URL to an icon.
            */
           icon?: string;
-          battery?: number | boolean | 'charging'; // in percent (0-100), or string 'charging',
+          // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+          battery?: number | boolean | 'charging' | string; // in percent (0-100), or string 'charging' or value with unit as string,
           // or string '10V',
           // or string '10mV',
           // or string '100' in mV

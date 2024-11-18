@@ -295,7 +295,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 0.6.5 (2024-11-18)
+### **WORK IN PROGRESS**
 
 * (@GermanBluefox) Added configurable buttons for form
 
