@@ -22,6 +22,7 @@ export type ActionButton =
     | {
           label: ioBroker.StringOrTranslated;
           type: 'apply' | 'cancel';
+          noTranslation?: boolean;
           icon?: string;
           variant?: 'contained' | 'outlined' | 'text';
           style?: Record<string, number | string>;
