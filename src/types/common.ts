@@ -26,7 +26,7 @@ export type ActionButton =
           icon?: string;
           variant?: 'contained' | 'outlined' | 'text';
           style?: Record<string, number | string>;
-          color: 'primary' | 'secondary';
+          color?: 'primary' | 'secondary';
       }
     | 'apply'
     | 'cancel';
