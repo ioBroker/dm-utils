@@ -11,6 +11,7 @@ import {
     type JsonFormSchema,
     type RefreshResponse,
     type RetVal,
+    type ActionButton,
     ErrorCodes,
 } from './types';
 import type * as api from './types/api';
@@ -406,7 +407,7 @@ export class MessageContext implements ActionContext {
 
     showForm(
         schema: JsonFormSchema,
-        options?: { data?: JsonFormData; title?: string },
+        options?: { data?: JsonFormData; title?: ioBroker.StringOrTranslated; buttons?: ActionButton[] },
     ): Promise<JsonFormData | undefined> {
         this.checkPreconditions();
         const promise = new Promise<JsonFormData | undefined>(resolve => {

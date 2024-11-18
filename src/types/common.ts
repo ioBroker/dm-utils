@@ -27,7 +27,7 @@ export type ActionButton =
           style?: Record<string, number | string>;
           color: 'primary' | 'secondary';
       }
-    | 'ok'
+    | 'apply'
     | 'cancel';
 
 export type DeviceRefresh = 'device' | 'instance' | false | true;
