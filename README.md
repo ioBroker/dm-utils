@@ -271,7 +271,7 @@ The method has the following parameters:
 - `options` (object, optional): options to configure the dialog further
   - `indeterminate` (boolean, optional): set to `true` to visualize an unspecified wait time
   - `value` (number, optional): the progress value to show to the user (if set, it must be a value between 0 and 100)
-  - `label` (string, optional): label to show to the right of the progress bar; you may show the progress value in a human readable way (e.g. "42%") or show the current step in a multi-step progress (e.g. "Logging in...")
+  - `label` (string, optional): label to show to the right of the progress bar; you may show the progress value in a human-readable way (e.g. "42%") or show the current step in a multi-step progress (e.g. "Logging in...")
 
 This method returns a promise that resolves to a `ProgressDialog` object.
 
