@@ -10,6 +10,7 @@ export interface ActionContext {
             data?: JsonFormData;
             title?: ioBroker.StringOrTranslated;
             buttons?: (ActionButton | 'apply' | 'cancel')[];
+            maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
         },
     ): Promise<JsonFormData | undefined>;
     openProgress(
