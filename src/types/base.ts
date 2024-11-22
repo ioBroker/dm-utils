@@ -173,4 +173,11 @@ export interface DeviceInfo<T extends ActionType = 'api'> {
     actions?: DeviceAction<T>[];
     controls?: DeviceControl<T>[];
     hasDetails?: boolean;
+    /* Device type for grouping */
+    group?: {
+        // key could be a string, divided by / to define the subgroup
+        key: string;
+        name?: ioBroker.StringOrTranslated;
+        icon?: string;
+    };
 }

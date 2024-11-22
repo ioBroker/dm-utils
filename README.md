@@ -295,6 +295,10 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+
+* (@GermanBluefox) Allow grouping of devices
+
 ### 0.6.7 (2024-11-20)
 
 * (@GermanBluefox) Updated types
