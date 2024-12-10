@@ -218,6 +218,8 @@ export interface ConfigItem {
         ignoreOwnChanges?: boolean;
     };
     doNotSave?: boolean;
+    /** If the control should be shown ONLY in the expert mode */
+    expertMode?: boolean;
     noMultiEdit?: boolean;
     confirm?: ConfigItemConfirmData;
     icon?: ConfigIconType;
@@ -1050,7 +1052,7 @@ export type BackEndCommandType = 'nop' | 'refresh' | 'link' | 'message';
 export interface BackEndCommandGeneric {
     command: BackEndCommandType;
     /** New GUI schema */
-    schema?: ConfigItemPanel;
+    schema?: ConfigItemPanel | ConfigItemTabs;
     /** New GUI data */
     data?: Record<string, any>;
     refresh?: boolean;
@@ -1090,6 +1092,14 @@ export interface BackEndCommandMessage extends BackEndCommandGeneric {
 export type BackEndCommand = BackEndCommandMessage | BackEndCommandOpenLink | BackEndCommandRefresh;
 
 // -- STOP OF DYNAMIC GENERATED CODE
+
+export type BackEndCommandJsonFormOptions = {
+    data?: JsonFormData;
+    title?: ioBroker.StringOrTranslated;
+    buttons?: (ActionButton | 'apply' | 'cancel')[];
+    maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    noTranslation?: boolean; // Do not translate title
+};
 
 export type JsonFormSchema = ConfigItemPanel | ConfigItemTabs;
 

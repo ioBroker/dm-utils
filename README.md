@@ -295,6 +295,10 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+
+* (@GermanBluefox) Export `BackEndCommandJsonFormOptions` type
+
 ### 0.6.9 (2024-11-22)
 
 * (@GermanBluefox) Added max-width option for form
