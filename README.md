@@ -295,7 +295,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 0.6.10 (2024-12-10)
 
 * (@GermanBluefox) Export `BackEndCommandJsonFormOptions` type
 
