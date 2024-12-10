@@ -1096,7 +1096,7 @@ export type BackEndCommand = BackEndCommandMessage | BackEndCommandOpenLink | Ba
 export type BackEndCommandJsonFormOptions = {
     data?: JsonFormData;
     title?: ioBroker.StringOrTranslated;
-    buttons?: (ActionButton | 'apply' | 'cancel')[];
+    buttons?: (ActionButton | 'apply' | 'cancel' | 'close')[];
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     noTranslation?: boolean; // Do not translate title
 };
