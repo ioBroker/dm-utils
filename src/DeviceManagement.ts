@@ -434,9 +434,13 @@ export class MessageContext implements ActionContext {
                 const promise = new Promise<void>(resolve => {
                     this.progressHandler = () => resolve();
                 });
-                this.send('progress', {
-                    progress: { title, ...options, ...update, open: true },
-                });
+                this.send(
+                    'progress',
+                    {
+                        progress: { title, ...options, ...update, open: true },
+                    },
+                    true,
+                );
                 return promise;
             },
 
@@ -457,9 +461,13 @@ export class MessageContext implements ActionContext {
         const promise = new Promise<ProgressDialog>(resolve => {
             this.progressHandler = () => resolve(dialog);
         });
-        this.send('progress', {
-            progress: { title, ...options, open: true },
-        });
+        this.send(
+            'progress',
+            {
+                progress: { title, ...options, open: true },
+            },
+            true,
+        );
         return promise;
     }
 
@@ -506,7 +514,7 @@ export class MessageContext implements ActionContext {
         }
     }
 
-    private send(type: string, message: any): void {
+    private send(type: string, message: any, doNotClose?: boolean): void {
         if (!this.lastMessage) {
             throw new Error("No outstanding message, can't send a new one");
         }
@@ -520,6 +528,9 @@ export class MessageContext implements ActionContext {
             },
             this.lastMessage.callback,
         );
-        this.lastMessage = undefined;
+        if (!doNotClose) {
+            // "progress" is exception. It will be closed with "close" flag
+            this.lastMessage = undefined;
+        }
     }
 }
