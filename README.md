@@ -295,6 +295,11 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+
+* (@GermanBluefox) Added `disabled` options for a device
+* (@GermanBluefox) Major release just because is good enough. No breaking changes.
+
 ### 0.6.11 (2024-12-11)
 
 * (@GermanBluefox) Do not close handler for progress

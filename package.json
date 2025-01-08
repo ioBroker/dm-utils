@@ -16,7 +16,7 @@
     "release-patch": "release-script patch --yes",
     "release-minor": "release-script minor --yes",
     "release-major": "release-script major --yes",
-    "update-packages": "ncu --upgrade",
+    "update-packages": "npx -y npm-check-updates --upgrade",
     "npm": "npm i -f"
   },
   "author": "UncleSamSwiss",
@@ -28,7 +28,7 @@
     "@alcalzone/release-script": "^3.8.0",
     "@alcalzone/release-script-plugin-license": "^3.7.0",
     "@iobroker/eslint-config": "^1.0.0",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.10.5",
     "axios": "^1.7.9",
     "typescript": "^5.7.2"
   },
