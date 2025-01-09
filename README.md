@@ -114,7 +114,7 @@ In most cases, you will get all states of your instance and fill the array with 
 
 Every array entry is an object of type `DeviceInfo` which has the following properties:
 
-- `id` (string): a unique (human readable) identifier of the device (it must be unique for your adapter instance only)
+- `id` (string): a unique (human-readable) identifier of the device (it must be unique for your adapter instance only)
 - `name` (string or translations): the human-readable name of this device
 - `status` (optional): the current status of the device, which can be one of:
   - `"disconnected"`
@@ -197,14 +197,17 @@ This method is called when the user clicks on a control (i.e., slider) in the de
 
 The parameters of this method are:
 - `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
-- `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`
-- `state` (string | number | boolean): new state for the control, that will be sent to real device
+- `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`. There are some reserved control names, you can find the list below.
+- `state` (string | number | boolean): new state for the control, that will be sent to a real device
 - `context` (object): object containing helper methods that can be used when executing the action
 
 The returned object must contain:
 - `state`: ioBroker state object
 
 This method can be implemented asynchronously and can take a lot of time to complete.
+
+Reserved control names:
+- `disabled` - The disabled control has its own pre-defined place on the device card and is used to disable the device. The state of this control is boolean.
 
 ### `handleDeviceControlState(deviceId: string, controlId: string, context: MessageContext)
 
@@ -226,7 +229,11 @@ To allow your adapter to interact with the user, you can use "actions".
 
 As described above, there are actions on the instance and on devices. The behavior of both methods is similar.
 
-Inside an action method (`handleInstanceAction()` or `handleDeviceAction()`) you can perform arbitrary actions, like talking to a device or API, and you can interact with the user. For interactions, there are methods you can call on `context`:
+Inside an action method (`handleInstanceAction()` or `handleDeviceAction()`) you can perform arbitrary actions, like talking to a device or API, and you can interact with the user.
+For interactions, there are methods you can call on `context`:
+
+There are some reserved action names, you can find the list below:
+- `status` - This action is called when the user clicks on the status icon. So to implement the "click-on-status" functionality, the developer has to implement this action.
 
 ### `showMessage(text: ioBroker.StringOrTranslated)`
 

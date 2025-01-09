@@ -173,9 +173,7 @@ export interface DeviceInfo<T extends ActionType = 'api'> {
     actions?: DeviceAction<T>[];
     controls?: DeviceControl<T>[];
     hasDetails?: boolean;
-    /** undefined means, no "disabled" possibility, true means disabled, false means enabled */
-    disabled?: boolean;
-    /* Device type for grouping */
+    /** Device type for grouping */
     group?: {
         // key could be a string, divided by / to define the subgroup
         key: string;

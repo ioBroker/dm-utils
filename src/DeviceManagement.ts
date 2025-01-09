@@ -102,6 +102,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
                 },
             };
         }
+
         const action = device.actions?.find(a => a.id === actionId);
         if (!action) {
             this.log.warn(`Device action ${actionId} doesn't exist on device ${deviceId}`);
