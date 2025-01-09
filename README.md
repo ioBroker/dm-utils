@@ -206,9 +206,6 @@ The returned object must contain:
 
 This method can be implemented asynchronously and can take a lot of time to complete.
 
-Reserved control names:
-- `disabled` - The disabled control has its own pre-defined place on the device card and is used to disable the device. The state of this control is boolean.
-
 ### `handleDeviceControlState(deviceId: string, controlId: string, context: MessageContext)
 
 This method is called when GUI requests the update of the state.
@@ -234,6 +231,8 @@ For interactions, there are methods you can call on `context`:
 
 There are some reserved action names, you can find the list below:
 - `status` - This action is called when the user clicks on the status icon. So to implement the "click-on-status" functionality, the developer has to implement this action.
+- `disable` - This action will be called when the user clicks on the `enabled` icon. `disable` and `enable` actions cannot be together.
+- `enable` - This action will be called when the user clicks on the `disabled` icon. `disable` and `enable` actions cannot be together.
 
 ### `showMessage(text: ioBroker.StringOrTranslated)`
 

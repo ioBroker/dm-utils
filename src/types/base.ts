@@ -6,7 +6,17 @@ export type Color = 'primary' | 'secondary' | (string & {}); // color (you can u
 
 export type ControlState = string | number | boolean | null;
 
+/** Reserved action names */
+export const ACTIONS = {
+    /** This action will be called when user clicks on connection icon */
+    STATUS: 'status',
+    /** This action will be called when user clicks on connection icon */
+    DISABLE: 'disable',
+    ENABLE: 'enable',
+};
+
 export interface ActionBase<T extends ActionType> {
+    /** Unique (for this adapter) action ID. It could be the name from ACTIONS too, but in this case some predefined appearance will be applied */
     id: string;
     /**
      * This can either be base64 or the URL to an icon.
