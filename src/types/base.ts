@@ -10,9 +10,8 @@ export type ControlState = string | number | boolean | null;
 export const ACTIONS = {
     /** This action will be called when user clicks on connection icon */
     STATUS: 'status',
-    /** This action will be called when user clicks on connection icon */
-    DISABLE: 'disable',
-    ENABLE: 'enable',
+    /** This action will be called when the user clicks on enabled/disabled icon. The enabled/disabled icon will be shown only if the node status has "enabled" flag set to false or true */
+    ENABLE_DISABLE: 'enable/disable',
 };
 
 export interface ActionBase<T extends ActionType> {
@@ -172,16 +171,26 @@ export interface InstanceDetails<T extends ActionType = 'api'> {
 }
 
 export interface DeviceInfo<T extends ActionType = 'api'> {
+    /** ID of the action. Should be unique only in one adapter. Other adapters could have same names */
     id: string;
-    icon?: string; // base64 or url
+    /** Name of the device. It will be shown in the card header */
+    name: ioBroker.StringOrTranslated;
+    /** base64 or url icon for device card */
+    icon?: string;
     manufacturer?: ioBroker.StringOrTranslated;
     model?: ioBroker.StringOrTranslated;
-    color?: Color; // color of name
-    backgroundColor?: Color; // background color of card (you can use primary, secondary or color rgb value or hex)
-    name: ioBroker.StringOrTranslated;
+    /** Color or 'primary', 'secondary' for the text in the card header */
+    color?: Color;
+    /** Background color of card header (you can use primary, secondary or color rgb value or hex) */
+    backgroundColor?: Color;
     status?: DeviceStatus | DeviceStatus[];
+    /** If this flag is true or false, the according indication will be shown. Additionally, if ACTIONS.ENABLE_DISABLE is implemented, this action will be sent to backend by clicking on this indication */
+    enabled?: boolean;
+    /** List of actions on the card */
     actions?: DeviceAction<T>[];
+    /** List of controls on the card. The difference of controls and actions is that the controls can show status (e.g. on/off) and can work directly with states */
     controls?: DeviceControl<T>[];
+    /** If true, the button `more` will be shown on the card and called `dm:deviceDetails` action to get the details  */
     hasDetails?: boolean;
     /** Device type for grouping */
     group?: {

@@ -301,9 +301,9 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 1.0.3 (2025-01-09)
+### **WORK IN PROGRESS**
 
-* (@GermanBluefox) Added description for `disabled` control and `status` action.
+* (@GermanBluefox) Added action ENABLE_DISABLE and `enabled` status
 
 ### 1.0.0 (2025-01-08)
 
@@ -320,11 +320,11 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 
 ### 0.6.9 (2024-11-22)
 
-* (@GermanBluefox) Added max-width option for form
+* (@GermanBluefox) Added a max-width option for form
 
 ### 0.6.8 (2024-11-22)
 
-* (@GermanBluefox) Allow grouping of devices
+* (@GermanBluefox) Allowed grouping of devices
 
 ### 0.6.7 (2024-11-20)
 

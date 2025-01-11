@@ -1,13 +1,59 @@
 export type ApiVersion = 'v1';
 
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+export type ConfigIconType =
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'add'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'backlight'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'delete'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'dimmer'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'edit'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'group'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'identify'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'info'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'light'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'lines'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'next'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'pair'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'pause'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'play'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'previous'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'qrcode'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'refresh'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'search'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'settings'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'socket'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'stop'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'unpair'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'user'
+    | string; // base 64 string
+
 export type DeviceStatus =
     | 'connected'
     | 'disconnected'
     | {
-          /**
-           * This can either be the name of a font awesome icon (e.g. "fa-signal") or the URL to an icon.
-           */
-          icon?: string;
           // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
           battery?: number | boolean | 'charging' | string; // in percent (0-100), or string 'charging' or value with unit as string,
           // or string '10V',
@@ -23,7 +69,8 @@ export type ActionButton = {
     label: ioBroker.StringOrTranslated;
     type: 'apply' | 'cancel';
     noTranslation?: boolean;
-    icon?: string;
+    /** base64 or icon name */
+    icon?: ConfigIconType
     variant?: 'contained' | 'outlined' | 'text';
     style?: Record<string, number | string>;
     color?: 'primary' | 'secondary';
@@ -115,45 +162,6 @@ export type ConfigItemType =
     | 'topic'
     | 'qrCode'
     | 'state';
-
-type ConfigIconType =
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'edit'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'auth'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'send'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'web'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'warning'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'error'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'info'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'search'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'book'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'help'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'upload'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'user'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'group'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'delete'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'refresh'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'add'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'unpair'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'pair'
-    | string;
 
 export interface ConfigItemConfirmData {
     condition: string;
@@ -501,7 +509,7 @@ export interface ConfigItemStaticInfo extends Omit<ConfigItem, 'data'> {
     labelIcon?: string;
     /** Unit */
     unit?: ioBroker.StringOrTranslated;
-    /** Normally the title and value are shown on the left and right of the line. With this flag, the value will appear just after the label*/
+    /** Normally, the title and value are shown on the left and right of the line. With this flag, the value will appear just after the label*/
     narrow?: boolean;
     /** Add to label the colon at the end if not exist in label */
     addColon?: boolean;
