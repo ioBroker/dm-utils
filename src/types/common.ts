@@ -70,7 +70,7 @@ export type ActionButton = {
     type: 'apply' | 'cancel';
     noTranslation?: boolean;
     /** base64 or icon name */
-    icon?: ConfigIconType
+    icon?: ConfigIconType;
     variant?: 'contained' | 'outlined' | 'text';
     style?: Record<string, number | string>;
     color?: 'primary' | 'secondary';

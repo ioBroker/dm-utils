@@ -301,7 +301,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 1.0.4 (2025-01-11)
+### **WORK IN PROGRESS**
 
 * (@GermanBluefox) Added action ENABLE_DISABLE and `enabled` status
 
