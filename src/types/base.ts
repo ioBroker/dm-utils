@@ -1,4 +1,4 @@
-import type { ActionContext, ErrorResponse, MessageContext } from '..';
+import type { ActionContext, ConfigConnectionType, ErrorResponse, MessageContext } from '..';
 import type { ApiVersion, DeviceRefresh, DeviceStatus, RetVal } from './common';
 
 type ActionType = 'api' | 'adapter';
@@ -184,6 +184,8 @@ export interface DeviceInfo<T extends ActionType = 'api'> {
     /** Background color of card header (you can use primary, secondary or color rgb value or hex) */
     backgroundColor?: Color;
     status?: DeviceStatus | DeviceStatus[];
+    /** Connection type, how the device is connected */
+    connectionType?: ConfigConnectionType;
     /** If this flag is true or false, the according indication will be shown. Additionally, if ACTIONS.ENABLE_DISABLE is implemented, this action will be sent to backend by clicking on this indication */
     enabled?: boolean;
     /** List of actions on the card */

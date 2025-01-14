@@ -1,5 +1,7 @@
 export type ApiVersion = 'v1';
 
+export type ConfigConnectionType = 'lan' | 'wifi' | 'bluetooth' | 'thread' | 'z-wave' | 'zigbee' | 'other';
+
 // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type ConfigIconType =
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
