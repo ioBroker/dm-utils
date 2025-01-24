@@ -181,6 +181,8 @@ export interface DeviceInfo<T extends ActionType = 'api'> {
     model?: ioBroker.StringOrTranslated;
     /** Color or 'primary', 'secondary' for the text in the card header */
     color?: Color;
+    /** Color of the text in the card header */
+    headerTextColor?: Color;
     /** Background color of card header (you can use primary, secondary or color rgb value or hex) */
     backgroundColor?: Color;
     status?: DeviceStatus | DeviceStatus[];
