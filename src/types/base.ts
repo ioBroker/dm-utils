@@ -121,9 +121,10 @@ export interface ControlBase {
 
     icon?: string; // base64 or url - icon could be by all types except select
     iconOn?: string; // base64 or url - by type button, switch, slider, icon
-    min?: number; // only for slider
-    max?: number; // only for slider
-    unit?: string; // only for slider
+    min?: number; // only for slider and number
+    max?: number; // only for slider and number
+    step?: number; // only for slider and number
+    unit?: string; // only for slider and number
     label?: ioBroker.StringOrTranslated;
     labelOn?: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
@@ -181,8 +182,6 @@ export interface DeviceInfo<T extends ActionType = 'api'> {
     model?: ioBroker.StringOrTranslated;
     /** Color or 'primary', 'secondary' for the text in the card header */
     color?: Color;
-    /** Color of the text in the card header */
-    headerTextColor?: Color;
     /** Background color of card header (you can use primary, secondary or color rgb value or hex) */
     backgroundColor?: Color;
     status?: DeviceStatus | DeviceStatus[];
