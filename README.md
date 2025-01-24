@@ -301,7 +301,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 1.0.7 (2025-01-24)
 
 * (@GermanBluefox) Added `headerTextColor` to device info
 
