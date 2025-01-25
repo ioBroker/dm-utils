@@ -69,13 +69,16 @@ export type DeviceStatus =
 
 export type ActionButton = {
     label: ioBroker.StringOrTranslated;
-    type: 'apply' | 'cancel';
+    type: 'apply' | 'cancel' | 'copyToClipboard';
     noTranslation?: boolean;
     /** base64 or icon name */
     icon?: ConfigIconType;
     variant?: 'contained' | 'outlined' | 'text';
     style?: Record<string, number | string>;
+    /** Name of the attribute in data that should be copied to clipboard */
     color?: 'primary' | 'secondary';
+    /** Name of the attribute in data that should be copied to clipboard */
+    copyToClipboardAttr?: string;
 };
 
 export type DeviceRefresh = 'device' | 'instance' | false | true;
@@ -1108,6 +1111,8 @@ export type BackEndCommandJsonFormOptions = {
     title?: ioBroker.StringOrTranslated;
     buttons?: (ActionButton | 'apply' | 'cancel' | 'close')[];
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+    /** Minimal width of the dialog */
+    minWidth?: number;
     noTranslation?: boolean; // Do not translate title
 };
 
