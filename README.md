@@ -301,6 +301,11 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+
+* (@GermanBluefox) Added timeout property to actions
+* (@GermanBluefox) Updated packages
+
 ### 1.0.9 (2025-01-25)
 
 * (@GermanBluefox) Added copyToClipboard dialog button

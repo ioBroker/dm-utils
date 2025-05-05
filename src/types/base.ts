@@ -102,6 +102,8 @@ export interface ActionBase<T extends ActionType> {
         /** Step value for the input (number or slider) */
         step?: number;
     };
+    /** Timeout in ms for waiting an answer from backend */
+    timeout?: number;
 }
 
 export interface ChannelInfo {
