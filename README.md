@@ -301,7 +301,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 1.0.11 (2025-10-21)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Updated packages
 
 ### 1.0.10 (2025-05-05)
