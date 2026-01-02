@@ -1188,13 +1188,20 @@ export type ActionButton = {
 };
 
 export type BackEndCommandJsonFormOptions = {
+    /** Data for the form */
     data?: JsonFormData;
+    /** Form title */
     title?: ioBroker.StringOrTranslated;
+    /** Buttons that will be shown on the bottom of the form */
     buttons?: (ActionButton | 'apply' | 'cancel' | 'close')[];
+    /** Maximal form width */
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     /** Minimal width of the dialog */
     minWidth?: number;
-    noTranslation?: boolean; // Do not translate title
+    /** Do not translate title */
+    noTranslation?: boolean;
+    /** Always allow the apply button. Even when nothing was changed */
+    ignoreApplyDisabled?: boolean;
 };
 
 export type JsonFormSchema = ConfigItemPanel | ConfigItemTabs;
