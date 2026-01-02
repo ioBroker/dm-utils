@@ -161,6 +161,8 @@ export type ConfigIconType =
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'unpair'
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'update'
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'upload'
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'user'

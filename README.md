@@ -301,8 +301,9 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### 1.0.15 (2026-01-02)
+### **WORK IN PROGRESS**
 * (@GermanBluefox) Added `ignoreApplyDisabled` flag
+* (@GermanBluefox) Added `update` icon
 
 ### 1.0.13 (2025-10-21)
 * (@GermanBluefox) Updated packages
