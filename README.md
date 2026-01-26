@@ -6,7 +6,7 @@ Utility classes for ioBroker adapters to support [ioBroker.device-manager](https
 
 Add in your `io-package.json` the property `deviceManager: true` to `common.supportedMessages`.
 Note: If you don't have a `common.supportedMessages` property yet, you have to add it.
-Also, if you don't have a `common.supportedMessages.messagebox: true` property yet, you have to add it. If common.messagebox exists, you can remove it. (see 
+Also, if you don't have a `common.supportedMessages.custom: true` property yet, you have to add it. If common.messagebox exists, you can remove it. (see 
 https://github.com/ioBroker/ioBroker.js-controller/blob/274f9e8f84dbdaaba9830a6cc00ddf083e989090/schemas/io-package.json#L754C104-L754C178)
 
 In your ioBroker adapter, add a subclass of `DeviceManagement` and override the methods you need (see next chapters):
