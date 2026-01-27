@@ -137,6 +137,10 @@ Every array entry is an object of type `DeviceInfo` which has the following prop
   - `disabled` (boolean, optional): if set to `true`, the button can't be clicked but is shown to the user
 - `hasDetails` (boolean, optional): if set to `true`, the row of the device can be expanded and details are shown below
 
+Possible strings for device icons are here: [TYPE ICONS](https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68)
+Possible strings for action icons are here: [ACTION NAMES]([https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68](https://github.com/ioBroker/dm-gui-components/blob/main/src/Utils.tsx#L128))
+Possible strings for configuration icons are here: [CONFIGURATION TYPES]([https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68](https://github.com/ioBroker/dm-utils/blob/b3e54ecfaedd6a239beec59c5deb8117d1d59d7f/src/types/common.ts#L110))
+
 ### `getInstanceInfo()`
 
 This method allows the device manager tab to gather some general information about the instance. It is called when the user opens the tab.
