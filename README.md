@@ -124,12 +124,11 @@ Every array entry is an object of type `DeviceInfo` which has the following prop
 
 - `id` (string): a unique (human-readable) identifier of the device (it must be unique for your adapter instance only)
 - `name` (string or translations): the human-readable name of this device
-- `status` (optional): the current status of the device, which can be one of:
-  - `"disconnected"`
-  - `"connected"`
-  - an object containing:
-    - `icon` (string): an icon depicting the status of the device (see below for details)
-    - `description` (string, optional): a text that will be shown as a tooltip on the status
+- `status` (optional): the current status of the device, which has to be an object containing:
+    - `connection` (string): alowed values are: `"connected"` / `"disconnected"`
+    - `rssi` (number): rssi value of the connection
+    - `battery` (boolean / number): if boolean: false: Battery empty. If number: battery level of the device (shows also a battery symbol at card)
+    - `warning` (boolean / string): if boolean: true indicates a warning. if string: shows also the warning with mousover
 - `actions` (array, optional): an array of actions that can be performed on the device; each object contains:
   - `id` (string): unique identifier to recognize an action (never shown to the user)
   - `icon` (string): an icon shown on the button (see below for details)
