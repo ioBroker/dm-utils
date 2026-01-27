@@ -73,6 +73,14 @@ the `DeviceManagement` implementation's `handleXxxAction()` is called, and the a
 The communication between the `ioBroker.device-manager` tab and the adapter happens through `sendTo`.
 
 **IMPORTANT:** make sure your adapter doesn't handle `sendTo` messages starting with `dm:`, otherwise the communication will not work.
+- Use for Example this on the top of your onMessage Methode:
+
+```
+if (obj.command?.startsWith('dm:')) {
+    // Handled by Device Manager class itself, so ignored here
+    return;
+}
+```
 
 ### Access adapter methods
 
