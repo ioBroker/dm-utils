@@ -73,6 +73,14 @@ the `DeviceManagement` implementation's `handleXxxAction()` is called, and the a
 The communication between the `ioBroker.device-manager` tab and the adapter happens through `sendTo`.
 
 **IMPORTANT:** make sure your adapter doesn't handle `sendTo` messages starting with `dm:`, otherwise the communication will not work.
+- Use for Example this on the top of your onMessage Methode:
+
+```
+if (obj.command?.startsWith('dm:')) {
+    // Handled by Device Manager class itself, so ignored here
+    return;
+}
+```
 
 ### Access adapter methods
 
@@ -116,12 +124,11 @@ Every array entry is an object of type `DeviceInfo` which has the following prop
 
 - `id` (string): a unique (human-readable) identifier of the device (it must be unique for your adapter instance only)
 - `name` (string or translations): the human-readable name of this device
-- `status` (optional): the current status of the device, which can be one of:
-  - `"disconnected"`
-  - `"connected"`
-  - an object containing:
-    - `icon` (string): an icon depicting the status of the device (see below for details)
-    - `description` (string, optional): a text that will be shown as a tooltip on the status
+- `status` (optional): the current status of the device, which has to be an object containing:
+    - `connection` (string): alowed values are: `"connected"` / `"disconnected"`
+    - `rssi` (number): rssi value of the connection
+    - `battery` (boolean / number): if boolean: false: Battery empty. If number: battery level of the device (shows also a battery symbol at card)
+    - `warning` (boolean / string): if boolean: true indicates a warning. if string: shows also the warning with mousover
 - `actions` (array, optional): an array of actions that can be performed on the device; each object contains:
   - `id` (string): unique identifier to recognize an action (never shown to the user)
   - `icon` (string): an icon shown on the button (see below for details)
@@ -129,6 +136,12 @@ Every array entry is an object of type `DeviceInfo` which has the following prop
   - `disabled` (boolean, optional): if set to `true`, the button can't be clicked but is shown to the user
 - `hasDetails` (boolean, optional): if set to `true`, the row of the device can be expanded and details are shown below
 
+Possible strings for device icons are here: [TYPE ICONS](https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68)
+<br/>
+Possible strings for action icons are here: [ACTION NAMES](https://github.com/ioBroker/dm-gui-components/blob/main/src/Utils.tsx#L128))
+<br/>
+Possible strings for configuration icons are here: [CONFIGURATION TYPES](https://github.com/ioBroker/dm-utils/blob/b3e54ecfaedd6a239beec59c5deb8117d1d59d7f/src/types/common.ts#L110))
+<br/>
 ### `getInstanceInfo()`
 
 This method allows the device manager tab to gather some general information about the instance. It is called when the user opens the tab.
