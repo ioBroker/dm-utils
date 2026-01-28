@@ -343,7 +343,7 @@ class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
-### **WORK IN PROGRESS**
+### 2.0.2 (2026-01-28)
 * (@GermanBluefox) BREAKING: Admin/GUI must have version 9 (or higher) of `dm-gui-components`
 * (@GermanBluefox) Added types to update status of device directly from state
 * (@GermanBluefox) Added backend to GUI communication possibility
