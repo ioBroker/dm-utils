@@ -1,20 +1,24 @@
-export type ApiVersion = 'v1';
+export type ApiVersion = 'v1' | 'v2';
 
 export type ConfigConnectionType = 'lan' | 'wifi' | 'bluetooth' | 'thread' | 'z-wave' | 'zigbee' | 'other';
+
+export type ValueOrObject<T> = T | { objectId: string; property: string };
+export type ValueOrState<T, M = { [value: string | number]: string }> = T | { stateId: string; mapping?: M };
+export type ValueOrStateOrObject<T> = T | ValueOrObject<T> | ValueOrState<T>;
 
 export type DeviceStatus =
     | 'connected'
     | 'disconnected'
     | {
           // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-          battery?: number | boolean | 'charging' | string; // in percent (0-100), or string 'charging' or value with unit as string,
+          battery?: ValueOrState<number | boolean | 'charging' | string>; // in percent (0-100), or string 'charging' or value with unit as string,
           // or string '10V',
           // or string '10mV',
           // or string '100' in mV
           // or boolean true (means OK) or false (Battery warning)
-          connection?: 'connected' | 'disconnected';
-          rssi?: number; // in dBm
-          warning?: ioBroker.StringOrTranslated | boolean; // warning text or just boolean true (means warning)
+          connection?: ValueOrState<'connected' | 'disconnected', { [value: string]: 'connected' | 'disconnected' }>;
+          rssi?: ValueOrState<number>; // in dBm
+          warning?: ValueOrState<ioBroker.StringOrTranslated | boolean>; // warning text or just boolean true (means warning)
       };
 
 export type DeviceRefresh = 'device' | 'instance' | false | true;

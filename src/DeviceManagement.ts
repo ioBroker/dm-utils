@@ -15,16 +15,58 @@ import {
     ErrorCodes,
 } from './types';
 import type * as api from './types/api';
-import type { ControlState, DeviceControl } from './types/base';
+import { BackendToGuiCommand, ControlState, DeviceControl } from './types/base';
 
 export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstance> {
     private instanceInfo?: InstanceDetails;
     private devices?: Map<string, DeviceInfo>;
+    private readonly communicationStateId: string;
 
     private readonly contexts = new Map<number, MessageContext>();
 
-    constructor(protected readonly adapter: T) {
+    constructor(
+        protected readonly adapter: T,
+        communicationStateId?: string | boolean,
+    ) {
         adapter.on('message', this.onMessage.bind(this));
+        if (communicationStateId === true) {
+            // use standard ID `info.deviceManager`
+            this.communicationStateId = 'info.deviceManager';
+        } else if (communicationStateId) {
+            this.communicationStateId = communicationStateId;
+        }
+        if (this.communicationStateId) {
+            this.ensureCommunicationState().catch(e => this.log().error(`Cannot initialize communication state: ${e}`));
+        }
+    }
+
+    private async ensureCommunicationState(): Promise<void> {
+        let stateObj = await this.adapter.getObjectAsync(this.communicationStateId);
+        if (!stateObj) {
+            stateObj = {
+                _id: this.communicationStateId,
+                type: 'state',
+                common: {
+                    expert: true,
+                    name: 'Communication with GUI for device manager',
+                    type: 'string',
+                    role: 'state',
+                    def: '',
+                    read: true,
+                    write: false,
+                },
+                native: {},
+            };
+            await this.adapter.setObjectAsync(this.communicationStateId, stateObj);
+        }
+    }
+
+    protected async sendCommandToGui(command: BackendToGuiCommand): Promise<void> {
+        if (this.communicationStateId) {
+            this.adapter.setStateAsync(this.communicationStateId, JSON.stringify(command), true);
+        } else {
+            throw new Error('Communication state not found');
+        }
     }
 
     protected get log(): ioBroker.Log {
@@ -32,7 +74,8 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     }
 
     protected getInstanceInfo(): RetVal<InstanceDetails> {
-        return { apiVersion: 'v1' };
+        // Overload this method if your adapter does not use BackendToGui communication and States/Objects in DeviceInfo
+        return { apiVersion: 'v2', communicationStateId: this.communicationStateId || undefined };
     }
 
     protected abstract listDevices(): RetVal<DeviceInfo[]>;

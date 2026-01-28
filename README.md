@@ -75,7 +75,7 @@ The communication between the `ioBroker.device-manager` tab and the adapter happ
 **IMPORTANT:** make sure your adapter doesn't handle `sendTo` messages starting with `dm:`, otherwise the communication will not work.
 - Use for Example this on the top of your onMessage Methode:
 
-```
+```js
 if (obj.command?.startsWith('dm:')) {
     // Handled by Device Manager class itself, so ignored here
     return;
@@ -128,7 +128,7 @@ Every array entry is an object of type `DeviceInfo` which has the following prop
     - `connection` (string): alowed values are: `"connected"` / `"disconnected"`
     - `rssi` (number): rssi value of the connection
     - `battery` (boolean / number): if boolean: false: Battery empty. If number: battery level of the device (shows also a battery symbol at card)
-    - `warning` (boolean / string): if boolean: true indicates a warning. if string: shows also the warning with mousover
+    - `warning` (boolean / string): if boolean: true indicates a warning. If string: shows also the warning with mouseover
 - `actions` (array, optional): an array of actions that can be performed on the device; each object contains:
   - `id` (string): unique identifier to recognize an action (never shown to the user)
   - `icon` (string): an icon shown on the button (see below for details)
@@ -138,9 +138,9 @@ Every array entry is an object of type `DeviceInfo` which has the following prop
 
 Possible strings for device icons are here: [TYPE ICONS](https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68)
 <br/>
-Possible strings for action icons are here: [ACTION NAMES](https://github.com/ioBroker/dm-gui-components/blob/main/src/Utils.tsx#L128))
+Possible strings for action icons are here: [ACTION NAMES](https://github.com/ioBroker/dm-gui-components/blob/main/src/Utils.tsx#L128)
 <br/>
-Possible strings for configuration icons are here: [CONFIGURATION TYPES](https://github.com/ioBroker/dm-utils/blob/b3e54ecfaedd6a239beec59c5deb8117d1d59d7f/src/types/common.ts#L110))
+Possible strings for configuration icons are here: [CONFIGURATION TYPES](https://github.com/ioBroker/dm-utils/blob/b3e54ecfaedd6a239beec59c5deb8117d1d59d7f/src/types/common.ts#L110)
 <br/>
 ### `getInstanceInfo()`
 
@@ -148,13 +148,14 @@ This method allows the device manager tab to gather some general information abo
 
 If you override this method, the returned object must contain:
 
-- `apiVersion` (string): the supported API version; must currently always be `"v1"`
+- `apiVersion` (string): the supported API version; must be `"v1"` or `"v2"` (if "backend to GUI communication" is used or IDs instead of values)
 - `actions` (array, optional): an array of actions that can be performed on the instance; each object contains:
   - `id` (string): unique identifier to recognize an action (never shown to the user)
   - `icon` (string): an icon shown on the button (see below for details)
   - `title` (string): the title shown next to the icon on the button
   - `description` (string, optional): a text that will be shown as a tooltip on the button
   - `disabled` (boolean, optional): if set to `true`, the button can't be clicked but is shown to the user
+- `communicationStateId` (string) (optional): the ID of the state that is used by backend for communication with front-end (only API v2)
 
 ### `getDeviceDetails(id: string)`
 
@@ -308,12 +309,45 @@ This method returns a promise that resolves to a `ProgressDialog` object.
       - `label` (string, optional): change the label to the right of the progress bar
 - `close()`
   - Closes the progress dialog (and allows you to open other dialogs)
+
+### `sendCommandToGui(command: BackendToGuiCommand)`
+
+Sends command to GUI to add/update/delete devices or to update the status of device.
+
+**It is suggested** to use the state's ID directly in DeviceInfo structure instead of sending the command every time to GUI on status update.  
+
+See example below:
+```ts
+class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
+    protected listDevices(): RetVal<DeviceInfo[]>{
+        const deviceInfo: DeviceInfo = {
+          id: 'uniqieID',
+          name: 'My device',
+          icon: 'node', // find possible icons here: https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68
+          manufacturer: { objectId: 'uniqieID', property: 'native.manufacturer' },
+          model: { objectId: 'uniqieID', property: 'native.model' },
+          status: {
+            battery: { stateId: 'uniqieID.DevicePower0.BatteryPercent' },
+            connection: { stateId: 'uniqieID.online', mapping: {'true': 'connected', 'false': 'disconnected'} },
+            rssi: { stateId: 'uniqieID.rssi' },
+          },
+          hasDetails: true,
+        };
+        return [deviceInfo];
+    }
+}
+```
   
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
 ## Changelog
+### **WORK IN PROGRESS**
+* (@GermanBluefox) BREAKING: Admin/GUI must have version 9 (or higher) of `dm-gui-components`
+* (@GermanBluefox) Added types to update status of device directly from state
+* (@GermanBluefox) Added backend to GUI communication possibility
+
 ### 1.0.16 (2026-01-02)
 * (@GermanBluefox) Added `ignoreApplyDisabled` flag
 * (@GermanBluefox) Added `update` icon

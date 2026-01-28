@@ -1,4 +1,6 @@
-import type { ActionContext, ConfigConnectionType, ErrorResponse, MessageContext } from '..';
+import { ActionContext, ConfigConnectionType, ErrorResponse, MessageContext, ValueOrObject, ValueOrState,
+    ValueOrStateOrObject
+} from '..';
 import type { ApiVersion, DeviceRefresh, DeviceStatus, RetVal } from './common';
 
 type ActionType = 'api' | 'adapter';
@@ -169,34 +171,37 @@ export interface DeviceAction<T extends ActionType = 'api'> extends ActionBase<T
 }
 
 export interface InstanceDetails<T extends ActionType = 'api'> {
+    /** API Version: 1 - till 2025 (including), 2 - from 2026 */
     apiVersion: ApiVersion;
     actions?: InstanceAction<T>[];
+    /** ID of state used for communication with GUI */
+    communicationStateId?: string;
 }
 
 export interface DeviceInfo<T extends ActionType = 'api'> {
     /** ID of the action. Should be unique only in one adapter. Other adapters could have same names */
     id: string;
     /** Name of the device. It will be shown in the card header */
-    name: ioBroker.StringOrTranslated;
+    name: ValueOrObject<ioBroker.StringOrTranslated>;
     /** base64 or url icon for device card */
-    icon?: string;
-    manufacturer?: ioBroker.StringOrTranslated;
-    model?: ioBroker.StringOrTranslated;
+    icon?: ValueOrState<string>;
+    manufacturer?: ValueOrStateOrObject<ioBroker.StringOrTranslated>;
+    model?: ValueOrStateOrObject<ioBroker.StringOrTranslated>;
     /** Color or 'primary', 'secondary' for the text in the card header */
-    color?: Color;
+    color?: ValueOrState<Color>;
     /** Background color of card header (you can use primary, secondary or color rgb value or hex) */
-    backgroundColor?: Color;
+    backgroundColor?: ValueOrState<Color>;
     status?: DeviceStatus | DeviceStatus[];
     /** Connection type, how the device is connected */
-    connectionType?: ConfigConnectionType;
+    connectionType?: ValueOrStateOrObject<ConfigConnectionType>;
     /** If this flag is true or false, the according indication will be shown. Additionally, if ACTIONS.ENABLE_DISABLE is implemented, this action will be sent to backend by clicking on this indication */
-    enabled?: boolean;
+    enabled?: ValueOrState<boolean>;
     /** List of actions on the card */
     actions?: DeviceAction<T>[];
     /** List of controls on the card. The difference of controls and actions is that the controls can show status (e.g. on/off) and can work directly with states */
     controls?: DeviceControl<T>[];
     /** If true, the button `more` will be shown on the card and called `dm:deviceDetails` action to get the details  */
-    hasDetails?: boolean;
+    hasDetails?: ValueOrStateOrObject<boolean>;
     /** Device type for grouping */
     group?: {
         // key could be a string, divided by / to define the subgroup
@@ -205,3 +210,38 @@ export interface DeviceInfo<T extends ActionType = 'api'> {
         icon?: string;
     };
 }
+
+export interface BackendToGuiCommandDeviceInfoUpdate {
+    /** Used for updating and for adding new device */
+    command: 'infoUpdate';
+    /** Device ID */
+    deviceId: string;
+    /** Backend can send directly new information about device to avoid extra request from GUI */
+    info?: DeviceInfo;
+}
+
+export interface BackendToGuiCommandDeviceStatusUpdate {
+    /** Status of device was updated */
+    command: 'statusUpdate';
+    /** Device ID */
+    deviceId: string;
+    /** Backend can send directly new status to avoid extra request from GUI */
+    status?: DeviceStatus;
+}
+
+export interface BackendToGuiCommandDeviceDelete {
+    /** Device was deleted */
+    command: 'delete';
+    deviceId: string;
+}
+
+export interface BackendToGuiCommandAllUpdate {
+    /** Read ALL information about all devices anew */
+    command: 'all';
+}
+
+export type BackendToGuiCommand =
+    | BackendToGuiCommandDeviceInfoUpdate
+    | BackendToGuiCommandDeviceStatusUpdate
+    | BackendToGuiCommandDeviceDelete
+    | BackendToGuiCommandAllUpdate;
