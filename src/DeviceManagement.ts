@@ -13,6 +13,7 @@ import {
     type RetVal,
     type ActionButton,
     ErrorCodes,
+    type DeviceStatus,
 } from './types';
 import type * as api from './types/api';
 import type { BackendToGuiCommand, ControlState, DeviceControl } from './types/base';
@@ -63,7 +64,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
 
     protected async sendCommandToGui(command: BackendToGuiCommand): Promise<void> {
         if (this.communicationStateId) {
-            await this.adapter.setStateAsync(this.communicationStateId, JSON.stringify(command), true);
+            await this.adapter.setState(this.communicationStateId, JSON.stringify(command), true);
         } else {
             throw new Error('Communication state not found');
         }
@@ -79,6 +80,14 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     }
 
     protected abstract listDevices(): RetVal<DeviceInfo[]>;
+
+    protected getDeviceInfo(deviceId: string): RetVal<DeviceInfo> {
+        throw new Error('Do not send "infoUpdate" or "delete" command without implementing getDeviceInfo method!');
+    }
+
+    protected getDeviceStatus(deviceId: string): RetVal<DeviceStatus | DeviceStatus[]> {
+        throw new Error('Do not send "statusUpdate" command without implementing getDeviceStatus method!');
+    }
 
     protected getDeviceDetails(id: string): RetVal<DeviceDetails | null | { error: string }> {
         return { id, schema: {} as JsonFormSchema };
@@ -303,12 +312,28 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
                 }));
 
                 this.sendReply<api.DeviceInfo[]>(apiDeviceList, msg);
-                this.adapter.sendTo(msg.from, msg.command, this.devices, msg.callback);
+                return;
+            }
+            case 'dm:deviceInfo': {
+                const deviceInfo = await this.getDeviceInfo(msg.message as string);
+                this.sendReply<api.DeviceInfo>(
+                    {
+                        ...deviceInfo,
+                        actions: this.convertActions(deviceInfo.actions),
+                        controls: this.convertControls(deviceInfo.controls),
+                    },
+                    msg,
+                );
+                return;
+            }
+            case 'dm:deviceStatus': {
+                const deviceStatus = await this.getDeviceStatus(msg.message as string);
+                this.sendReply<DeviceStatus | DeviceStatus[]>(deviceStatus, msg);
                 return;
             }
             case 'dm:deviceDetails': {
                 const details = await this.getDeviceDetails(msg.message as string);
-                this.adapter.sendTo(msg.from, msg.command, details, msg.callback);
+                this.sendReply<DeviceDetails | { error: string }>(details, msg);
                 return;
             }
             case 'dm:instanceAction': {
