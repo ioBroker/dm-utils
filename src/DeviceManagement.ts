@@ -15,7 +15,7 @@ import {
     ErrorCodes,
 } from './types';
 import type * as api from './types/api';
-import { BackendToGuiCommand, ControlState, DeviceControl } from './types/base';
+import type { BackendToGuiCommand, ControlState, DeviceControl } from './types/base';
 
 export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstance> {
     private instanceInfo?: InstanceDetails;
@@ -63,7 +63,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
 
     protected async sendCommandToGui(command: BackendToGuiCommand): Promise<void> {
         if (this.communicationStateId) {
-            this.adapter.setStateAsync(this.communicationStateId, JSON.stringify(command), true);
+            await this.adapter.setStateAsync(this.communicationStateId, JSON.stringify(command), true);
         } else {
             throw new Error('Communication state not found');
         }

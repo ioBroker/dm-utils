@@ -1,5 +1,11 @@
-import { ActionContext, ConfigConnectionType, ErrorResponse, MessageContext, ValueOrObject, ValueOrState,
-    ValueOrStateOrObject
+import type {
+    ActionContext,
+    ConfigConnectionType,
+    ErrorResponse,
+    MessageContext,
+    ValueOrObject,
+    ValueOrState,
+    ValueOrStateOrObject,
 } from '..';
 import type { ApiVersion, DeviceRefresh, DeviceStatus, RetVal } from './common';
 
