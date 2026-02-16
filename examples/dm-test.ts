@@ -5,6 +5,7 @@ import {
     DeviceManagement,
     type JsonFormSchema,
 } from '../src';
+import { type DeviceRefreshResponse } from '../src/types/base';
 
 const demoFormSchema: JsonFormSchema = {
     type: 'tabs',
@@ -80,7 +81,29 @@ const demoFormSchema: JsonFormSchema = {
 
 export class DmTestDeviceManagement extends DeviceManagement {
     protected loadDevices(context: DeviceLoadContext<string>): void {
-        context.addDevice({ id: 'test-123', identifier: 'test-123', name: 'Test 123', status: 'connected' });
+        context.addDevice({
+            id: 'test-123',
+            identifier: 'test-123',
+            name: 'Test 123',
+            status: 'connected',
+            actions: [
+                {
+                    id: 'update',
+                    icon: 'forward',
+                    handler: (deviceId: string): DeviceRefreshResponse<'adapter', string> => {
+                        this.log.info(`Update was pressed on ${deviceId}`);
+                        return {
+                            update: {
+                                id: 'test-123',
+                                identifier: 'test-123 (*)',
+                                name: `Updated name for ${deviceId}`,
+                                status: 'disconnected',
+                            },
+                        };
+                    },
+                },
+            ],
+        });
         context.addDevice({
             id: 'test-345',
             identifier: 'test-345',
@@ -97,20 +120,20 @@ export class DmTestDeviceManagement extends DeviceManagement {
             actions: [
                 {
                     id: 'play',
-                    icon: 'fas fa-play',
+                    icon: 'play',
                     handler: (deviceId: string) => {
                         this.log.info(`Play was pressed on ${deviceId}`);
-                        return { refresh: false };
+                        return { refresh: 'none' };
                     },
                 },
                 {
                     id: 'pause',
-                    icon: 'fa-pause',
+                    icon: 'pause',
                     description: 'Pause device',
                     handler: async (deviceId: string, context: ActionContext) => {
                         this.log.info(`Pause was pressed on ${deviceId}`);
                         const confirm = await context.showConfirmation('Do you want to refresh the device only?');
-                        return { refresh: confirm ? 'device' : 'instance' };
+                        return { refresh: confirm ? 'devices' : 'instance' };
                     },
                 },
                 {
@@ -140,7 +163,7 @@ export class DmTestDeviceManagement extends DeviceManagement {
                         } else {
                             await context.showMessage(`You entered: ${JSON.stringify(data)}`);
                         }
-                        return { refresh: false };
+                        return { refresh: 'none' };
                     },
                 },
             ],

@@ -95,7 +95,7 @@ Example: `this.getState()` -> `this.adapter.getState()`
 | 101  | Instance action ${actionId} was called before getInstanceInfo() was called. This could happen if the instance has restarted. |
 | 102  | Instance action ${actionId} is unknown.                                                                                      |
 | 103  | Instance action ${actionId} is disabled because it has no handler.                                                           |
-| 201  | Device action ${actionId} was called before listDevices() was called. This could happen if the instance has restarted.       |
+| 201  | Device action ${actionId} was called before loadDevices() was called. This could happen if the instance has restarted.       |
 | 202  | Device action ${actionId} was called on unknown device: ${deviceId}.                                                         |
 | 203  | Device action ${actionId} doesn't exist on device ${deviceId}.                                                               |
 | 204  | Device action ${actionId} on ${deviceId} is disabled because it has no handler.                                              |
@@ -118,6 +118,8 @@ This allows you to implement the method synchronously or asynchronously, dependi
 This method must always be overridden (as it is abstract in the base class).
 
 You must fill the `context` with information about all devices of this adapter's instance.
+
+You may call `context.setTotalDevices(count: number)` as soon as possible to let the GUI know how many devices in total will be loaded. This allows the GUI to show the loading progress.
 
 This method is called when the user expands an instance in the list.
 
@@ -223,8 +225,8 @@ These functions are called when the user clicks on a control (i.e., slider) in t
 
 The parameters of this method are:
 
-- `deviceId` (JSON object): the `id` that was given in `listDevices()` --> `[].id`
-- `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`. There are some reserved control names, you can find the list below.
+- `deviceId` (JSON object): the `id` that was given in `loadDevices()` --> `[].id`
+- `controlId` (string): the `id` that was given in `loadDevices()` --> `[].controls[].id`. There are some reserved control names, you can find the list below.
 - `newState` (string | number | boolean): new state for the control, that will be sent to a real device
 - `context` (object): object containing helper methods that can be used when executing the action
 
@@ -238,8 +240,8 @@ These functions are called when GUI requests the update of the state.
 
 The parameters of this method are:
 
-- `deviceId` (JSON object): the `id` that was given in `listDevices()` --> `[].id`
-- `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`
+- `deviceId` (JSON object): the `id` that was given in `loadDevices()` --> `[].id`
+- `controlId` (string): the `id` that was given in `loadDevices()` --> `[].controls[].id`
 - `context` (object): object containing helper methods that can be used when executing the action
 
 The returned object must be an ioBroker state object.
@@ -340,7 +342,7 @@ See example below:
 
 ```ts
 class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
-    protected listDevices(): RetVal<DeviceInfo[]> {
+    protected loadDevices(context: DeviceLoadContext<string>): void {
         const deviceInfo: DeviceInfo = {
             id: 'uniqieID',
             name: 'My device',
@@ -354,23 +356,48 @@ class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
             },
             hasDetails: true,
         };
-        return [deviceInfo];
+        context.addDevice(deviceInfo);
     }
 }
 ```
+
+## Migration from 1.x to 2.x
+
+Between version 1.x and 2.x, there are some breaking changes. Please also have a look at the changelog below for more information.
+
+### Incremental loading of devices
+
+In version 1.x, the `listDevices()` method had to return the full list of devices.
+In version 2.x, this method was replaced by `loadDevices(context: DeviceLoadContext)` that allows incremental loading of devices.
+
+Instead of creating and returning an array of `DeviceInfo` objects, you have to call `context.addDevice(deviceInfo)` for each device you want to add to the list.
+
+You may also call `context.setTotalDevices(count: number)` as soon as possible to let the GUI know how many devices in total will be loaded.
+
+### Refresh response of device actions
+
+In version 2.x, the refresh response of device actions has changed.
+
+| Version 1.x  | Version 2.x  | Description                                                                 |
+| ------------ | ------------ | --------------------------------------------------------------------------- |
+| `true`       | `'all'`      | the instance information as well as the entire device list will be reloaded |
+| `false`      | `'none'`     | nothing will be reloaded                                                    |
+| `'device'`   | `'devices'`  | the entire device list will be reloaded                                     |
+| `'instance'` | `'instance'` | (unchanged) only the instance information will be reloaded                  |
+
+## Changelog
 
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
 
-## Changelog
-
 ### **WORK IN PROGRESS**
 
 - (@UncleSamSwiss) Enabled incremental loading of devices
 - (@UncleSamSwiss) Removed direct access to `DeviceManagement.handleXxx()` methods (use `handler` and similar properties instead)
 - (@UncleSamSwiss) Added `identifier` property to `DeviceInfo` for human-readable identifiers
+- (@UncleSamSwiss) Device refresh responses can no longer be a `boolean` and `'device'` was renamed to `'devices'`.
 
 ### 2.0.2 (2026-01-28)
 

@@ -25,12 +25,6 @@ export type DeviceStatus =
           warning?: ValueOrState<ioBroker.StringOrTranslated | boolean>; // warning text or just boolean true (means warning)
       };
 
-export type DeviceRefresh = 'device' | 'instance' | false | true;
-
-export type RefreshResponse = {
-    refresh: DeviceRefresh;
-};
-
 export type ErrorResponse = {
     error: {
         code: number;

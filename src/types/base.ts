@@ -7,7 +7,7 @@ import type {
     ValueOrState,
     ValueOrStateOrObject,
 } from '..';
-import type { ApiVersion, DeviceId, DeviceStatus, RefreshResponse, RetVal } from './common';
+import type { ApiVersion, DeviceId, DeviceStatus, RetVal } from './common';
 
 type ActionType = 'api' | 'adapter';
 export type Color = 'primary' | 'secondary' | (string & {}); // color (you can use primary, secondary or color rgb value or hex)
@@ -132,17 +132,42 @@ export interface DeviceControl<TType extends ActionType = 'api', TId extends Dev
         : (deviceId: TId, actionId: string, context: MessageContext<TId>) => RetVal<ErrorResponse | ioBroker.State>;
 }
 
+export type InstanceRefreshResponse = {
+    refresh: boolean;
+};
+
 export interface InstanceAction<T extends ActionType = 'api'> extends ActionBase<T> {
     handler?: T extends 'api'
         ? never
-        : (context: ActionContext, options?: Record<string, any>) => RetVal<{ refresh: boolean }>;
+        : (context: ActionContext, options?: Record<string, any>) => RetVal<InstanceRefreshResponse>;
     title: ioBroker.StringOrTranslated;
 }
+
+export type DeviceUpdate<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = {
+    update: DeviceInfo<T, TId>;
+};
+
+export type DeviceDelete<TId extends DeviceId = DeviceId> = {
+    delete: TId;
+};
+
+export type DeviceRefresh = 'all' | 'devices' | 'instance' | 'none';
+
+export type DeviceRefreshResponse<T extends ActionType = 'api', TId extends DeviceId = DeviceId> =
+    | {
+          refresh: DeviceRefresh;
+      }
+    | DeviceUpdate<T, TId>
+    | DeviceDelete<TId>;
 
 export interface DeviceAction<T extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ActionBase<T> {
     handler?: T extends 'api'
         ? never
-        : (deviceId: TId, context: ActionContext, options?: Record<string, any>) => RetVal<RefreshResponse>;
+        : (
+              deviceId: TId,
+              context: ActionContext,
+              options?: Record<string, any>,
+          ) => RetVal<DeviceRefreshResponse<'adapter', TId>>;
 }
 
 export interface InstanceDetails<T extends ActionType = 'api'> {

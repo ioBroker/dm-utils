@@ -13,15 +13,20 @@ import {
     type InstanceDetails,
     type JsonFormData,
     type JsonFormSchema,
-    type RefreshResponse,
     type RetVal,
 } from './types';
 import type * as api from './types/api';
-import type { BackendToGuiCommand, ControlState, DeviceControl } from './types/base';
+import type {
+    BackendToGuiCommand,
+    ControlState,
+    DeviceControl,
+    DeviceRefreshResponse,
+    InstanceRefreshResponse,
+} from './types/base';
 
 export type DeviceLoadContext<TId extends DeviceId> = {
     addDevice(device: DeviceInfo<TId>): void;
-    setTotalDevices(total: number): void;
+    setTotalDevices(count: number): void;
 };
 
 export abstract class DeviceManagement<
@@ -107,7 +112,7 @@ export abstract class DeviceManagement<
         actionId: string,
         context?: ActionContext,
         options?: { value?: number | string | boolean; [key: string]: any },
-    ): RetVal<ErrorResponse> | RetVal<RefreshResponse> {
+    ): RetVal<ErrorResponse> | RetVal<InstanceRefreshResponse> {
         if (!this.instanceInfo) {
             this.log.warn(`Instance action ${actionId} was called before getInstanceInfo()`);
             return {
@@ -144,13 +149,13 @@ export abstract class DeviceManagement<
         actionId: string,
         context?: ActionContext,
         options?: { value?: number | string | boolean; [key: string]: any },
-    ): RetVal<ErrorResponse> | RetVal<RefreshResponse> {
+    ): RetVal<ErrorResponse> | RetVal<DeviceRefreshResponse<'adapter', TId>> {
         if (!this.devices) {
-            this.log.warn(`Device action ${actionId} was called before listDevices()`);
+            this.log.warn(`Device action ${actionId} was called before loadDevices()`);
             return {
                 error: {
                     code: ErrorCodes.E_DEVICE_ACTION_NOT_INITIALIZED,
-                    message: `Device action ${actionId} was called before listDevices()`,
+                    message: `Device action ${actionId} was called before loadDevices()`,
                 },
             };
         }
@@ -196,11 +201,11 @@ export abstract class DeviceManagement<
         context?: MessageContext<TId>,
     ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
-            this.log.warn(`Device control ${controlId} was called before listDevices()`);
+            this.log.warn(`Device control ${controlId} was called before loadDevices()`);
             return {
                 error: {
                     code: ErrorCodes.E_DEVICE_CONTROL_NOT_INITIALIZED,
-                    message: `Device control ${controlId} was called before listDevices()`,
+                    message: `Device control ${controlId} was called before loadDevices()`,
                 },
             };
         }
@@ -246,11 +251,11 @@ export abstract class DeviceManagement<
         context?: MessageContext<TId>,
     ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
-            this.log.warn(`Device get state ${controlId} was called before listDevices()`);
+            this.log.warn(`Device get state ${controlId} was called before loadDevices()`);
             return {
                 error: {
                     code: ErrorCodes.E_DEVICE_GET_STATE_NOT_INITIALIZED,
-                    message: `Device control ${controlId} was called before listDevices()`,
+                    message: `Device control ${controlId} was called before loadDevices()`,
                 },
             };
         }
@@ -364,7 +369,20 @@ export abstract class DeviceManagement<
                     value: action.value,
                 });
                 this.messageContexts.delete(msg._id);
-                context.sendFinalResult(result);
+                if ('update' in result) {
+                    // special handling for update responses (we need to update our cache and convert actions/controls before sending to GUI)
+                    const update = result.update;
+                    this.devices?.set(JSON.stringify(update.id), update);
+                    context.sendFinalResult({
+                        update: {
+                            ...update,
+                            actions: convertActions(update.actions),
+                            controls: convertControls(update.controls),
+                        },
+                    });
+                } else {
+                    context.sendFinalResult(result);
+                }
                 return;
             }
             case 'dm:deviceControl': {
@@ -452,8 +470,8 @@ class DeviceLoadContextImpl<TId extends DeviceId> implements DeviceLoadContext<T
         this.flush();
     }
 
-    setTotalDevices(total: number): void {
-        this.totalDevices = total;
+    setTotalDevices(count: number): void {
+        this.totalDevices = count;
         this.flush();
     }
 
@@ -590,7 +608,7 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
         return promise;
     }
 
-    sendFinalResult(result: ErrorResponse | RefreshResponse): void {
+    sendFinalResult(result: ErrorResponse | DeviceRefreshResponse<'api', TId> | InstanceRefreshResponse): void {
         this.send('result', {
             result,
         });
