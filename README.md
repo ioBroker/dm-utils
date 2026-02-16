@@ -126,6 +126,7 @@ In most cases, you will get all states of your instance and fill the `context` w
 Every item is an object of type `DeviceInfo` which has the following properties:
 
 - `id` (JSON object): a unique identifier of the device (it must be unique for your adapter instance only)
+- `identifier` (optional): a human-readable identifier of the device
 - `name` (string or translations): the human-readable name of this device
 - `status` (optional): the current status of the device, which has to be an object containing:
     - `connection` (string): alowed values are: `"connected"` / `"disconnected"`
@@ -159,7 +160,8 @@ If you override this method, the returned object must contain:
     - `title` (string): the title shown next to the icon on the button
     - `description` (string, optional): a text that will be shown as a tooltip on the button
     - `handler` (function, optional): function that will be called when the user clicks on the button; if not given, the button will be disabled in the UI
-- `communicationStateId` (string) (optional): the ID of the state that is used by backend for communication with front-end (only API v2)
+- `communicationStateId` (string, optional): the ID of the state that is used by backend for communication with front-end
+- `identifierLabel` (string or translations, optional): the human-readable label next to the identifier
 
 ### `getDeviceDetails(id: DeviceId)`
 
@@ -175,9 +177,11 @@ For more details about the schema, see [here](https://github.com/ioBroker/ioBrok
 
 Please keep in mind that there is no "Save" button, so in most cases, the form shouldn't contain editable fields, but you may use `sendTo<xxx>` objects to send data to the adapter.
 
+## `DeviceManagement` handlers
+
 ### InstanceInfo action handlers
 
-These methods are called when the user clicks on an action (i.e., button) for an adapter instance.
+These functions are called when the user clicks on an action (i.e., button) for an adapter instance.
 
 The parameters of this function are:
 
@@ -194,7 +198,7 @@ See below for how to interact with the user.
 
 ### DeviceInfo action handlers
 
-These methods are called when the user clicks on an action (i.e., button) for an adapter instance.
+These functions are called when the user clicks on an action (i.e., button) for an adapter instance.
 
 The parameters of this function are:
 
@@ -366,6 +370,7 @@ class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
 
 - (@UncleSamSwiss) Enabled incremental loading of devices
 - (@UncleSamSwiss) Removed direct access to `DeviceManagement.handleXxx()` methods (use `handler` and similar properties instead)
+- (@UncleSamSwiss) Added `identifier` property to `DeviceInfo` for human-readable identifiers
 
 ### 2.0.2 (2026-01-28)
 

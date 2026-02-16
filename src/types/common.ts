@@ -8,20 +8,19 @@ export interface ComplexDeviceId {
 export type DeviceId = string | number | ComplexDeviceId;
 
 export type ValueOrObject<T> = T | { objectId: string; property: string };
-export type ValueOrState<T, M = { [value: string | number]: string }> = T | { stateId: string; mapping?: M };
+export type ValueOrState<T> = T | { stateId: string; mapping?: Record<string | number, T> };
 export type ValueOrStateOrObject<T> = T | ValueOrObject<T> | ValueOrState<T>;
 
 export type DeviceStatus =
     | 'connected'
     | 'disconnected'
     | {
-          // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-          battery?: ValueOrState<number | boolean | 'charging' | string>; // in percent (0-100), or string 'charging' or value with unit as string,
+          battery?: ValueOrState<number | boolean | 'charging' | (string & {})>; // in percent (0-100), or string 'charging' or value with unit as string,
           // or string '10V',
           // or string '10mV',
           // or string '100' in mV
           // or boolean true (means OK) or false (Battery warning)
-          connection?: ValueOrState<'connected' | 'disconnected', { [value: string]: 'connected' | 'disconnected' }>;
+          connection?: ValueOrState<'connected' | 'disconnected'>;
           rssi?: ValueOrState<number>; // in dBm
           warning?: ValueOrState<ioBroker.StringOrTranslated | boolean>; // warning text or just boolean true (means warning)
       };
@@ -48,8 +47,8 @@ interface ObjectBrowserCustomFilter {
     common?: {
         type?: ioBroker.CommonType | ioBroker.CommonType[];
         role?: string | string[];
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-        custom?: '_' | '_dataSources' | true | string | string[];
+
+        custom?: '_' | '_dataSources' | true | (string & {}) | string[];
     };
 }
 

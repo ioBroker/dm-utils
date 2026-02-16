@@ -151,11 +151,15 @@ export interface InstanceDetails<T extends ActionType = 'api'> {
     actions?: InstanceAction<T>[];
     /** ID of state used for communication with GUI */
     communicationStateId?: string;
+    /** Human-readable label next to the identifier */
+    identifierLabel?: ioBroker.StringOrTranslated;
 }
 
 export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId = DeviceId> {
-    /** ID of the action. Should be unique only in one adapter. Other adapters could have same names */
+    /** ID of the device. Must be be unique only in one adapter. Other adapters could have same IDs */
     id: TId;
+    /** Human readable identifier of the device */
+    identifier?: ValueOrObject<string>;
     /** Name of the device. It will be shown in the card header */
     name: ValueOrObject<ioBroker.StringOrTranslated>;
     /** base64 or url icon for device card */
