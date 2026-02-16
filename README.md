@@ -268,7 +268,7 @@ This asynchronous method returns (or rather: the Promise is resolved) once the u
 - `true` if the user clicked "OK"
 - `false` if the user clicked "Cancel"
 
-### `showForm(schema: JsonFormSchema, options?: { data?: JsonFormData; title?: string })`
+### `showForm(schema: JsonFormSchema, options?: { data?: JsonFormData; title?: string; ignoreApplyDisabled?: boolean })`
 
 Shows a dialog with a Custom JSON form that can be edited by the user.
 
@@ -277,6 +277,7 @@ The method has the following parameters:
 - `options` (object, optional): options to configure the dialog further
   - `data` (object, optional): the data used to populate the Custom JSON form
   - `title` (string, optional): the dialog title
+  - `ignoreApplyDisabled` (boolean, optional): set to `true` to always enable the "OK" button even if the form is unchanged
 
 This asynchronous method returns (or rather: the Promise is resolved) once the user has clicked a button in the dialog:
 - the form data, if the user clicked "OK"
