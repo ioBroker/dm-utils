@@ -79,7 +79,7 @@ const demoFormSchema: JsonFormSchema = {
 };
 
 export class DmTestDeviceManagement extends DeviceManagement {
-    protected loadDevices(context: DeviceLoadContext): void {
+    protected loadDevices(context: DeviceLoadContext<string>): void {
         context.addDevice({ id: 'test-123', name: 'Test 123', status: 'connected' });
         context.addDevice({ id: 'test-345', name: 'Test 345', status: 'disconnected', hasDetails: true, actions: [] });
         context.addDevice({
@@ -138,7 +138,7 @@ export class DmTestDeviceManagement extends DeviceManagement {
         });
     }
 
-    protected override getDeviceDetails(id: string): Promise<DeviceDetails> {
+    protected override getDeviceDetails(id: string): Promise<DeviceDetails<string>> {
         const schema: JsonFormSchema = {
             type: 'panel',
             items: {

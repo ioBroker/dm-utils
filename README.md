@@ -125,7 +125,7 @@ In most cases, you will get all states of your instance and fill the `context` w
 
 Every item is an object of type `DeviceInfo` which has the following properties:
 
-- `id` (string): a unique (human-readable) identifier of the device (it must be unique for your adapter instance only)
+- `id` (JSON object): a unique identifier of the device (it must be unique for your adapter instance only)
 - `name` (string or translations): the human-readable name of this device
 - `status` (optional): the current status of the device, which has to be an object containing:
     - `connection` (string): alowed values are: `"connected"` / `"disconnected"`
@@ -161,13 +161,13 @@ If you override this method, the returned object must contain:
     - `handler` (function, optional): function that will be called when the user clicks on the button; if not given, the button will be disabled in the UI
 - `communicationStateId` (string) (optional): the ID of the state that is used by backend for communication with front-end (only API v2)
 
-### `getDeviceDetails(id: string)`
+### `getDeviceDetails(id: DeviceId)`
 
 This method is called if a device's `hasDetails` is set to `true` and the user clicks on the expander.
 
 The returned object must contain:
 
-- `id` (string): the `id` given as parameter to the method call
+- `id` (JSON object): the `id` given as parameter to the method call
 - `schema` (Custom JSON form schema): the schema of the Custom JSON form to show below the device information
 - `data` (object, optional): the data used to populate the Custom JSON form
 
@@ -198,7 +198,7 @@ These methods are called when the user clicks on an action (i.e., button) for an
 
 The parameters of this function are:
 
-- `deviceId` (string): the `id` of the device
+- `deviceId` (JSON object): the `id` of the device
 - `context` (object): object containing helper methods that can be used when executing the action
 - `options` (object): object containing the action `value` (if given)
 
@@ -219,7 +219,7 @@ These functions are called when the user clicks on a control (i.e., slider) in t
 
 The parameters of this method are:
 
-- `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
+- `deviceId` (JSON object): the `id` that was given in `listDevices()` --> `[].id`
 - `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`. There are some reserved control names, you can find the list below.
 - `newState` (string | number | boolean): new state for the control, that will be sent to a real device
 - `context` (object): object containing helper methods that can be used when executing the action
@@ -234,7 +234,7 @@ These functions are called when GUI requests the update of the state.
 
 The parameters of this method are:
 
-- `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
+- `deviceId` (JSON object): the `id` that was given in `listDevices()` --> `[].id`
 - `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`
 - `context` (object): object containing helper methods that can be used when executing the action
 

@@ -7,7 +7,7 @@ import type {
     ValueOrState,
     ValueOrStateOrObject,
 } from '..';
-import type { ApiVersion, DeviceRefresh, DeviceStatus, RetVal } from './common';
+import type { ApiVersion, DeviceId, DeviceStatus, RefreshResponse, RetVal } from './common';
 
 type ActionType = 'api' | 'adapter';
 export type Color = 'primary' | 'secondary' | (string & {}); // color (you can use primary, secondary or color rgb value or hex)
@@ -118,18 +118,18 @@ export interface ControlBase {
     channel?: ChannelInfo;
 }
 
-export interface DeviceControl<T extends ActionType = 'api'> extends ControlBase {
-    handler?: T extends 'api'
+export interface DeviceControl<TType extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ControlBase {
+    handler?: TType extends 'api'
         ? never
         : (
-              deviceId: string,
+              deviceId: TId,
               actionId: string,
               state: ControlState,
-              context: MessageContext,
+              context: MessageContext<TId>,
           ) => RetVal<ErrorResponse | ioBroker.State>;
-    getStateHandler?: T extends 'api'
+    getStateHandler?: TType extends 'api'
         ? never
-        : (deviceId: string, actionId: string, context: MessageContext) => RetVal<ErrorResponse | ioBroker.State>;
+        : (deviceId: TId, actionId: string, context: MessageContext<TId>) => RetVal<ErrorResponse | ioBroker.State>;
 }
 
 export interface InstanceAction<T extends ActionType = 'api'> extends ActionBase<T> {
@@ -139,14 +139,10 @@ export interface InstanceAction<T extends ActionType = 'api'> extends ActionBase
     title: ioBroker.StringOrTranslated;
 }
 
-export interface DeviceAction<T extends ActionType = 'api'> extends ActionBase<T> {
+export interface DeviceAction<T extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ActionBase<T> {
     handler?: T extends 'api'
         ? never
-        : (
-              deviceId: string,
-              context: ActionContext,
-              options?: Record<string, any>,
-          ) => RetVal<{ refresh: DeviceRefresh }>;
+        : (deviceId: TId, context: ActionContext, options?: Record<string, any>) => RetVal<RefreshResponse>;
 }
 
 export interface InstanceDetails<T extends ActionType = 'api'> {
@@ -157,9 +153,9 @@ export interface InstanceDetails<T extends ActionType = 'api'> {
     communicationStateId?: string;
 }
 
-export interface DeviceInfo<T extends ActionType = 'api'> {
+export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId = DeviceId> {
     /** ID of the action. Should be unique only in one adapter. Other adapters could have same names */
-    id: string;
+    id: TId;
     /** Name of the device. It will be shown in the card header */
     name: ValueOrObject<ioBroker.StringOrTranslated>;
     /** base64 or url icon for device card */
@@ -176,9 +172,9 @@ export interface DeviceInfo<T extends ActionType = 'api'> {
     /** If this flag is true or false, the according indication will be shown. Additionally, if ACTIONS.ENABLE_DISABLE is implemented, this action will be sent to backend by clicking on this indication */
     enabled?: ValueOrState<boolean>;
     /** List of actions on the card */
-    actions?: DeviceAction<T>[];
+    actions?: DeviceAction<T, TId>[];
     /** List of controls on the card. The difference of controls and actions is that the controls can show status (e.g. on/off) and can work directly with states */
-    controls?: DeviceControl<T>[];
+    controls?: DeviceControl<T, TId>[];
     /** If true, the button `more` will be shown on the card and called `dm:deviceDetails` action to get the details  */
     hasDetails?: ValueOrStateOrObject<boolean>;
     /** Device type for grouping */
@@ -190,28 +186,28 @@ export interface DeviceInfo<T extends ActionType = 'api'> {
     };
 }
 
-export interface BackendToGuiCommandDeviceInfoUpdate {
+export interface BackendToGuiCommandDeviceInfoUpdate<TId extends DeviceId = DeviceId> {
     /** Used for updating and for adding new device */
     command: 'infoUpdate';
     /** Device ID */
-    deviceId: string;
+    deviceId: TId;
     /** Backend can send directly new information about device to avoid extra request from GUI */
     info?: DeviceInfo;
 }
 
-export interface BackendToGuiCommandDeviceStatusUpdate {
+export interface BackendToGuiCommandDeviceStatusUpdate<TId extends DeviceId = DeviceId> {
     /** Status of device was updated */
     command: 'statusUpdate';
     /** Device ID */
-    deviceId: string;
+    deviceId: TId;
     /** Backend can send directly new status to avoid extra request from GUI */
     status?: DeviceStatus;
 }
 
-export interface BackendToGuiCommandDeviceDelete {
+export interface BackendToGuiCommandDeviceDelete<TId extends DeviceId = DeviceId> {
     /** Device was deleted */
     command: 'delete';
-    deviceId: string;
+    deviceId: TId;
 }
 
 export interface BackendToGuiCommandAllUpdate {
@@ -219,8 +215,8 @@ export interface BackendToGuiCommandAllUpdate {
     command: 'all';
 }
 
-export type BackendToGuiCommand =
-    | BackendToGuiCommandDeviceInfoUpdate
-    | BackendToGuiCommandDeviceStatusUpdate
-    | BackendToGuiCommandDeviceDelete
+export type BackendToGuiCommand<TId extends DeviceId = DeviceId> =
+    | BackendToGuiCommandDeviceInfoUpdate<TId>
+    | BackendToGuiCommandDeviceStatusUpdate<TId>
+    | BackendToGuiCommandDeviceDelete<TId>
     | BackendToGuiCommandAllUpdate;

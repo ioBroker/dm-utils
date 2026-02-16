@@ -1,6 +1,11 @@
-export type ApiVersion = 'v1' | 'v2';
+export type ApiVersion = 'v2';
 
 export type ConfigConnectionType = 'lan' | 'wifi' | 'bluetooth' | 'thread' | 'z-wave' | 'zigbee' | 'other';
+
+export interface ComplexDeviceId {
+    [key: string | number]: string | number | ComplexDeviceId;
+}
+export type DeviceId = string | number | ComplexDeviceId;
 
 export type ValueOrObject<T> = T | { objectId: string; property: string };
 export type ValueOrState<T, M = { [value: string | number]: string }> = T | { stateId: string; mapping?: M };
@@ -1211,8 +1216,8 @@ export type JsonFormSchema = ConfigItemPanel | ConfigItemTabs;
 
 export type JsonFormData = Record<string, any>;
 
-export interface DeviceDetails {
-    id: string;
+export interface DeviceDetails<TId extends DeviceId = DeviceId> {
+    id: TId;
     schema: JsonFormSchema;
     data?: JsonFormData;
 }
