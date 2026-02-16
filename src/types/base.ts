@@ -28,63 +28,36 @@ export interface ActionBase<T extends ActionType> {
     /**
      * This can either be base64 or the URL to an icon.
      */
-    icon?: // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'edit'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    icon?:
+        | 'edit'
         | 'rename'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'delete'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'refresh'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'newDevice'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'new'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'add'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'discover'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'search'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'unpairDevice'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'pairDevice'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'identify'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'play'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'stop'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'pause'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'forward'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'next'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'rewind'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'previous'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'lamp'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'light'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'backlight'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'dimmer'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'socket'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'settings'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'users'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'group'
-        // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
         | 'user'
-        | string; // base64 or url
+        | (string & {}); // base64 or url
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends 'api' ? boolean : never;
     color?: Color;
