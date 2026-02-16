@@ -41,6 +41,15 @@ async function patchCommonTs() {
     }
     typeLines.splice(0, f);
 
+    while (!typeLines[f].startsWith('export type JsonConfigContext =')) {
+        f++;
+    }
+    if (f >= typeLines.length) {
+        console.error(`Cannot find "export type JsonConfigContext =" in ${TYPES_URL})`);
+        process.exit(2);
+    }
+    typeLines.splice(f);
+
     writeFileSync(COMMON_FILENAME, `${start.join('\n')}\n${typeLines.join('\n')}\n${end.join('\n')}`);
 }
 
