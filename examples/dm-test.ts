@@ -110,7 +110,25 @@ export class DmTestDeviceManagement extends DeviceManagement {
             name: 'Test 345',
             status: 'disconnected',
             hasDetails: true,
-            actions: [],
+            actions: [
+                {
+                    id: 'info',
+                    icon: 'settings',
+                    // instead of handler, url can be provided to open a link when action is clicked
+                    url: 'https://www.iobroker.net',
+                },
+                {
+                    id: 'infoTranslated',
+                    icon: 'info',
+                    // The URL can also be translated, so it can be different for different languages
+                    url: {
+                        en: 'https://www.iobroker.net/#en',
+                        de: 'https://www.iobroker.net/#de',
+                        ru: 'https://www.iobroker.net/#ru',
+                        'zh-cn': 'https://www.iobroker.net/#zh-cn',
+                    },
+                },
+            ],
         });
         context.addDevice({
             id: 'test-789',
@@ -132,7 +150,7 @@ export class DmTestDeviceManagement extends DeviceManagement {
                     description: 'Pause device',
                     handler: async (deviceId: string, context: ActionContext) => {
                         this.log.info(`Pause was pressed on ${deviceId}`);
-                        const confirm = await context.showConfirmation('Do you want to refresh the device only?');
+                        const confirm = await context.showConfirmation('Do you want to refresh the device list only?');
                         return { refresh: confirm ? 'devices' : 'instance' };
                     },
                 },

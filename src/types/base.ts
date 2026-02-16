@@ -57,6 +57,7 @@ export interface ActionBase<T extends ActionType> {
         | 'users'
         | 'group'
         | 'user'
+        | 'info'
         | (string & {}); // base64 or url
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends 'api' ? boolean : never;
@@ -136,12 +137,14 @@ export type InstanceRefreshResponse = {
     refresh: boolean;
 };
 
-export interface InstanceAction<T extends ActionType = 'api'> extends ActionBase<T> {
-    handler?: T extends 'api'
-        ? never
-        : (context: ActionContext, options?: Record<string, any>) => RetVal<InstanceRefreshResponse>;
-    title: ioBroker.StringOrTranslated;
-}
+export type WithHandlerOrUrl<TType extends ActionType, THandler> =
+    | { handler?: TType extends 'api' ? never : THandler }
+    | { url: ioBroker.StringOrTranslated };
+
+export type InstanceAction<T extends ActionType = 'api'> = ActionBase<T> &
+    WithHandlerOrUrl<T, (context: ActionContext, options?: Record<string, any>) => RetVal<InstanceRefreshResponse>> & {
+        title: ioBroker.StringOrTranslated;
+    };
 
 export type DeviceUpdate<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = {
     update: DeviceInfo<T, TId>;
@@ -160,15 +163,15 @@ export type DeviceRefreshResponse<T extends ActionType = 'api', TId extends Devi
     | DeviceUpdate<T, TId>
     | DeviceDelete<TId>;
 
-export interface DeviceAction<T extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ActionBase<T> {
-    handler?: T extends 'api'
-        ? never
-        : (
-              deviceId: TId,
-              context: ActionContext,
-              options?: Record<string, any>,
-          ) => RetVal<DeviceRefreshResponse<'adapter', TId>>;
-}
+export type DeviceAction<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = ActionBase<T> &
+    WithHandlerOrUrl<
+        T,
+        (
+            deviceId: TId,
+            context: ActionContext,
+            options?: Record<string, any>,
+        ) => RetVal<DeviceRefreshResponse<'adapter', TId>>
+    >;
 
 export interface InstanceDetails<T extends ActionType = 'api'> {
     /** API Version: 1 - till 2025 (including), 2 - from 2026 */

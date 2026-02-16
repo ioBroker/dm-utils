@@ -132,7 +132,7 @@ export abstract class DeviceManagement<
                 },
             };
         }
-        if (!action.handler) {
+        if (!('handler' in action) || !action.handler) {
             this.log.warn(`Instance action ${actionId} is disabled because it has no handler`);
             return {
                 error: {
@@ -181,7 +181,7 @@ export abstract class DeviceManagement<
                 },
             };
         }
-        if (!action.handler) {
+        if (!('handler' in action) || !action.handler) {
             this.log.warn(`Device action ${actionId} on ${jsonId} is disabled because it has no handler`);
             return {
                 error: {
@@ -688,7 +688,7 @@ function convertActions<T extends ActionBase, U extends api.ActionBase>(actions?
     });
 
     // remove handler function to send it as JSON
-    return actions.map((a: any) => ({ ...a, handler: undefined, disabled: !a.handler }));
+    return actions.map((a: any) => ({ ...a, handler: undefined, disabled: !a.handler && !a.url }));
 }
 
 function convertControls<T extends DeviceControl<'adapter'>, U extends DeviceControl<'api'>>(

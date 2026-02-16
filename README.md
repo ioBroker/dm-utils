@@ -398,6 +398,7 @@ In version 2.x, the refresh response of device actions has changed.
 - (@UncleSamSwiss) Removed direct access to `DeviceManagement.handleXxx()` methods (use `handler` and similar properties instead)
 - (@UncleSamSwiss) Added `identifier` property to `DeviceInfo` for human-readable identifiers
 - (@UncleSamSwiss) Device refresh responses can no longer be a `boolean` and `'device'` was renamed to `'devices'`.
+- (@UncleSamSwiss) Added `info` icon and possibility for actions to be a link (by providing a `url` property instead of a `handler` function)
 
 ### 2.0.2 (2026-01-28)
 
