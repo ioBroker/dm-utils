@@ -136,7 +136,7 @@ Every item is an object of type `DeviceInfo` which has the following properties:
     - `id` (string): unique identifier to recognize an action (never shown to the user)
     - `icon` (string): an icon shown on the button (see below for details)
     - `description` (string, optional): a text that will be shown as a tooltip on the button
-    - `disabled` (boolean, optional): if set to `true`, the button can't be clicked but is shown to the user
+    - `handler` (function, optional): function that will be called when the user clicks on the button; if not given, the button will be disabled in the UI
 - `hasDetails` (boolean, optional): if set to `true`, the row of the device can be expanded and details are shown below
 
 Possible strings for device icons are here: [TYPE ICONS](https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68)
@@ -158,7 +158,7 @@ If you override this method, the returned object must contain:
     - `icon` (string): an icon shown on the button (see below for details)
     - `title` (string): the title shown next to the icon on the button
     - `description` (string, optional): a text that will be shown as a tooltip on the button
-    - `disabled` (boolean, optional): if set to `true`, the button can't be clicked but is shown to the user
+    - `handler` (function, optional): function that will be called when the user clicks on the button; if not given, the button will be disabled in the UI
 - `communicationStateId` (string) (optional): the ID of the state that is used by backend for communication with front-end (only API v2)
 
 ### `getDeviceDetails(id: string)`
@@ -175,14 +175,14 @@ For more details about the schema, see [here](https://github.com/ioBroker/ioBrok
 
 Please keep in mind that there is no "Save" button, so in most cases, the form shouldn't contain editable fields, but you may use `sendTo<xxx>` objects to send data to the adapter.
 
-### `handleInstanceAction(actionId: string, context: ActionContext)
+### InstanceInfo action handlers
 
-This method is called when to user clicks on an action (i.e., button) for an adapter instance.
+These methods are called when the user clicks on an action (i.e., button) for an adapter instance.
 
-The parameters of this method are:
+The parameters of this function are:
 
-- `actionId` (string): the `id` that was given in `getInstanceInfo()` --> `actions[].id`
 - `context` (object): object containing helper methods that can be used when executing the action
+- `options` (object): object containing the action `value` (if given)
 
 The returned object must contain:
 
@@ -192,15 +192,15 @@ This method can be implemented asynchronously and can take a lot of time to comp
 
 See below for how to interact with the user.
 
-### `handleDeviceAction(deviceId: string, actionId: string, context: ActionContext)
+### DeviceInfo action handlers
 
-This method is called when the user clicks on an action (i.e., button) for a device.
+These methods are called when the user clicks on an action (i.e., button) for an adapter instance.
 
-The parameters of this method are:
+The parameters of this function are:
 
-- `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
-- `actionId` (string): the `id` that was given in `listDevices()` --> `[].actions[].id`
+- `deviceId` (string): the `id` of the device
 - `context` (object): object containing helper methods that can be used when executing the action
+- `options` (object): object containing the action `value` (if given)
 
 The returned object must contain:
 
@@ -213,26 +213,24 @@ This method can be implemented asynchronously and can take a lot of time to comp
 
 See below for how to interact with the user.
 
-### `handleDeviceControl(deviceId: string, controlId: string, state: ControlState, context: MessageContext)
+### DeviceInfo control handlers
 
-This method is called when the user clicks on a control (i.e., slider) in the device card.
+These functions are called when the user clicks on a control (i.e., slider) in the device card.
 
 The parameters of this method are:
 
 - `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
 - `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`. There are some reserved control names, you can find the list below.
-- `state` (string | number | boolean): new state for the control, that will be sent to a real device
+- `newState` (string | number | boolean): new state for the control, that will be sent to a real device
 - `context` (object): object containing helper methods that can be used when executing the action
 
-The returned object must contain:
-
-- `state`: ioBroker state object
+The returned object must be an ioBroker state object.
 
 This method can be implemented asynchronously and can take a lot of time to complete.
 
-### `handleDeviceControlState(deviceId: string, controlId: string, context: MessageContext)
+### DeviceInfo getState handlers
 
-This method is called when GUI requests the update of the state.
+These functions are called when GUI requests the update of the state.
 
 The parameters of this method are:
 
@@ -240,9 +238,7 @@ The parameters of this method are:
 - `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`
 - `context` (object): object containing helper methods that can be used when executing the action
 
-The returned object must contain:
-
-- `state`: ioBroker state object
+The returned object must be an ioBroker state object.
 
 This method can be implemented asynchronously and can take a lot of time to complete.
 
@@ -325,7 +321,7 @@ This method returns a promise that resolves to a `ProgressDialog` object.
         - `update` (object): what to update in the dialog
             - `title` (string, optional): change the dialog title
             - `indeterminate` (boolean, optional): change whether the progress is indeterminate
-            - `value` (number, optional): change the progress value
+            - `value` (number, optional): change the progress value (if set, it must be a value between 0 and 100)
             - `label` (string, optional): change the label to the right of the progress bar
 - `close()`
     - Closes the progress dialog (and allows you to open other dialogs)
@@ -365,6 +361,11 @@ class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
 -->
 
 ## Changelog
+
+### **WORK IN PROGRESS**
+
+- (@UncleSamSwiss) Enabled incremental loading of devices
+- (@UncleSamSwiss) Removed direct access to `DeviceManagement.handleXxx()` methods (use `handler` and similar properties instead)
 
 ### 2.0.2 (2026-01-28)
 

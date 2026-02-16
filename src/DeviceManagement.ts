@@ -99,7 +99,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         return { id, schema: {} as JsonFormSchema };
     }
 
-    protected handleInstanceAction(
+    private handleInstanceAction(
         actionId: string,
         context?: ActionContext,
         options?: { value?: number | string | boolean; [key: string]: any },
@@ -135,7 +135,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         return action.handler(context, options);
     }
 
-    protected handleDeviceAction(
+    private handleDeviceAction(
         deviceId: string,
         actionId: string,
         context?: ActionContext,
@@ -184,7 +184,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         return action.handler(deviceId, context, options);
     }
 
-    protected handleDeviceControl(
+    private handleDeviceControl(
         deviceId: string,
         controlId: string,
         newState: ControlState,
@@ -234,7 +234,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
     }
 
     // request state of control
-    protected handleDeviceControlState(
+    private handleDeviceControlState(
         deviceId: string,
         controlId: string,
         context?: MessageContext,

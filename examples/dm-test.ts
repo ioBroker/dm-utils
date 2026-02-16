@@ -1,11 +1,10 @@
 import {
     type ActionContext,
     type DeviceDetails,
+    type DeviceLoadContext,
     DeviceManagement,
-    type DeviceRefresh,
     type JsonFormSchema,
 } from '../src';
-import type * as base from '../src/types/base';
 
 const demoFormSchema: JsonFormSchema = {
     type: 'tabs',
@@ -84,67 +83,59 @@ export class DmTestDeviceManagement extends DeviceManagement {
         context.addDevice({ id: 'test-123', name: 'Test 123', status: 'connected' });
         context.addDevice({ id: 'test-345', name: 'Test 345', status: 'disconnected', hasDetails: true, actions: [] });
         context.addDevice({
-                id: 'test-789',
-                name: 'Test 789',
-                status: 'connected',
-                actions: [
-                    {
-                        id: 'play',
-                        icon: 'fas fa-play',
+            id: 'test-789',
+            name: 'Test 789',
+            status: 'connected',
+            actions: [
+                {
+                    id: 'play',
+                    icon: 'fas fa-play',
+                    handler: (deviceId: string) => {
+                        this.log.info(`Play was pressed on ${deviceId}`);
+                        return { refresh: false };
                     },
-                    {
-                        id: 'pause',
-                        icon: 'fa-pause',
-                        description: 'Pause device',
+                },
+                {
+                    id: 'pause',
+                    icon: 'fa-pause',
+                    description: 'Pause device',
+                    handler: async (deviceId: string, context: ActionContext) => {
+                        this.log.info(`Pause was pressed on ${deviceId}`);
+                        const confirm = await context.showConfirmation('Do you want to refresh the device only?');
+                        return { refresh: confirm ? 'device' : 'instance' };
                     },
-                    {
-                        id: 'forward',
-                        icon: 'forward',
-                        description: 'Forward',
-                    },
-                ],
+                },
+                {
+                    id: 'forward',
+                    icon: 'forward',
+                    description: 'Forward',
+                },
+            ],
         });
         context.addDevice({
-                id: 'test-ABC',
-                name: 'Test ABC',
-                status: 'connected',
-                actions: [
-                    {
-                        id: 'forms',
-                        icon: 'fab fa-wpforms',
-                        description: 'Show forms flow',
+            id: 'test-ABC',
+            name: 'Test ABC',
+            status: 'connected',
+            actions: [
+                {
+                    id: 'forms',
+                    icon: 'fab fa-wpforms',
+                    description: 'Show forms flow',
+                    handler: async (deviceId: string, context: ActionContext) => {
+                        this.log.info(`Forms was pressed on ${deviceId}`);
+                        const data = await context.showForm(demoFormSchema, {
+                            data: { myPort: 8081, secondPort: 8082 },
+                        });
+                        if (!data) {
+                            await context.showMessage('You cancelled the previous form!');
+                        } else {
+                            await context.showMessage(`You entered: ${JSON.stringify(data)}`);
+                        }
+                        return { refresh: false };
                     },
-                ],
+                },
+            ],
         });
-    }
-
-    protected override async handleDeviceAction(
-        deviceId: string,
-        actionId: string,
-        context: ActionContext,
-    ): Promise<{ refresh: DeviceRefresh }> {
-        switch (actionId) {
-            case 'play':
-                this.log.info(`Play was pressed on ${deviceId}`);
-                return { refresh: false };
-            case 'pause': {
-                this.log.info(`Pause was pressed on ${deviceId}`);
-                const confirm = await context.showConfirmation('Do you want to refresh the device only?');
-                return { refresh: confirm ? 'device' : 'instance' };
-            }
-            case 'forms': {
-                this.log.info(`Forms was pressed on ${deviceId}`);
-                const data = await context.showForm(demoFormSchema, { data: { myPort: 8081, secondPort: 8082 } });
-                if (!data) {
-                    await context.showMessage('You cancelled the previous form!');
-                } else {
-                    await context.showMessage(`You entered: ${JSON.stringify(data)}`);
-                }
-                return { refresh: false };
-            }
-            default:
-                throw new Error(`Unknown action ${actionId}`);
-        }
     }
 
     protected override getDeviceDetails(id: string): Promise<DeviceDetails> {
