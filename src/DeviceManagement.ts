@@ -18,12 +18,18 @@ import {
 import type * as api from './types/api';
 import type { BackendToGuiCommand, ControlState, DeviceControl } from './types/base';
 
+export type DeviceLoadContext = {
+    addDevice(device: DeviceInfo): void;
+    setTotalDevices(total: number): void;
+};
+
 export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstance> {
     private instanceInfo?: InstanceDetails;
     private devices?: Map<string, DeviceInfo>;
     private readonly communicationStateId: string;
 
-    private readonly contexts = new Map<number, MessageContext>();
+    private readonly deviceLoadContexts = new Map<number, DeviceLoadContextImpl>();
+    private readonly messageContexts = new Map<number, MessageContext>();
 
     constructor(
         protected readonly adapter: T,
@@ -79,7 +85,7 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         return { apiVersion: 'v2', communicationStateId: this.communicationStateId || undefined };
     }
 
-    protected abstract listDevices(): RetVal<DeviceInfo[]>;
+    protected abstract loadDevices(context: DeviceLoadContext): RetVal<void>;
 
     protected getDeviceInfo(_deviceId: string): RetVal<DeviceInfo> {
         throw new Error('Do not send "infoUpdate" or "delete" command without implementing getDeviceInfo method!');
@@ -289,29 +295,26 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
             case 'dm:instanceInfo': {
                 this.instanceInfo = await this.getInstanceInfo();
                 this.sendReply<api.InstanceDetails>(
-                    { ...this.instanceInfo, actions: this.convertActions(this.instanceInfo.actions) },
+                    { ...this.instanceInfo, actions: convertActions(this.instanceInfo.actions) },
                     msg,
                 );
                 return;
             }
-            case 'dm:listDevices': {
-                const deviceList = await this.listDevices();
+            case 'dm:loadDevices': {
+                const context = new DeviceLoadContextImpl(msg, this.adapter);
+                this.deviceLoadContexts.set(msg._id, context);
+                await this.loadDevices(context);
+                if (context.complete()) {
+                    this.deviceLoadContexts.delete(msg._id);
+                }
 
-                this.devices = deviceList.reduce((map, value) => {
+                this.devices = context.devices.reduce((map, value) => {
                     if (map.has(value.id)) {
                         throw new Error(`Device ID ${value.id} is not unique`);
                     }
                     map.set(value.id, value);
                     return map;
                 }, new Map<string, DeviceInfo>());
-
-                const apiDeviceList: api.DeviceInfo[] = deviceList.map(d => ({
-                    ...d,
-                    actions: this.convertActions(d.actions),
-                    controls: this.convertControls(d.controls),
-                }));
-
-                this.sendReply<api.DeviceInfo[]>(apiDeviceList, msg);
                 return;
             }
             case 'dm:deviceInfo': {
@@ -319,8 +322,8 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
                 this.sendReply<api.DeviceInfo>(
                     {
                         ...deviceInfo,
-                        actions: this.convertActions(deviceInfo.actions),
-                        controls: this.convertControls(deviceInfo.controls),
+                        actions: convertActions(deviceInfo.actions),
+                        controls: convertControls(deviceInfo.controls),
                     },
                     msg,
                 );
@@ -339,34 +342,34 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
             case 'dm:instanceAction': {
                 const action = msg.message as { actionId: string; value: number | string | boolean };
                 const context = new MessageContext(msg, this.adapter);
-                this.contexts.set(msg._id, context);
+                this.messageContexts.set(msg._id, context);
                 const result = await this.handleInstanceAction(action.actionId, context, { value: action.value });
-                this.contexts.delete(msg._id);
+                this.messageContexts.delete(msg._id);
                 context.sendFinalResult(result);
                 return;
             }
             case 'dm:deviceAction': {
                 const action = msg.message as { actionId: string; deviceId: string; value: number | string | boolean };
                 const context = new MessageContext(msg, this.adapter);
-                this.contexts.set(msg._id, context);
+                this.messageContexts.set(msg._id, context);
                 const result = await this.handleDeviceAction(action.deviceId, action.actionId, context, {
                     value: action.value,
                 });
-                this.contexts.delete(msg._id);
+                this.messageContexts.delete(msg._id);
                 context.sendFinalResult(result);
                 return;
             }
             case 'dm:deviceControl': {
                 const control = msg.message as { deviceId: string; controlId: string; state: ControlState };
                 const context = new MessageContext(msg, this.adapter);
-                this.contexts.set(msg._id, context);
+                this.messageContexts.set(msg._id, context);
                 const result = await this.handleDeviceControl(
                     control.deviceId,
                     control.controlId,
                     control.state,
                     context,
                 );
-                this.contexts.delete(msg._id);
+                this.messageContexts.delete(msg._id);
                 context.sendControlResult(control.deviceId, control.controlId, result);
                 return;
             }
@@ -374,15 +377,29 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
             case 'dm:deviceControlState': {
                 const control = msg.message as { deviceId: string; controlId: string };
                 const context = new MessageContext(msg, this.adapter);
-                this.contexts.set(msg._id, context);
+                this.messageContexts.set(msg._id, context);
                 const result = await this.handleDeviceControlState(control.deviceId, control.controlId, context);
-                this.contexts.delete(msg._id);
+                this.messageContexts.delete(msg._id);
                 context.sendControlResult(control.deviceId, control.controlId, result);
+                return;
+            }
+            case 'dm:deviceLoadProgress': {
+                const { origin } = msg.message as { origin: number };
+                const context = this.deviceLoadContexts.get(origin);
+                if (!context) {
+                    this.log.warn(`Unknown message origin: ${origin}`);
+                    this.sendReply({ error: 'Unknown load progress origin' }, msg);
+                    return;
+                }
+
+                if (context.handleProgress(msg)) {
+                    this.deviceLoadContexts.delete(origin);
+                }
                 return;
             }
             case 'dm:actionProgress': {
                 const { origin } = msg.message as { origin: number };
-                const context = this.contexts.get(origin);
+                const context = this.messageContexts.get(origin);
                 if (!context) {
                     this.log.warn(`Unknown message origin: ${origin}`);
                     this.sendReply({ error: 'Unknown action origin' }, msg);
@@ -395,48 +412,73 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
         }
     }
 
-    private convertActions<T extends ActionBase, U extends api.ActionBase>(actions?: T[]): undefined | U[] {
-        if (!actions) {
-            return undefined;
-        }
-
-        // detect duplicate IDs
-        const ids = new Set<string>();
-
-        actions.forEach(a => {
-            if (ids.has(a.id)) {
-                throw new Error(`Action ID ${a.id} is used twice, this would lead to unexpected behavior`);
-            }
-            ids.add(a.id);
-        });
-
-        // remove handler function to send it as JSON
-        return actions.map((a: any) => ({ ...a, handler: undefined, disabled: !a.handler }));
-    }
-
-    private convertControls<T extends DeviceControl<'adapter'>, U extends DeviceControl<'api'>>(
-        controls?: T[],
-    ): undefined | U[] {
-        if (!controls) {
-            return undefined;
-        }
-
-        // detect duplicate IDs
-        const ids = new Set<string>();
-
-        controls.forEach(a => {
-            if (ids.has(a.id)) {
-                throw new Error(`Control ID ${a.id} is used twice, this would lead to unexpected behavior`);
-            }
-            ids.add(a.id);
-        });
-
-        // remove handler function to send it as JSON
-        return controls.map((a: any) => ({ ...a, handler: undefined, getStateHandler: undefined }));
-    }
-
     private sendReply<T>(reply: T, msg: ioBroker.Message): void {
         this.adapter.sendTo(msg.from, msg.command, reply, msg.callback);
+    }
+}
+
+class DeviceLoadContextImpl implements DeviceLoadContext {
+    private readonly minBatchSize = 8;
+    public readonly devices: DeviceInfo[] = [];
+    private readonly id: number;
+    private sendNext: api.DeviceInfo[] = [];
+    private totalDevices?: number;
+    private completed = false;
+    private respondTo?: ioBroker.Message;
+
+    constructor(
+        msg: ioBroker.Message,
+        private readonly adapter: AdapterInstance,
+    ) {
+        this.respondTo = msg;
+        this.id = msg._id;
+    }
+
+    addDevice(device: DeviceInfo): void {
+        this.devices.push(device);
+        this.sendNext.push({
+            ...device,
+            actions: convertActions(device.actions),
+            controls: convertControls(device.controls),
+        });
+        this.flush();
+    }
+
+    setTotalDevices(total: number): void {
+        this.totalDevices = total;
+        this.flush();
+    }
+
+    complete(): boolean {
+        this.completed = true;
+        return this.flush();
+    }
+
+    handleProgress(message: ioBroker.Message): boolean {
+        this.respondTo = message;
+        return this.flush();
+    }
+
+    private flush(): boolean {
+        if (this.sendNext.length <= this.minBatchSize && !this.completed) {
+            return false;
+        }
+
+        if (!this.respondTo) {
+            return false;
+        }
+
+        const reply: api.DeviceLoadIncrement = {
+            add: this.sendNext,
+            total: this.totalDevices,
+            next: this.completed ? undefined : { origin: this.id },
+        };
+        this.sendNext = [];
+
+        const msg = this.respondTo;
+        this.respondTo = undefined;
+        this.adapter.sendTo(msg.from, msg.command, reply, msg.callback);
+        return this.completed;
     }
 }
 
@@ -602,4 +644,44 @@ export class MessageContext implements ActionContext {
             this.lastMessage = undefined;
         }
     }
+}
+
+function convertActions<T extends ActionBase, U extends api.ActionBase>(actions?: T[]): undefined | U[] {
+    if (!actions) {
+        return undefined;
+    }
+
+    // detect duplicate IDs
+    const ids = new Set<string>();
+
+    actions.forEach(a => {
+        if (ids.has(a.id)) {
+            throw new Error(`Action ID ${a.id} is used twice, this would lead to unexpected behavior`);
+        }
+        ids.add(a.id);
+    });
+
+    // remove handler function to send it as JSON
+    return actions.map((a: any) => ({ ...a, handler: undefined, disabled: !a.handler }));
+}
+
+function convertControls<T extends DeviceControl<'adapter'>, U extends DeviceControl<'api'>>(
+    controls?: T[],
+): undefined | U[] {
+    if (!controls) {
+        return undefined;
+    }
+
+    // detect duplicate IDs
+    const ids = new Set<string>();
+
+    controls.forEach(a => {
+        if (ids.has(a.id)) {
+            throw new Error(`Control ID ${a.id} is used twice, this would lead to unexpected behavior`);
+        }
+        ids.add(a.id);
+    });
+
+    // remove handler function to send it as JSON
+    return controls.map((a: any) => ({ ...a, handler: undefined, getStateHandler: undefined }));
 }

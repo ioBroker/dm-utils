@@ -6,3 +6,9 @@ export type DeviceAction = base.DeviceAction<'api'>;
 export type InstanceDetails = base.InstanceDetails<'api'>;
 export type DeviceInfo = base.DeviceInfo<'api'>;
 export type DeviceControl = base.DeviceControl<'api'>;
+
+export type DeviceLoadIncrement = {
+    add: DeviceInfo[];
+    total?: number;
+    next?: { origin: number };
+};

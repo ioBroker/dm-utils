@@ -113,17 +113,17 @@ All methods can either return an object of the defined value or a `Promise` reso
 
 This allows you to implement the method synchronously or asynchronously, depending on your implementation.
 
-### `listDevices()`
+### `loadDevices(context: DeviceLoadContext)`
 
 This method must always be overridden (as it is abstract in the base class).
 
-You must return an array with information about all devices of this adapter's instance.
+You must fill the `context` with information about all devices of this adapter's instance.
 
 This method is called when the user expands an instance in the list.
 
-In most cases, you will get all states of your instance and fill the array with the relevant information.
+In most cases, you will get all states of your instance and fill the `context` with the relevant information.
 
-Every array entry is an object of type `DeviceInfo` which has the following properties:
+Every item is an object of type `DeviceInfo` which has the following properties:
 
 - `id` (string): a unique (human-readable) identifier of the device (it must be unique for your adapter instance only)
 - `name` (string or translations): the human-readable name of this device

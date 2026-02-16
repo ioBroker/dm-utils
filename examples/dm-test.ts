@@ -80,11 +80,10 @@ const demoFormSchema: JsonFormSchema = {
 };
 
 export class DmTestDeviceManagement extends DeviceManagement {
-    protected listDevices(): Promise<base.DeviceInfo<'adapter'>[]> {
-        return Promise.resolve([
-            { id: 'test-123', name: 'Test 123', status: 'connected' },
-            { id: 'test-345', name: 'Test 345', status: 'disconnected', hasDetails: true, actions: [] },
-            {
+    protected loadDevices(context: DeviceLoadContext): void {
+        context.addDevice({ id: 'test-123', name: 'Test 123', status: 'connected' });
+        context.addDevice({ id: 'test-345', name: 'Test 345', status: 'disconnected', hasDetails: true, actions: [] });
+        context.addDevice({
                 id: 'test-789',
                 name: 'Test 789',
                 status: 'connected',
@@ -104,8 +103,8 @@ export class DmTestDeviceManagement extends DeviceManagement {
                         description: 'Forward',
                     },
                 ],
-            },
-            {
+        });
+        context.addDevice({
                 id: 'test-ABC',
                 name: 'Test ABC',
                 status: 'connected',
@@ -116,8 +115,7 @@ export class DmTestDeviceManagement extends DeviceManagement {
                         description: 'Show forms flow',
                     },
                 ],
-            },
-        ]);
+        });
     }
 
     protected override async handleDeviceAction(
