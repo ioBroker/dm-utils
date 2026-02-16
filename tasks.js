@@ -1,13 +1,11 @@
 const { readFileSync, writeFileSync } = require('node:fs');
 const axios = require('axios');
 const COMMON_FILENAME = `${__dirname}/src/types/common.ts`;
-const TYPES_URL = 'https://raw.githubusercontent.com/ioBroker/ioBroker.admin/master/packages/jsonConfig/src/types.d.ts';
+const TYPES_URL = 'https://raw.githubusercontent.com/ioBroker/json-config/main/src/types.d.ts';
 
 async function patchCommonTs() {
     let text = readFileSync(COMMON_FILENAME).toString();
-    const response = await axios.get(
-        'https://raw.githubusercontent.com/ioBroker/ioBroker.admin/master/packages/jsonConfig/src/types.d.ts',
-    );
+    const response = await axios.get(TYPES_URL);
     const typeLines = response.data.toString().split('\n');
 
     const lines = text.split('\n');
