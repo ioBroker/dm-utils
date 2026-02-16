@@ -2,18 +2,18 @@ import type { AdapterInstance } from '@iobroker/adapter-core';
 import type { ActionContext } from './ActionContext';
 import type { ProgressDialog } from './ProgressDialog';
 import {
+    ErrorCodes,
     type ActionBase,
+    type ActionButton,
     type DeviceDetails,
     type DeviceInfo,
+    type DeviceStatus,
     type ErrorResponse,
     type InstanceDetails,
     type JsonFormData,
     type JsonFormSchema,
     type RefreshResponse,
     type RetVal,
-    type ActionButton,
-    ErrorCodes,
-    type DeviceStatus,
 } from './types';
 import type * as api from './types/api';
 import type { BackendToGuiCommand, ControlState, DeviceControl } from './types/base';
@@ -81,11 +81,11 @@ export abstract class DeviceManagement<T extends AdapterInstance = AdapterInstan
 
     protected abstract listDevices(): RetVal<DeviceInfo[]>;
 
-    protected getDeviceInfo(deviceId: string): RetVal<DeviceInfo> {
+    protected getDeviceInfo(_deviceId: string): RetVal<DeviceInfo> {
         throw new Error('Do not send "infoUpdate" or "delete" command without implementing getDeviceInfo method!');
     }
 
-    protected getDeviceStatus(deviceId: string): RetVal<DeviceStatus | DeviceStatus[]> {
+    protected getDeviceStatus(_deviceId: string): RetVal<DeviceStatus | DeviceStatus[]> {
         throw new Error('Do not send "statusUpdate" command without implementing getDeviceStatus method!');
     }
 
