@@ -6,7 +6,7 @@ Utility classes for ioBroker adapters to support [ioBroker.device-manager](https
 
 Add in your `io-package.json` the property `deviceManager: true` to `common.supportedMessages`.
 Note: If you don't have a `common.supportedMessages` property yet, you have to add it.
-Also, if you have a `common.messagebox` property for the adapter specific messages, you can remove it and add `common.supportedMessages.custom: true`. (see
+Also, if you have a `common.messagebox` property for the adapter-specific messages, you can remove it and add `common.supportedMessages.custom: true`. (see
 https://github.com/ioBroker/ioBroker.js-controller/blob/274f9e8f84dbdaaba9830a6cc00ddf083e989090/schemas/io-package.json#L754C104-L754C178)
 
 In your ioBroker adapter, add a subclass of `DeviceManagement` and override the methods you need (see next chapters):
@@ -62,7 +62,7 @@ the `DeviceManagement` implementation's `handleXxxAction()` is called, and the a
 
 ### Controls
 
-The device manager tab allows the user to control devices too. If devices are controllable, the device manager tab shows a control elements in the device card.
+The device manager tab allows the user to control devices too. If devices are controllable, the device manager tab shows the control elements in the device card.
 
 When the user clicks on a control (i.e., a button in the UI),
 the `DeviceManagement` implementation's `handleXxxAction()` is called, and the adapter can perform arbitrary actions
@@ -74,7 +74,7 @@ The communication between the `ioBroker.device-manager` tab and the adapter happ
 
 **IMPORTANT:** make sure your adapter doesn't handle `sendTo` messages starting with `dm:`, otherwise the communication will not work.
 
-- Use for Example this on the top of your onMessage Methode:
+- Use, for example, this on the top of your onMessage Methode:
 
 ```js
 if (obj.command?.startsWith('dm:')) {
@@ -133,7 +133,7 @@ Every item is an object of type `DeviceInfo` which has the following properties:
 - `status` (optional): the current status of the device, which has to be an object containing:
     - `connection` (string): alowed values are: `"connected"` / `"disconnected"`
     - `rssi` (number): rssi value of the connection
-    - `battery` (boolean / number): if boolean: false: Battery empty. If number: battery level of the device (shows also a battery symbol at card)
+    - `battery` (boolean / number): if boolean: false - the battery is empty. If number: the battery level of the device (shows also a battery symbol on the card)
     - `warning` (boolean / string): if boolean: true indicates a warning. If a string: shows also the warning with mouseover
 - `actions` (array, optional): an array of actions that can be performed on the device; each object contains:
     - `id` (string): unique identifier to recognize an action (never shown to the user)
@@ -313,7 +313,7 @@ The method has the following parameters:
 - `options` (object, optional): options to configure the dialog further
     - `indeterminate` (boolean, optional): set to `true` to visualize an unspecified wait time
     - `value` (number, optional): the progress value to show to the user (if set, it must be a value between 0 and 100)
-    - `label` (string, optional): label to show to the right of the progress bar; you may show the progress value in a human-readable way (e.g. "42%") or show the current step in a multi-step progress (e.g. "Logging in...")
+    - `label` (string, optional): the label to show to the right of the progress bar; you may show the progress value in a human-readable way (e.g. "42%") or show the current step in multi-step progress (e.g. "Logging in...")
 
 This method returns a promise that resolves to a `ProgressDialog` object.
 
@@ -334,11 +334,11 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 
 ### `sendCommandToGui(command: BackendToGuiCommand)`
 
-Sends command to GUI to add/update/delete devices or to update the status of device.
+Sends command to GUI to add/update/delete devices or to update the status of a device.
 
-**It is suggested** to use the state's ID directly in DeviceInfo structure instead of sending the command every time to GUI on status update.
+**It is suggested** to use the state's ID directly in the DeviceInfo structure instead of sending the command every time to GUI on status update.
 
-See example below:
+See the example below:
 
 ```ts
 class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
@@ -363,7 +363,7 @@ class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
 
 ## Migration from 1.x to 2.x
 
-Between version 1.x and 2.x, there are some breaking changes. Please also have a look at the changelog below for more information.
+Between versions 1.x and 2.x, there are some breaking changes. Please also have a look at the changelog below for more information.
 
 ### Incremental loading of devices
 
@@ -403,7 +403,7 @@ In version 2.x, the refresh response of device actions has changed.
 ### 2.0.2 (2026-01-28)
 
 - (@GermanBluefox) BREAKING: Admin/GUI must have version 9 (or higher) of `dm-gui-components`
-- (@GermanBluefox) Added types to update status of device directly from state
+- (@GermanBluefox) Added types to update the status of a device directly from the state
 - (@GermanBluefox) Added backend to GUI communication possibility
 - (@GermanBluefox) Added `dm:deviceInfo` command
 - (@GermanBluefox) Added `dm:deviceStatus` command
@@ -441,7 +441,7 @@ In version 2.x, the refresh response of device actions has changed.
 ### 1.0.0 (2025-01-08)
 
 - (@GermanBluefox) Added `disabled` options for a device
-- (@GermanBluefox) Major release just because is good enough. No breaking changes.
+- (@GermanBluefox) Major release just because it is good enough. No breaking changes.
 
 ### 0.6.11 (2024-12-11)
 
