@@ -134,7 +134,7 @@ Every item is an object of type `DeviceInfo` which has the following properties:
     - `connection` (string): alowed values are: `"connected"` / `"disconnected"`
     - `rssi` (number): rssi value of the connection
     - `battery` (boolean / number): if boolean: false: Battery empty. If number: battery level of the device (shows also a battery symbol at card)
-    - `warning` (boolean / string): if boolean: true indicates a warning. If string: shows also the warning with mouseover
+    - `warning` (boolean / string): if boolean: true indicates a warning. If a string: shows also the warning with mouseover
 - `actions` (array, optional): an array of actions that can be performed on the device; each object contains:
     - `id` (string): unique identifier to recognize an action (never shown to the user)
     - `icon` (string): an icon shown on the button (see below for details)
