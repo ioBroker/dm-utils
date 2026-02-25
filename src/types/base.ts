@@ -184,9 +184,9 @@ export interface InstanceDetails<T extends ActionType = 'api'> {
 }
 
 export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId = DeviceId> {
-    /** ID of the device. Must be be unique only in one adapter. Other adapters could have same IDs */
+    /** ID of the device. Must be unique only in one adapter. Other adapters could have same IDs */
     id: TId;
-    /** Human readable identifier of the device */
+    /** Human-readable identifier of the device */
     identifier?: ValueOrObject<string>;
     /** Name of the device. It will be shown in the card header */
     name: ValueOrObject<ioBroker.StringOrTranslated>;
