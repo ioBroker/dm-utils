@@ -95,7 +95,7 @@ export abstract class DeviceManagement<
 
     protected getInstanceInfo(): RetVal<InstanceDetails> {
         // Overload this method if your adapter does not use BackendToGui communication and States/Objects in DeviceInfo
-        return { apiVersion: 'v2', communicationStateId: this.communicationStateId || undefined };
+        return { apiVersion: 'v3', communicationStateId: this.communicationStateId || undefined };
     }
 
     protected abstract loadDevices(context: DeviceLoadContext<TId>): RetVal<void>;

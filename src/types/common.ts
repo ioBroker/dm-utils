@@ -1,4 +1,4 @@
-export type ApiVersion = 'v2';
+export type ApiVersion = 'v3';
 
 export type ConfigConnectionType = 'lan' | 'wifi' | 'bluetooth' | 'thread' | 'z-wave' | 'zigbee' | 'other';
 

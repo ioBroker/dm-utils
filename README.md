@@ -155,7 +155,7 @@ This method allows the device manager tab to gather some general information abo
 
 If you override this method, the returned object must contain:
 
-- `apiVersion` (string): the supported API version; must be `"v1"` or `"v2"` (if "backend to GUI communication" is used or IDs instead of values)
+- `apiVersion` (string): the supported API version; must be `"v3"`
 - `actions` (array, optional): an array of actions that can be performed on the instance; each object contains:
     - `id` (string): unique identifier to recognize an action (never shown to the user)
     - `icon` (string): an icon shown on the button (see below for details)
