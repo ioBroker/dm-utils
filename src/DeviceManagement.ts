@@ -23,11 +23,15 @@ import type {
     DeviceRefreshResponse,
     InstanceRefreshResponse,
 } from './types/base';
+import type { ProgressOptions, ProgressUpdate } from './types/common';
 
 export type DeviceLoadContext<TId extends DeviceId> = {
     addDevice(device: DeviceInfo<TId>): void;
     setTotalDevices(count: number): void;
 };
+
+// Based on https://tkdodo.eu/blog/omit-for-discriminated-unions-in-type-script
+type DistributiveOmit<T, K extends keyof T> = T extends any ? Omit<T, K> : never;
 
 export abstract class DeviceManagement<
     TAdapter extends AdapterInstance = AdapterInstance,
@@ -525,9 +529,7 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
         const promise = new Promise<void>(resolve => {
             this.progressHandler = () => resolve();
         });
-        this.send('message', {
-            message: text,
-        });
+        this.send({ type: 'message', message: text });
         return promise;
     }
 
@@ -536,9 +538,7 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
         const promise = new Promise<boolean>(resolve => {
             this.progressHandler = msg => resolve(!!msg.confirm);
         });
-        this.send('confirm', {
-            confirm: text,
-        });
+        this.send({ type: 'confirm', confirm: text });
         return promise;
     }
 
@@ -554,30 +554,22 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
         const promise = new Promise<JsonFormData | undefined>(resolve => {
             this.progressHandler = msg => resolve(msg.data);
         });
-        this.send('form', {
+        this.send({
+            type: 'form',
             form: { schema, ...options },
         });
         return promise;
     }
 
-    openProgress(
-        title: string,
-        options?: { indeterminate?: boolean; value?: number; label?: string },
-    ): Promise<ProgressDialog> {
+    openProgress(title: ioBroker.StringOrTranslated, options?: ProgressOptions): Promise<ProgressDialog> {
         this.checkPreconditions();
         this.hasOpenProgressDialog = true;
         const dialog: ProgressDialog = {
-            update: (update: { title?: string; indeterminate?: boolean; value?: number; label?: string }) => {
+            update: (update: ProgressUpdate) => {
                 const promise = new Promise<void>(resolve => {
                     this.progressHandler = () => resolve();
                 });
-                this.send(
-                    'progress',
-                    {
-                        progress: { title, ...options, ...update, open: true },
-                    },
-                    true,
-                );
+                this.send({ type: 'progress', progress: update }, true);
                 return promise;
             },
 
@@ -588,9 +580,7 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
                         resolve();
                     };
                 });
-                this.send('progress', {
-                    progress: { open: false },
-                });
+                this.send({ type: 'progress', progress: { open: false } });
                 return promise;
             },
         };
@@ -598,25 +588,18 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
         const promise = new Promise<ProgressDialog>(resolve => {
             this.progressHandler = () => resolve(dialog);
         });
-        this.send(
-            'progress',
-            {
-                progress: { title, ...options, open: true },
-            },
-            true,
-        );
+        this.send({ type: 'progress', progress: { title, ...options, open: true } }, true);
         return promise;
     }
 
     sendFinalResult(result: ErrorResponse | DeviceRefreshResponse<'api', TId> | InstanceRefreshResponse): void {
-        this.send('result', {
-            result,
-        });
+        this.send({ type: 'result', result });
     }
 
     sendControlResult(deviceId: TId, controlId: string, result: ErrorResponse | ioBroker.State): void {
         if (typeof result === 'object' && 'error' in result) {
-            this.send('result', {
+            this.send({
+                type: 'result',
                 result: {
                     error: result.error,
                     deviceId,
@@ -624,7 +607,8 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
                 },
             });
         } else {
-            this.send('result', {
+            this.send({
+                type: 'result',
                 result: {
                     state: result,
                     deviceId,
@@ -651,7 +635,10 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
         }
     }
 
-    private send(type: string, message: any, doNotClose?: boolean): void {
+    private send(
+        message: DistributiveOmit<api.DmActionResponse | api.DmControlResponse, 'origin'>,
+        doNotClose?: boolean,
+    ): void {
         if (!this.lastMessage) {
             throw new Error("No outstanding message, can't send a new one");
         }
@@ -660,7 +647,6 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
             this.lastMessage.command,
             {
                 ...message,
-                type,
                 origin: this.lastMessage.message.origin || this.lastMessage._id,
             },
             this.lastMessage.callback,

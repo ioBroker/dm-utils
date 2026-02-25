@@ -1,10 +1,7 @@
+import type { ProgressUpdate } from './types/common';
+
 export interface ProgressDialog {
-    update(update: {
-        title?: ioBroker.StringOrTranslated;
-        indeterminate?: boolean;
-        value?: number;
-        label?: ioBroker.StringOrTranslated;
-    }): Promise<void>;
+    update(update: ProgressUpdate): Promise<void>;
 
     close(): Promise<void>;
 }

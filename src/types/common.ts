@@ -34,6 +34,16 @@ export type ErrorResponse = {
 
 export type RetVal<T> = T | Promise<T>;
 
+export interface ProgressOptions {
+    indeterminate?: boolean;
+    value?: number;
+    label?: ioBroker.StringOrTranslated;
+}
+
+export interface ProgressUpdate extends ProgressOptions {
+    title?: ioBroker.StringOrTranslated;
+}
+
 type CustomCSSProperties = Record<string, any>;
 
 interface ObjectBrowserCustomFilter {
