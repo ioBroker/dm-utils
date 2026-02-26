@@ -1,0 +1,21 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ErrorCodes = void 0;
+var ErrorCodes;
+(function (ErrorCodes) {
+    ErrorCodes[ErrorCodes["E_INSTANCE_ACTION_NOT_INITIALIZED"] = 101] = "E_INSTANCE_ACTION_NOT_INITIALIZED";
+    ErrorCodes[ErrorCodes["E_INSTANCE_ACTION_UNKNOWN"] = 102] = "E_INSTANCE_ACTION_UNKNOWN";
+    ErrorCodes[ErrorCodes["E_INSTANCE_ACTION_NO_HANDLER"] = 103] = "E_INSTANCE_ACTION_NO_HANDLER";
+    ErrorCodes[ErrorCodes["E_DEVICE_ACTION_NOT_INITIALIZED"] = 201] = "E_DEVICE_ACTION_NOT_INITIALIZED";
+    ErrorCodes[ErrorCodes["E_DEVICE_ACTION_DEVICE_UNKNOWN"] = 202] = "E_DEVICE_ACTION_DEVICE_UNKNOWN";
+    ErrorCodes[ErrorCodes["E_DEVICE_ACTION_UNKNOWN"] = 203] = "E_DEVICE_ACTION_UNKNOWN";
+    ErrorCodes[ErrorCodes["E_DEVICE_ACTION_NO_HANDLER"] = 204] = "E_DEVICE_ACTION_NO_HANDLER";
+    ErrorCodes[ErrorCodes["E_DEVICE_CONTROL_NOT_INITIALIZED"] = 301] = "E_DEVICE_CONTROL_NOT_INITIALIZED";
+    ErrorCodes[ErrorCodes["E_DEVICE_CONTROL_DEVICE_UNKNOWN"] = 302] = "E_DEVICE_CONTROL_DEVICE_UNKNOWN";
+    ErrorCodes[ErrorCodes["E_DEVICE_CONTROL_UNKNOWN"] = 303] = "E_DEVICE_CONTROL_UNKNOWN";
+    ErrorCodes[ErrorCodes["E_DEVICE_CONTROL_NO_HANDLER"] = 304] = "E_DEVICE_CONTROL_NO_HANDLER";
+    ErrorCodes[ErrorCodes["E_DEVICE_GET_STATE_NOT_INITIALIZED"] = 401] = "E_DEVICE_GET_STATE_NOT_INITIALIZED";
+    ErrorCodes[ErrorCodes["E_DEVICE_GET_STATE_DEVICE_UNKNOWN"] = 402] = "E_DEVICE_GET_STATE_DEVICE_UNKNOWN";
+    ErrorCodes[ErrorCodes["E_DEVICE_GET_STATE_UNKNOWN"] = 403] = "E_DEVICE_GET_STATE_UNKNOWN";
+    ErrorCodes[ErrorCodes["E_DEVICE_GET_STATE_NO_HANDLER"] = 404] = "E_DEVICE_GET_STATE_NO_HANDLER";
+})(ErrorCodes || (exports.ErrorCodes = ErrorCodes = {}));
