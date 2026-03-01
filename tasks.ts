@@ -1,18 +1,17 @@
-const { readFileSync, writeFileSync } = require('node:fs');
-const axios = require('axios');
-const COMMON_FILENAME = `${__dirname}/src/types/common.ts`;
-const TYPES_URL = 'https://raw.githubusercontent.com/ioBroker/ioBroker.admin/master/packages/jsonConfig/src/types.d.ts';
+import { readFileSync, writeFileSync } from 'node:fs';
+import axios from 'axios';
 
-async function patchCommonTs() {
-    let text = readFileSync(COMMON_FILENAME).toString();
-    const response = await axios.get(
-        'https://raw.githubusercontent.com/ioBroker/ioBroker.admin/master/packages/jsonConfig/src/types.d.ts',
-    );
-    const typeLines = response.data.toString().split('\n');
+const COMMON_FILENAME: string = `${process.cwd()}/src/types/common.ts`;
+const TYPES_URL: string = 'https://raw.githubusercontent.com/ioBroker/json-config/main/src/types.d.ts';
 
-    const lines = text.split('\n');
-    const start = [];
-    const end = [];
+async function patchCommonTs(): Promise<void> {
+    const text: string = readFileSync(COMMON_FILENAME, 'utf-8');
+    const response = await axios.get<string>(TYPES_URL);
+    const typeLines: string[] = response.data.split('\n');
+
+    const lines: string[] = text.split('\n');
+    const start: string[] = [];
+    const end: string[] = [];
     let found = 0;
     for (let i = 0; i < lines.length; i++) {
         if (lines[i].startsWith('// -- START OF DYNAMIC GENERATED CODE')) {
@@ -43,7 +42,17 @@ async function patchCommonTs() {
     }
     typeLines.splice(0, f);
 
+    while (!typeLines[f].startsWith('export type JsonConfigContext =')) {
+        f++;
+    }
+    if (f >= typeLines.length) {
+        console.error(`Cannot find "export type JsonConfigContext =" in ${TYPES_URL})`);
+        process.exit(2);
+    }
+    typeLines.splice(f);
+
     writeFileSync(COMMON_FILENAME, `${start.join('\n')}\n${typeLines.join('\n')}\n${end.join('\n')}`);
 }
 
-patchCommonTs().catch(err => console.error(`Error: ${err}`));
+patchCommonTs().catch((err: unknown) => console.error(`Error: ${err}`));
+

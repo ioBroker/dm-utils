@@ -1,70 +1,28 @@
-import type {
-    ActionContext,
-    ConfigConnectionType,
-    ErrorResponse,
-    MessageContext,
-    ValueOrObject,
-    ValueOrState,
-    ValueOrStateOrObject,
-} from '..';
+import type { ActionContext, ConfigConnectionType, ErrorResponse, MessageContext, ValueOrObject, ValueOrState, ValueOrStateOrObject } from '..';
 import type { ApiVersion, DeviceId, DeviceStatus, RetVal } from './common';
-
 type ActionType = 'api' | 'adapter';
-export type Color = 'primary' | 'secondary' | (string & {}); // color (you can use primary, secondary or color rgb value or hex)
-
+export type Color = 'primary' | 'secondary' | (string & {});
 export type ControlState = string | number | boolean | null;
-
 /** Reserved action names */
-export const ACTIONS = {
+export declare const ACTIONS: {
     /** This action will be called when user clicks on connection icon */
-    STATUS: 'status',
+    STATUS: string;
     /** This action will be called when the user clicks on enabled/disabled icon. The enabled/disabled icon will be shown only if the node status has "enabled" flag set to false or true */
-    ENABLE_DISABLE: 'enable/disable',
+    ENABLE_DISABLE: string;
 };
-
 export interface ActionBase<T extends ActionType> {
     /** Unique (for this adapter) action ID. It could be the name from ACTIONS too, but in this case some predefined appearance will be applied */
     id: string;
     /**
      * This can either be base64 or the URL to an icon.
      */
-    icon?:
-        | 'edit'
-        | 'rename'
-        | 'delete'
-        | 'refresh'
-        | 'newDevice'
-        | 'new'
-        | 'add'
-        | 'discover'
-        | 'search'
-        | 'unpairDevice'
-        | 'pairDevice'
-        | 'identify'
-        | 'play'
-        | 'stop'
-        | 'pause'
-        | 'forward'
-        | 'next'
-        | 'rewind'
-        | 'previous'
-        | 'lamp'
-        | 'light'
-        | 'backlight'
-        | 'dimmer'
-        | 'socket'
-        | 'settings'
-        | 'users'
-        | 'group'
-        | 'user'
-        | 'info'
-        | (string & {}); // base64 or url
+    icon?: 'edit' | 'rename' | 'delete' | 'refresh' | 'newDevice' | 'new' | 'add' | 'discover' | 'search' | 'unpairDevice' | 'pairDevice' | 'identify' | 'play' | 'stop' | 'pause' | 'forward' | 'next' | 'rewind' | 'previous' | 'lamp' | 'light' | 'backlight' | 'dimmer' | 'socket' | 'settings' | 'users' | 'group' | 'user' | 'info' | (string & {});
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends 'api' ? boolean : never;
     color?: Color;
-    backgroundColor?: Color; // background color of button (you can use primary, secondary or color rgb value or hex)
+    backgroundColor?: Color;
     /** If true, the user will be asked for confirmation before executing the action */
-    confirmation?: boolean | ioBroker.StringOrTranslated; // if type StringOrTranslated, this text will be shown in the confirmation dialog
+    confirmation?: boolean | ioBroker.StringOrTranslated;
     /** If defined, before the action is triggered, the non-empty text or number or checkbox will be asked */
     inputBefore?: {
         /** This label will be shown for the text input */
@@ -72,7 +30,10 @@ export interface ActionBase<T extends ActionType> {
         /** This type of input will be shown. Default is type */
         type?: 'text' | 'number' | 'checkbox' | 'select' | 'slider' | 'color';
         /** If a type is "select", the options must be defined */
-        options?: { label: ioBroker.StringOrTranslated; value: string }[];
+        options?: {
+            label: ioBroker.StringOrTranslated;
+            value: string;
+        }[];
         /** Default value for the input */
         defaultValue?: string | number | boolean;
         /** If true, the input could be empty */
@@ -87,92 +48,65 @@ export interface ActionBase<T extends ActionType> {
     /** Timeout in ms for waiting an answer from backend */
     timeout?: number;
 }
-
 export interface ChannelInfo {
     name: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
-    icon?: string; // base64 or url
-    color?: Color; // color of name
-    backgroundColor?: Color; // background color of card (you can use primary, secondary or color rgb value or hex)
+    icon?: string;
+    color?: Color;
+    backgroundColor?: Color;
     order?: number;
 }
-
 export interface ControlBase {
-    id: string; // unique id of control for one device. Controls must be unique for one device
+    id: string;
     type: 'button' | 'switch' | 'slider' | 'select' | 'icon' | 'color' | 'text' | 'number' | 'info';
-    state?: ioBroker.State; // actual state for all types except button
-    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if state changed, GUI will request update of control
-
-    icon?: string; // base64 or url - icon could be by all types except select
-    iconOn?: string; // base64 or url - by type button, switch, slider, icon
-    min?: number; // only for slider and number
-    max?: number; // only for slider and number
-    step?: number; // only for slider and number
-    unit?: string; // only for slider and number
+    state?: ioBroker.State;
+    stateId?: string;
+    icon?: string;
+    iconOn?: string;
+    min?: number;
+    max?: number;
+    step?: number;
+    unit?: string;
     label?: ioBroker.StringOrTranslated;
     labelOn?: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
     color?: Color;
     colorOn?: Color;
-    controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
-    options?: { label: ioBroker.StringOrTranslated; value: ControlState; icon?: string; color?: Color }[]; // only for select
+    controlDelay?: number;
+    options?: {
+        label: ioBroker.StringOrTranslated;
+        value: ControlState;
+        icon?: string;
+        color?: Color;
+    }[];
     channel?: ChannelInfo;
 }
-
 export interface DeviceControl<TType extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ControlBase {
-    handler?: TType extends 'api'
-        ? never
-        : (
-              deviceId: TId,
-              actionId: string,
-              state: ControlState,
-              context: MessageContext<TId>,
-          ) => RetVal<ErrorResponse | ioBroker.State>;
-    getStateHandler?: TType extends 'api'
-        ? never
-        : (deviceId: TId, actionId: string, context: MessageContext<TId>) => RetVal<ErrorResponse | ioBroker.State>;
+    handler?: TType extends 'api' ? never : (deviceId: TId, actionId: string, state: ControlState, context: MessageContext<TId>) => RetVal<ErrorResponse | ioBroker.State>;
+    getStateHandler?: TType extends 'api' ? never : (deviceId: TId, actionId: string, context: MessageContext<TId>) => RetVal<ErrorResponse | ioBroker.State>;
 }
-
 export type InstanceRefreshResponse = {
     refresh: boolean;
 };
-
-export type WithHandlerOrUrl<TType extends ActionType, THandler> =
-    | { handler?: TType extends 'api' ? never : THandler }
-    | { url: ioBroker.StringOrTranslated };
-
-export type InstanceAction<T extends ActionType = 'api'> = ActionBase<T> &
-    WithHandlerOrUrl<T, (context: ActionContext, options?: Record<string, any>) => RetVal<InstanceRefreshResponse>> & {
-        title: ioBroker.StringOrTranslated;
-    };
-
+export type WithHandlerOrUrl<TType extends ActionType, THandler> = {
+    handler?: TType extends 'api' ? never : THandler;
+} | {
+    url: ioBroker.StringOrTranslated;
+};
+export type InstanceAction<T extends ActionType = 'api'> = ActionBase<T> & WithHandlerOrUrl<T, (context: ActionContext, options?: Record<string, any>) => RetVal<InstanceRefreshResponse>> & {
+    title: ioBroker.StringOrTranslated;
+};
 export type DeviceUpdate<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = {
     update: DeviceInfo<T, TId>;
 };
-
 export type DeviceDelete<TId extends DeviceId = DeviceId> = {
     delete: TId;
 };
-
 export type DeviceRefresh = 'all' | 'devices' | 'instance' | 'none';
-
-export type DeviceRefreshResponse<T extends ActionType = 'api', TId extends DeviceId = DeviceId> =
-    | {
-          refresh: DeviceRefresh;
-      }
-    | DeviceUpdate<T, TId>
-    | DeviceDelete<TId>;
-
-export type DeviceAction<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = ActionBase<T> &
-    WithHandlerOrUrl<
-        T,
-        (
-            deviceId: TId,
-            context: ActionContext,
-            options?: Record<string, any>,
-        ) => RetVal<DeviceRefreshResponse<'adapter', TId>>
-    >;
-
+export type DeviceRefreshResponse<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = {
+    refresh: DeviceRefresh;
+} | DeviceUpdate<T, TId> | DeviceDelete<TId>;
+export type DeviceAction<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = ActionBase<T> & WithHandlerOrUrl<T, (deviceId: TId, context: ActionContext, options?: Record<string, any>) => RetVal<DeviceRefreshResponse<'adapter', TId>>>;
 export interface InstanceDetails<T extends ActionType = 'api'> {
     /** API Version: 1 - till 2025 (including), 2 - from 2026 */
     apiVersion: ApiVersion;
@@ -182,7 +116,6 @@ export interface InstanceDetails<T extends ActionType = 'api'> {
     /** Human-readable label next to the identifier */
     identifierLabel?: ioBroker.StringOrTranslated;
 }
-
 export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId = DeviceId> {
     /** ID of the device. Must be unique only in one adapter. Other adapters could have same IDs */
     id: TId;
@@ -211,13 +144,11 @@ export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId =
     hasDetails?: ValueOrStateOrObject<boolean>;
     /** Device type for grouping */
     group?: {
-        // key could be a string, divided by / to define the subgroup
         key: string;
         name?: ioBroker.StringOrTranslated;
         icon?: string;
     };
 }
-
 export interface BackendToGuiCommandDeviceInfoUpdate<TId extends DeviceId = DeviceId> {
     /** Used for updating and for adding new device */
     command: 'infoUpdate';
@@ -226,7 +157,6 @@ export interface BackendToGuiCommandDeviceInfoUpdate<TId extends DeviceId = Devi
     /** Backend can send directly new information about device to avoid extra request from GUI */
     info?: DeviceInfo;
 }
-
 export interface BackendToGuiCommandDeviceStatusUpdate<TId extends DeviceId = DeviceId> {
     /** Status of device was updated */
     command: 'statusUpdate';
@@ -235,20 +165,14 @@ export interface BackendToGuiCommandDeviceStatusUpdate<TId extends DeviceId = De
     /** Backend can send directly new status to avoid extra request from GUI */
     status?: DeviceStatus;
 }
-
 export interface BackendToGuiCommandDeviceDelete<TId extends DeviceId = DeviceId> {
     /** Device was deleted */
     command: 'delete';
     deviceId: TId;
 }
-
 export interface BackendToGuiCommandAllUpdate {
     /** Read ALL information about all devices anew */
     command: 'all';
 }
-
-export type BackendToGuiCommand<TId extends DeviceId = DeviceId> =
-    | BackendToGuiCommandDeviceInfoUpdate<TId>
-    | BackendToGuiCommandDeviceStatusUpdate<TId>
-    | BackendToGuiCommandDeviceDelete<TId>
-    | BackendToGuiCommandAllUpdate;
+export type BackendToGuiCommand<TId extends DeviceId = DeviceId> = BackendToGuiCommandDeviceInfoUpdate<TId> | BackendToGuiCommandDeviceStatusUpdate<TId> | BackendToGuiCommandDeviceDelete<TId> | BackendToGuiCommandAllUpdate;
+export {};

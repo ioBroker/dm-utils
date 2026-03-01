@@ -6,7 +6,7 @@ Utility classes for ioBroker adapters to support [ioBroker.device-manager](https
 
 Add in your `io-package.json` the property `deviceManager: true` to `common.supportedMessages`.
 Note: If you don't have a `common.supportedMessages` property yet, you have to add it.
-Also, if you don't have a `common.supportedMessages.messagebox: true` property yet, you have to add it. If common.messagebox exists, you can remove it. (see 
+Also, if you have a `common.messagebox` property for the adapter-specific messages, you can remove it and add `common.supportedMessages.custom: true`. (see
 https://github.com/ioBroker/ioBroker.js-controller/blob/274f9e8f84dbdaaba9830a6cc00ddf083e989090/schemas/io-package.json#L754C104-L754C178)
 
 In your ioBroker adapter, add a subclass of `DeviceManagement` and override the methods you need (see next chapters):
@@ -30,7 +30,7 @@ class MyAdapter extends utils.Adapter {
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
         super({
             ...options,
-            name: "my-adapter",
+            name: 'my-adapter',
         });
         this.deviceManagement = new DmTestDeviceManagement(this);
 
@@ -62,7 +62,7 @@ the `DeviceManagement` implementation's `handleXxxAction()` is called, and the a
 
 ### Controls
 
-The device manager tab allows the user to control devices too. If devices are controllable, the device manager tab shows a control elements in the device card.
+The device manager tab allows the user to control devices too. If devices are controllable, the device manager tab shows the control elements in the device card.
 
 When the user clicks on a control (i.e., a button in the UI),
 the `DeviceManagement` implementation's `handleXxxAction()` is called, and the adapter can perform arbitrary actions
@@ -73,7 +73,8 @@ the `DeviceManagement` implementation's `handleXxxAction()` is called, and the a
 The communication between the `ioBroker.device-manager` tab and the adapter happens through `sendTo`.
 
 **IMPORTANT:** make sure your adapter doesn't handle `sendTo` messages starting with `dm:`, otherwise the communication will not work.
-- Use for Example this on the top of your onMessage Methode:
+
+- Use, for example, this on the top of your onMessage Methode:
 
 ```js
 if (obj.command?.startsWith('dm:')) {
@@ -88,12 +89,13 @@ You can access all adapter methods like `getState()` or `getStateAsync()` via `t
 Example: `this.getState()` -> `this.adapter.getState()`
 
 ### Error Codes
-| Code | Description                                                                                                                  | 
-|------|------------------------------------------------------------------------------------------------------------------------------|
-| 101  | Instance action ${actionId} was called before getInstanceInfo() was called. This could happen if the instance has restarted. |   
-| 102  | Instance action ${actionId} is unknown.                                                                                      |                                                   
-| 103  | Instance action ${actionId} is disabled because it has no handler.                                                           |       
-| 201  | Device action ${actionId} was called before listDevices() was called. This could happen if the instance has restarted.       |
+
+| Code | Description                                                                                                                  |
+| ---- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 101  | Instance action ${actionId} was called before getInstanceInfo() was called. This could happen if the instance has restarted. |
+| 102  | Instance action ${actionId} is unknown.                                                                                      |
+| 103  | Instance action ${actionId} is disabled because it has no handler.                                                           |
+| 201  | Device action ${actionId} was called before loadDevices() was called. This could happen if the instance has restarted.       |
 | 202  | Device action ${actionId} was called on unknown device: ${deviceId}.                                                         |
 | 203  | Device action ${actionId} doesn't exist on device ${deviceId}.                                                               |
 | 204  | Device action ${actionId} on ${deviceId} is disabled because it has no handler.                                              |
@@ -101,6 +103,7 @@ Example: `this.getState()` -> `this.adapter.getState()`
 ## Examples
 
 To get an idea of how to use `dm-utils`, please have a look at:
+
 - [the folder "examples"](examples/dm-test.ts) or
 - [ioBroker.dm-test](https://github.com/UncleSamSwiss/ioBroker.dm-test)
 
@@ -110,30 +113,33 @@ All methods can either return an object of the defined value or a `Promise` reso
 
 This allows you to implement the method synchronously or asynchronously, depending on your implementation.
 
-### `listDevices()`
+### `loadDevices(context: DeviceLoadContext)`
 
 This method must always be overridden (as it is abstract in the base class).
 
-You must return an array with information about all devices of this adapter's instance.
+You must fill the `context` with information about all devices of this adapter's instance.
+
+You may call `context.setTotalDevices(count: number)` as soon as possible to let the GUI know how many devices in total will be loaded. This allows the GUI to show the loading progress.
 
 This method is called when the user expands an instance in the list.
 
-In most cases, you will get all states of your instance and fill the array with the relevant information.
+In most cases, you will get all states of your instance and fill the `context` with the relevant information.
 
-Every array entry is an object of type `DeviceInfo` which has the following properties:
+Every item is an object of type `DeviceInfo` which has the following properties:
 
-- `id` (string): a unique (human-readable) identifier of the device (it must be unique for your adapter instance only)
+- `id` (JSON object): a unique identifier of the device (it must be unique for your adapter instance only)
+- `identifier` (optional): a human-readable identifier of the device
 - `name` (string or translations): the human-readable name of this device
 - `status` (optional): the current status of the device, which has to be an object containing:
     - `connection` (string): alowed values are: `"connected"` / `"disconnected"`
     - `rssi` (number): rssi value of the connection
-    - `battery` (boolean / number): if boolean: false: Battery empty. If number: battery level of the device (shows also a battery symbol at card)
-    - `warning` (boolean / string): if boolean: true indicates a warning. If string: shows also the warning with mouseover
+    - `battery` (boolean / number): if boolean: false - the battery is empty. If number: the battery level of the device (shows also a battery symbol on the card)
+    - `warning` (boolean / string): if boolean: true indicates a warning. If a string: shows also the warning with mouseover
 - `actions` (array, optional): an array of actions that can be performed on the device; each object contains:
-  - `id` (string): unique identifier to recognize an action (never shown to the user)
-  - `icon` (string): an icon shown on the button (see below for details)
-  - `description` (string, optional): a text that will be shown as a tooltip on the button
-  - `disabled` (boolean, optional): if set to `true`, the button can't be clicked but is shown to the user
+    - `id` (string): unique identifier to recognize an action (never shown to the user)
+    - `icon` (string): an icon shown on the button (see below for details)
+    - `description` (string, optional): a text that will be shown as a tooltip on the button
+    - `handler` (function, optional): function that will be called when the user clicks on the button; if not given, the button will be disabled in the UI
 - `hasDetails` (boolean, optional): if set to `true`, the row of the device can be expanded and details are shown below
 
 Possible strings for device icons are here: [TYPE ICONS](https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68)
@@ -142,28 +148,30 @@ Possible strings for action icons are here: [ACTION NAMES](https://github.com/io
 <br/>
 Possible strings for configuration icons are here: [CONFIGURATION TYPES](https://github.com/ioBroker/dm-utils/blob/b3e54ecfaedd6a239beec59c5deb8117d1d59d7f/src/types/common.ts#L110)
 <br/>
+
 ### `getInstanceInfo()`
 
 This method allows the device manager tab to gather some general information about the instance. It is called when the user opens the tab.
 
 If you override this method, the returned object must contain:
 
-- `apiVersion` (string): the supported API version; must be `"v1"` or `"v2"` (if "backend to GUI communication" is used or IDs instead of values)
+- `apiVersion` (string): the supported API version; must be `"v3"`
 - `actions` (array, optional): an array of actions that can be performed on the instance; each object contains:
-  - `id` (string): unique identifier to recognize an action (never shown to the user)
-  - `icon` (string): an icon shown on the button (see below for details)
-  - `title` (string): the title shown next to the icon on the button
-  - `description` (string, optional): a text that will be shown as a tooltip on the button
-  - `disabled` (boolean, optional): if set to `true`, the button can't be clicked but is shown to the user
-- `communicationStateId` (string) (optional): the ID of the state that is used by backend for communication with front-end (only API v2)
+    - `id` (string): unique identifier to recognize an action (never shown to the user)
+    - `icon` (string): an icon shown on the button (see below for details)
+    - `title` (string): the title shown next to the icon on the button
+    - `description` (string, optional): a text that will be shown as a tooltip on the button
+    - `handler` (function, optional): function that will be called when the user clicks on the button; if not given, the button will be disabled in the UI
+- `communicationStateId` (string, optional): the ID of the state that is used by backend for communication with front-end
+- `identifierLabel` (string or translations, optional): the human-readable label next to the identifier
 
-### `getDeviceDetails(id: string)`
+### `getDeviceDetails(id: DeviceId)`
 
 This method is called if a device's `hasDetails` is set to `true` and the user clicks on the expander.
 
 The returned object must contain:
 
-- `id` (string): the `id` given as parameter to the method call
+- `id` (JSON object): the `id` given as parameter to the method call
 - `schema` (Custom JSON form schema): the schema of the Custom JSON form to show below the device information
 - `data` (object, optional): the data used to populate the Custom JSON form
 
@@ -171,31 +179,37 @@ For more details about the schema, see [here](https://github.com/ioBroker/ioBrok
 
 Please keep in mind that there is no "Save" button, so in most cases, the form shouldn't contain editable fields, but you may use `sendTo<xxx>` objects to send data to the adapter.
 
-### `handleInstanceAction(actionId: string, context: ActionContext)
+## `DeviceManagement` handlers
 
-This method is called when to user clicks on an action (i.e., button) for an adapter instance.
+### InstanceInfo action handlers
 
-The parameters of this method are:
-- `actionId` (string): the `id` that was given in `getInstanceInfo()` --> `actions[].id`
+These functions are called when the user clicks on an action (i.e., button) for an adapter instance.
+
+The parameters of this function are:
+
 - `context` (object): object containing helper methods that can be used when executing the action
+- `options` (object): object containing the action `value` (if given)
 
 The returned object must contain:
+
 - `refresh` (boolean): set this to `true` if you want the list to be reloaded after this action
 
 This method can be implemented asynchronously and can take a lot of time to complete.
 
 See below for how to interact with the user.
 
-### `handleDeviceAction(deviceId: string, actionId: string, context: ActionContext)
+### DeviceInfo action handlers
 
-This method is called when the user clicks on an action (i.e., button) for a device.
+These functions are called when the user clicks on an action (i.e., button) for an adapter instance.
 
-The parameters of this method are:
-- `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
-- `actionId` (string): the `id` that was given in `listDevices()` --> `[].actions[].id`
+The parameters of this function are:
+
+- `deviceId` (JSON object): the `id` of the device
 - `context` (object): object containing helper methods that can be used when executing the action
+- `options` (object): object containing the action `value` (if given)
 
 The returned object must contain:
+
 - `refresh` (string / boolean): the following values are allowed:
     - `"device"`: if you want the device details to be reloaded after this action
     - `"instance"`: if you want the entire device list to be reloaded after this action
@@ -205,32 +219,32 @@ This method can be implemented asynchronously and can take a lot of time to comp
 
 See below for how to interact with the user.
 
-### `handleDeviceControl(deviceId: string, controlId: string, state: ControlState, context: MessageContext)
+### DeviceInfo control handlers
 
-This method is called when the user clicks on a control (i.e., slider) in the device card.
+These functions are called when the user clicks on a control (i.e., slider) in the device card.
 
 The parameters of this method are:
-- `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
-- `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`. There are some reserved control names, you can find the list below.
-- `state` (string | number | boolean): new state for the control, that will be sent to a real device
+
+- `deviceId` (JSON object): the `id` that was given in `loadDevices()` --> `[].id`
+- `controlId` (string): the `id` that was given in `loadDevices()` --> `[].controls[].id`. There are some reserved control names, you can find the list below.
+- `newState` (string | number | boolean): new state for the control, that will be sent to a real device
 - `context` (object): object containing helper methods that can be used when executing the action
 
-The returned object must contain:
-- `state`: ioBroker state object
+The returned object must be an ioBroker state object.
 
 This method can be implemented asynchronously and can take a lot of time to complete.
 
-### `handleDeviceControlState(deviceId: string, controlId: string, context: MessageContext)
+### DeviceInfo getState handlers
 
-This method is called when GUI requests the update of the state.
+These functions are called when GUI requests the update of the state.
 
 The parameters of this method are:
-- `deviceId` (string): the `id` that was given in `listDevices()` --> `[].id`
-- `controlId` (string): the `id` that was given in `listDevices()` --> `[].controls[].id`
+
+- `deviceId` (JSON object): the `id` that was given in `loadDevices()` --> `[].id`
+- `controlId` (string): the `id` that was given in `loadDevices()` --> `[].controls[].id`
 - `context` (object): object containing helper methods that can be used when executing the action
 
-The returned object must contain:
-- `state`: ioBroker state object
+The returned object must be an ioBroker state object.
 
 This method can be implemented asynchronously and can take a lot of time to complete.
 
@@ -244,6 +258,7 @@ Inside an action method (`handleInstanceAction()` or `handleDeviceAction()`) you
 For interactions, there are methods you can call on `context`:
 
 There are some reserved action names, you can find the list below:
+
 - `status` - This action is called when the user clicks on the status icon. So to implement the "click-on-status" functionality, the developer has to implement this action.
 - `disable` - This action will be called when the user clicks on the `enabled` icon. `disable` and `enable` actions cannot be together.
 - `enable` - This action will be called when the user clicks on the `disabled` icon. `disable` and `enable` actions cannot be together.
@@ -253,6 +268,7 @@ There are some reserved action names, you can find the list below:
 Shows a message to the user.
 
 The method has the following parameter:
+
 - `text` (string or translation): the text to show to the user
 
 This asynchronous method returns (or rather: the Promise is resolved) once the user has clicked on "OK".
@@ -262,23 +278,28 @@ This asynchronous method returns (or rather: the Promise is resolved) once the u
 Lets the user confirm an action by showing a message with an "OK" and "Cancel" button.
 
 The method has the following parameter:
+
 - `text` (string or translation): the text to show to the user
 
 This asynchronous method returns (or rather: the Promise is resolved) once the user has clicked a button in the dialog:
+
 - `true` if the user clicked "OK"
 - `false` if the user clicked "Cancel"
 
-### `showForm(schema: JsonFormSchema, options?: { data?: JsonFormData; title?: string })`
+### `showForm(schema: JsonFormSchema, options?: { data?: JsonFormData; title?: string; ignoreApplyDisabled?: boolean })`
 
 Shows a dialog with a Custom JSON form that can be edited by the user.
 
 The method has the following parameters:
+
 - `schema` (Custom JSON form schema): the schema of the Custom JSON form to show in the dialog
 - `options` (object, optional): options to configure the dialog further
-  - `data` (object, optional): the data used to populate the Custom JSON form
-  - `title` (string, optional): the dialog title
+    - `data` (object, optional): the data used to populate the Custom JSON form
+    - `title` (string, optional): the dialog title
+    - `ignoreApplyDisabled` (boolean, optional): set to `true` to always enable the "OK" button even if the form is unchanged
 
 This asynchronous method returns (or rather: the Promise is resolved) once the user has clicked a button in the dialog:
+
 - the form data, if the user clicked "OK"
 - `undefined`, if the user clicked "Cancel"
 
@@ -287,11 +308,12 @@ This asynchronous method returns (or rather: the Promise is resolved) once the u
 Shows a dialog with a linear progress bar to the user. There is no way for the user to dismiss this dialog.
 
 The method has the following parameters:
+
 - `title` (string): the dialog title
 - `options` (object, optional): options to configure the dialog further
-  - `indeterminate` (boolean, optional): set to `true` to visualize an unspecified wait time
-  - `value` (number, optional): the progress value to show to the user (if set, it must be a value between 0 and 100)
-  - `label` (string, optional): label to show to the right of the progress bar; you may show the progress value in a human-readable way (e.g. "42%") or show the current step in a multi-step progress (e.g. "Logging in...")
+    - `indeterminate` (boolean, optional): set to `true` to visualize an unspecified wait time
+    - `value` (number, optional): the progress value to show to the user (if set, it must be a value between 0 and 100)
+    - `label` (string, optional): the label to show to the right of the progress bar; you may show the progress value in a human-readable way (e.g. "42%") or show the current step in multi-step progress (e.g. "Logging in...")
 
 This method returns a promise that resolves to a `ProgressDialog` object.
 
@@ -300,158 +322,209 @@ This method returns a promise that resolves to a `ProgressDialog` object.
 `ProgressDialog` has two methods:
 
 - `update(update: { title?: string; indeterminate?: boolean; value?:number; label?: string; })`
-  - Updates the progress dialog with new values
-  - The method has the following parameter:
-    - `update` (object): what to update in the dialog
-      - `title` (string, optional): change the dialog title
-      - `indeterminate` (boolean, optional): change whether the progress is indeterminate
-      - `value` (number, optional): change the progress value
-      - `label` (string, optional): change the label to the right of the progress bar
+    - Updates the progress dialog with new values
+    - The method has the following parameter:
+        - `update` (object): what to update in the dialog
+            - `title` (string, optional): change the dialog title
+            - `indeterminate` (boolean, optional): change whether the progress is indeterminate
+            - `value` (number, optional): change the progress value (if set, it must be a value between 0 and 100)
+            - `label` (string, optional): change the label to the right of the progress bar
 - `close()`
-  - Closes the progress dialog (and allows you to open other dialogs)
+    - Closes the progress dialog (and allows you to open other dialogs)
 
 ### `sendCommandToGui(command: BackendToGuiCommand)`
 
-Sends command to GUI to add/update/delete devices or to update the status of device.
+Sends command to GUI to add/update/delete devices or to update the status of a device.
 
-**It is suggested** to use the state's ID directly in DeviceInfo structure instead of sending the command every time to GUI on status update.  
+**It is suggested** to use the state's ID directly in the DeviceInfo structure instead of sending the command every time to GUI on status update.
 
-See example below:
+See the example below:
+
 ```ts
 class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
-    protected listDevices(): RetVal<DeviceInfo[]>{
+    protected loadDevices(context: DeviceLoadContext<string>): void {
         const deviceInfo: DeviceInfo = {
-          id: 'uniqieID',
-          name: 'My device',
-          icon: 'node', // find possible icons here: https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68
-          manufacturer: { objectId: 'uniqieID', property: 'native.manufacturer' },
-          model: { objectId: 'uniqieID', property: 'native.model' },
-          status: {
-            battery: { stateId: 'uniqieID.DevicePower0.BatteryPercent' },
-            connection: { stateId: 'uniqieID.online', mapping: {'true': 'connected', 'false': 'disconnected'} },
-            rssi: { stateId: 'uniqieID.rssi' },
-          },
-          hasDetails: true,
+            id: 'uniqieID',
+            name: 'My device',
+            icon: 'node', // find possible icons here: https://github.com/ioBroker/adapter-react-v5/blob/main/src/Components/DeviceType/DeviceTypeIcon.tsx#L68
+            manufacturer: { objectId: 'uniqieID', property: 'native.manufacturer' },
+            model: { objectId: 'uniqieID', property: 'native.model' },
+            status: {
+                battery: { stateId: 'uniqieID.DevicePower0.BatteryPercent' },
+                connection: { stateId: 'uniqieID.online', mapping: { true: 'connected', false: 'disconnected' } },
+                rssi: { stateId: 'uniqieID.rssi' },
+            },
+            hasDetails: true,
         };
-        return [deviceInfo];
+        context.addDevice(deviceInfo);
     }
 }
 ```
-  
+
+## Migration from 1.x to 2.x
+
+Between versions 1.x and 2.x, there are some breaking changes. Please also have a look at the changelog below for more information.
+
+### Incremental loading of devices
+
+In version 1.x, the `listDevices()` method had to return the full list of devices.
+In version 2.x, this method was replaced by `loadDevices(context: DeviceLoadContext)` that allows incremental loading of devices.
+
+Instead of creating and returning an array of `DeviceInfo` objects, you have to call `context.addDevice(deviceInfo)` for each device you want to add to the list.
+
+You may also call `context.setTotalDevices(count: number)` as soon as possible to let the GUI know how many devices in total will be loaded.
+
+### Refresh response of device actions
+
+In version 2.x, the refresh response of device actions has changed.
+
+| Version 1.x  | Version 2.x  | Description                                                                 |
+| ------------ | ------------ | --------------------------------------------------------------------------- |
+| `true`       | `'all'`      | the instance information as well as the entire device list will be reloaded |
+| `false`      | `'none'`     | nothing will be reloaded                                                    |
+| `'device'`   | `'devices'`  | the entire device list will be reloaded                                     |
+| `'instance'` | `'instance'` | (unchanged) only the instance information will be reloaded                  |
+
+## Changelog
+
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-## Changelog
+
+### **WORK IN PROGRESS**
+
+- (@UncleSamSwiss) Enabled incremental loading of devices
+- (@UncleSamSwiss) Removed direct access to `DeviceManagement.handleXxx()` methods (use `handler` and similar properties instead)
+- (@UncleSamSwiss) Added `identifier` property to `DeviceInfo` for human-readable identifiers
+- (@UncleSamSwiss) Device refresh responses can no longer be a `boolean` and `'device'` was renamed to `'devices'`.
+- (@UncleSamSwiss) Added `info` icon and possibility for actions to be a link (by providing a `url` property instead of a `handler` function)
+
 ### 2.0.2 (2026-01-28)
-* (@GermanBluefox) BREAKING: Admin/GUI must have version 9 (or higher) of `dm-gui-components`
-* (@GermanBluefox) Added types to update status of device directly from state
-* (@GermanBluefox) Added backend to GUI communication possibility
-* (@GermanBluefox) Added `dm:deviceInfo` command
-* (@GermanBluefox) Added `dm:deviceStatus` command
+
+- (@GermanBluefox) BREAKING: Admin/GUI must have version 9 (or higher) of `dm-gui-components`
+- (@GermanBluefox) Added types to update the status of a device directly from the state
+- (@GermanBluefox) Added backend to GUI communication possibility
+- (@GermanBluefox) Added `dm:deviceInfo` command
+- (@GermanBluefox) Added `dm:deviceStatus` command
 
 ### 1.0.16 (2026-01-02)
-* (@GermanBluefox) Added `ignoreApplyDisabled` flag
-* (@GermanBluefox) Added `update` icon
+
+- (@GermanBluefox) Added `ignoreApplyDisabled` flag
+- (@GermanBluefox) Added `update` icon
 
 ### 1.0.13 (2025-10-21)
-* (@GermanBluefox) Updated packages
+
+- (@GermanBluefox) Updated packages
 
 ### 1.0.10 (2025-05-05)
 
-* (@GermanBluefox) Added timeout property to actions
-* (@GermanBluefox) Updated packages
+- (@GermanBluefox) Added timeout property to actions
+- (@GermanBluefox) Updated packages
 
 ### 1.0.9 (2025-01-25)
 
-* (@GermanBluefox) Added copyToClipboard dialog button
+- (@GermanBluefox) Added copyToClipboard dialog button
 
 ### 1.0.8 (2025-01-24)
 
-* (@GermanBluefox) Removed `headerTextColor` to device info
+- (@GermanBluefox) Removed `headerTextColor` to device info
 
 ### 1.0.6 (2025-01-14)
- 
-* (@GermanBluefox) Added the connection type indication
+
+- (@GermanBluefox) Added the connection type indication
 
 ### 1.0.5 (2025-01-11)
 
-* (@GermanBluefox) Added action ENABLE_DISABLE and `enabled` status
+- (@GermanBluefox) Added action ENABLE_DISABLE and `enabled` status
 
 ### 1.0.0 (2025-01-08)
 
-* (@GermanBluefox) Added `disabled` options for a device
-* (@GermanBluefox) Major release just because is good enough. No breaking changes.
+- (@GermanBluefox) Added `disabled` options for a device
+- (@GermanBluefox) Major release just because it is good enough. No breaking changes.
 
 ### 0.6.11 (2024-12-11)
 
-* (@GermanBluefox) Do not close handler for progress
+- (@GermanBluefox) Do not close handler for progress
 
 ### 0.6.10 (2024-12-10)
 
-* (@GermanBluefox) Export `BackEndCommandJsonFormOptions` type
+- (@GermanBluefox) Export `BackEndCommandJsonFormOptions` type
 
 ### 0.6.9 (2024-11-22)
 
-* (@GermanBluefox) Added a max-width option for form
+- (@GermanBluefox) Added a max-width option for form
 
 ### 0.6.8 (2024-11-22)
 
-* (@GermanBluefox) Allowed grouping of devices
+- (@GermanBluefox) Allowed grouping of devices
 
 ### 0.6.7 (2024-11-20)
 
-* (@GermanBluefox) Updated types
+- (@GermanBluefox) Updated types
 
 ### 0.6.6 (2024-11-18)
 
-* (@GermanBluefox) Added configurable buttons for form
+- (@GermanBluefox) Added configurable buttons for form
 
 ### 0.6.0 (2024-11-17)
 
-* (@GermanBluefox) used new ioBroker/eslint-config lib and changed prettifier settings
-* (@GermanBluefox) updated JsonConfig types
+- (@GermanBluefox) used new ioBroker/eslint-config lib and changed prettifier settings
+- (@GermanBluefox) updated JsonConfig types
 
 ### 0.5.0 (2024-08-30)
-* (bluefox) Migrated to eslint 9
+
+- (bluefox) Migrated to eslint 9
 
 ### 0.4.0 (2024-08-30)
-* (bluefox) Added `state` type for JSON config
+
+- (bluefox) Added `state` type for JSON config
 
 ### 0.3.1 (2024-07-18)
-* (bluefox) Added qrCode type for JSON config
+
+- (bluefox) Added qrCode type for JSON config
 
 ### 0.3.0 (2024-07-17)
-* (bluefox) packages updated
-* (bluefox) Updated JSON config types
+
+- (bluefox) packages updated
+- (bluefox) Updated JSON config types
 
 ### 0.2.2 (2024-06-26)
-* (bluefox) packages updated
+
+- (bluefox) packages updated
 
 ### 0.2.0 (2024-05-29)
-* (bluefox) enhanced type exports
-* (bluefox) added confirmation and input text options
+
+- (bluefox) enhanced type exports
+- (bluefox) added confirmation and input text options
 
 ### 0.1.9 (2023-12-25)
-* (foxriver76) enhanced type exports
+
+- (foxriver76) enhanced type exports
 
 ### 0.1.8 (2023-12-17)
-* (bluefox) corrected control error
+
+- (bluefox) corrected control error
 
 ### 0.1.7 (2023-12-17)
-* (bluefox) added channel info
+
+- (bluefox) added channel info
 
 ### 0.1.5 (2023-12-16)
-* (bluefox) extended controls with unit and new control types
+
+- (bluefox) extended controls with unit and new control types
 
 ### 0.1.4 (2023-12-13)
-* (bluefox) added error codes
+
+- (bluefox) added error codes
 
 ### 0.1.3 (2023-12-10)
-* (bluefox) added some fields to DeviceInfo interface
-* (bluefox) added control possibilities
+
+- (bluefox) added some fields to DeviceInfo interface
+- (bluefox) added control possibilities
 
 ## License
+
 MIT License
 
 Copyright (c) 2023-2026 ioBroker Community Developers

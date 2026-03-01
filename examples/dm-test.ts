@@ -1,11 +1,11 @@
 import {
     type ActionContext,
     type DeviceDetails,
+    type DeviceLoadContext,
     DeviceManagement,
-    type DeviceRefresh,
     type JsonFormSchema,
 } from '../src';
-import type * as base from '../src/types/base';
+import { type DeviceRefreshResponse } from '../src/types/base';
 
 const demoFormSchema: JsonFormSchema = {
     type: 'tabs',
@@ -80,76 +80,115 @@ const demoFormSchema: JsonFormSchema = {
 };
 
 export class DmTestDeviceManagement extends DeviceManagement {
-    protected listDevices(): Promise<base.DeviceInfo<'adapter'>[]> {
-        return Promise.resolve([
-            { id: 'test-123', name: 'Test 123', status: 'connected' },
-            { id: 'test-345', name: 'Test 345', status: 'disconnected', hasDetails: true, actions: [] },
-            {
-                id: 'test-789',
-                name: 'Test 789',
-                status: 'connected',
-                actions: [
-                    {
-                        id: 'play',
-                        icon: 'fas fa-play',
+    protected loadDevices(context: DeviceLoadContext<string>): void {
+        context.addDevice({
+            id: 'test-123',
+            identifier: 'test-123',
+            name: 'Test 123',
+            status: 'connected',
+            actions: [
+                {
+                    id: 'update',
+                    icon: 'forward',
+                    handler: (deviceId: string): DeviceRefreshResponse<'adapter', string> => {
+                        this.log.info(`Update was pressed on ${deviceId}`);
+                        return {
+                            update: {
+                                id: 'test-123',
+                                identifier: 'test-123 (*)',
+                                name: `Updated name for ${deviceId}`,
+                                status: 'disconnected',
+                            },
+                        };
                     },
-                    {
-                        id: 'pause',
-                        icon: 'fa-pause',
-                        description: 'Pause device',
+                },
+            ],
+        });
+        context.addDevice({
+            id: 'test-345',
+            identifier: 'test-345',
+            name: 'Test 345',
+            status: 'disconnected',
+            hasDetails: true,
+            actions: [
+                {
+                    id: 'info',
+                    icon: 'settings',
+                    // instead of handler, url can be provided to open a link when action is clicked
+                    url: 'https://www.iobroker.net',
+                },
+                {
+                    id: 'infoTranslated',
+                    icon: 'info',
+                    // The URL can also be translated, so it can be different for different languages
+                    url: {
+                        en: 'https://www.iobroker.net/#en',
+                        de: 'https://www.iobroker.net/#de',
+                        ru: 'https://www.iobroker.net/#ru',
+                        'zh-cn': 'https://www.iobroker.net/#zh-cn',
                     },
-                    {
-                        id: 'forward',
-                        icon: 'forward',
-                        description: 'Forward',
+                },
+            ],
+        });
+        context.addDevice({
+            id: 'test-789',
+            identifier: 'test-789',
+            name: 'Test 789',
+            status: 'connected',
+            actions: [
+                {
+                    id: 'play',
+                    icon: 'play',
+                    handler: (deviceId: string) => {
+                        this.log.info(`Play was pressed on ${deviceId}`);
+                        return { refresh: 'none' };
                     },
-                ],
-            },
-            {
-                id: 'test-ABC',
-                name: 'Test ABC',
-                status: 'connected',
-                actions: [
-                    {
-                        id: 'forms',
-                        icon: 'fab fa-wpforms',
-                        description: 'Show forms flow',
+                },
+                {
+                    id: 'pause',
+                    icon: 'pause',
+                    description: 'Pause device',
+                    handler: async (deviceId: string, context: ActionContext) => {
+                        this.log.info(`Pause was pressed on ${deviceId}`);
+                        const confirm = await context.showConfirmation('Do you want to refresh the device list only?');
+                        return { refresh: confirm ? 'devices' : 'instance' };
                     },
-                ],
-            },
-        ]);
+                },
+                {
+                    id: 'forward',
+                    icon: 'forward',
+                    description: 'Forward',
+                },
+            ],
+        });
+        context.addDevice({
+            id: 'test-ABC',
+            identifier: 'test-ABC',
+            name: 'Test ABC',
+            status: 'connected',
+            actions: [
+                {
+                    id: 'forms',
+                    icon: 'fab fa-wpforms',
+                    description: 'Show forms flow',
+                    handler: async (deviceId: string, context: ActionContext) => {
+                        this.log.info(`Forms was pressed on ${deviceId}`);
+                        const data = await context.showForm(demoFormSchema, {
+                            data: { myPort: 8081, secondPort: 8082 },
+                        });
+                        if (!data) {
+                            await context.showMessage('You cancelled the previous form!');
+                        } else {
+                            await context.showMessage(`You entered: ${JSON.stringify(data)}`);
+                        }
+                        return { refresh: 'none' };
+                    },
+                },
+            ],
+        });
     }
 
-    protected override async handleDeviceAction(
-        deviceId: string,
-        actionId: string,
-        context: ActionContext,
-    ): Promise<{ refresh: DeviceRefresh }> {
-        switch (actionId) {
-            case 'play':
-                this.log.info(`Play was pressed on ${deviceId}`);
-                return { refresh: false };
-            case 'pause': {
-                this.log.info(`Pause was pressed on ${deviceId}`);
-                const confirm = await context.showConfirmation('Do you want to refresh the device only?');
-                return { refresh: confirm ? 'device' : 'instance' };
-            }
-            case 'forms': {
-                this.log.info(`Forms was pressed on ${deviceId}`);
-                const data = await context.showForm(demoFormSchema, { data: { myPort: 8081, secondPort: 8082 } });
-                if (!data) {
-                    await context.showMessage('You cancelled the previous form!');
-                } else {
-                    await context.showMessage(`You entered: ${JSON.stringify(data)}`);
-                }
-                return { refresh: false };
-            }
-            default:
-                throw new Error(`Unknown action ${actionId}`);
-        }
-    }
-
-    protected override getDeviceDetails(id: string): Promise<DeviceDetails> {
+    protected override getDeviceDetails(id: string): Promise<DeviceDetails<string>> {
         const schema: JsonFormSchema = {
             type: 'panel',
             items: {

@@ -1,190 +1,51 @@
 export type ApiVersion = 'v3';
-
 export type ConfigConnectionType = 'lan' | 'wifi' | 'bluetooth' | 'thread' | 'z-wave' | 'zigbee' | 'other';
-
 export interface ComplexDeviceId {
     [key: string | number]: string | number | ComplexDeviceId;
 }
 export type DeviceId = string | number | ComplexDeviceId;
-
-export type ValueOrObject<T> = T | { objectId: string; property: string };
-export type ValueOrState<T> = T | { stateId: string; mapping?: Record<string | number, T> };
+export type ValueOrObject<T> = T | {
+    objectId: string;
+    property: string;
+};
+export type ValueOrState<T> = T | {
+    stateId: string;
+    mapping?: Record<string | number, T>;
+};
 export type ValueOrStateOrObject<T> = T | ValueOrObject<T> | ValueOrState<T>;
-
-export type DeviceStatus =
-    | 'connected'
-    | 'disconnected'
-    | {
-          battery?: ValueOrState<number | boolean | 'charging' | (string & {})>; // in percent (0-100), or string 'charging' or value with unit as string,
-          // or string '10V',
-          // or string '10mV',
-          // or string '100' in mV
-          // or boolean true (means OK) or false (Battery warning)
-          connection?: ValueOrState<'connected' | 'disconnected'>;
-          rssi?: ValueOrState<number>; // in dBm
-          warning?: ValueOrState<ioBroker.StringOrTranslated | boolean>; // warning text or just boolean true (means warning)
-      };
-
+export type DeviceStatus = 'connected' | 'disconnected' | {
+    battery?: ValueOrState<number | boolean | 'charging' | (string & {})>;
+    connection?: ValueOrState<'connected' | 'disconnected'>;
+    rssi?: ValueOrState<number>;
+    warning?: ValueOrState<ioBroker.StringOrTranslated | boolean>;
+};
 export type ErrorResponse = {
     error: {
         code: number;
         message: string;
     };
 };
-
 export type RetVal<T> = T | Promise<T>;
-
 export interface ProgressOptions {
     indeterminate?: boolean;
     value?: number;
     label?: ioBroker.StringOrTranslated;
 }
-
 export interface ProgressUpdate extends ProgressOptions {
     title?: ioBroker.StringOrTranslated;
 }
-
 type CustomCSSProperties = Record<string, any>;
-
 interface ObjectBrowserCustomFilter {
     type?: ioBroker.ObjectType | ioBroker.ObjectType[];
     common?: {
         type?: ioBroker.CommonType | ioBroker.CommonType[];
         role?: string | string[];
-
         custom?: '_' | '_dataSources' | true | (string & {}) | string[];
     };
 }
-
 export type ObjectBrowserType = 'state' | 'instance' | 'channel' | 'device' | 'chart';
-
-// -- START OF DYNAMIC GENERATED CODE FROM https://raw.githubusercontent.com/ioBroker/json-config/main/src/types.d.ts
-export type ConfigItemType =
-    | 'accordion'
-    | 'alive'
-    | 'autocomplete'
-    | 'autocompleteSendTo'
-    | 'certCollection'
-    | 'certificate'
-    | 'certificates'
-    | 'checkDocker'
-    | 'checkLicense'
-    | 'checkbox'
-    | 'chips'
-    | 'color'
-    | 'coordinates'
-    | 'cron'
-    | 'custom'
-    | 'datePicker'
-    | 'deviceManager'
-    | 'divider'
-    | 'file'
-    | 'fileSelector'
-    | 'func'
-    | 'header'
-    | 'iframe'
-    | 'iframeSendTo'
-    | 'image'
-    | 'imageSendTo'
-    | 'infoBox'
-    | 'instance'
-    | 'interface'
-    | 'ip'
-    | 'jsonEditor'
-    | 'language'
-    | 'license'
-    | 'number'
-    | 'oauth2'
-    | 'objectId'
-    | 'panel'
-    | 'password'
-    | 'pattern'
-    | 'port'
-    | 'qrCode'
-    | 'room'
-    | 'select'
-    | 'selectSendTo'
-    | 'sendto'
-    | 'setState'
-    | 'slider'
-    | 'state'
-    | 'staticImage'
-    | 'staticInfo'
-    | 'staticLink'
-    | 'staticText'
-    | 'table'
-    | 'tabs'
-    | 'text'
-    | 'textSendTo'
-    | 'timePicker'
-    | 'topic'
-    | 'user'
-    | 'uuid'
-    | 'yamlEditor';
-
-export type ConfigIconType =
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'add'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'backlight'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'book'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'delete'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'dimmer'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'edit'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'error'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'group'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'help'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'identify'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'info'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'light'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'lines'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'next'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'pair'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'pause'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'play'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'previous'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'qrcode'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'refresh'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'search'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'send'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'settings'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'socket'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'stop'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'unpair'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'upload'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'user'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'warning'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'web'
-    | string; // base 64 string
-
+export type ConfigItemType = 'accordion' | 'alive' | 'autocomplete' | 'autocompleteSendTo' | 'certCollection' | 'certificate' | 'certificates' | 'checkDocker' | 'checkLicense' | 'checkbox' | 'chips' | 'color' | 'coordinates' | 'cron' | 'custom' | 'datePicker' | 'deviceManager' | 'divider' | 'file' | 'fileSelector' | 'func' | 'header' | 'iframe' | 'iframeSendTo' | 'image' | 'imageSendTo' | 'infoBox' | 'instance' | 'interface' | 'ip' | 'jsonEditor' | 'language' | 'license' | 'number' | 'oauth2' | 'objectId' | 'panel' | 'password' | 'pattern' | 'port' | 'qrCode' | 'room' | 'select' | 'selectSendTo' | 'sendto' | 'setState' | 'slider' | 'state' | 'staticImage' | 'staticInfo' | 'staticLink' | 'staticText' | 'table' | 'tabs' | 'text' | 'textSendTo' | 'timePicker' | 'topic' | 'user' | 'uuid' | 'yamlEditor';
+export type ConfigIconType = 'add' | 'backlight' | 'book' | 'delete' | 'dimmer' | 'edit' | 'error' | 'group' | 'help' | 'identify' | 'info' | 'light' | 'lines' | 'next' | 'pair' | 'pause' | 'play' | 'previous' | 'qrcode' | 'refresh' | 'search' | 'send' | 'settings' | 'socket' | 'stop' | 'unpair' | 'upload' | 'user' | 'warning' | 'web' | string;
 export interface ConfigItemConfirmData {
     condition: string;
     text?: ioBroker.StringOrTranslated;
@@ -194,7 +55,6 @@ export interface ConfigItemConfirmData {
     type?: 'info' | 'warning' | 'error' | 'none';
     alsoDependsOn?: string[];
 }
-
 export interface ConfigItem {
     /** Type of the JSON config item */
     type: ConfigItemType;
@@ -254,19 +114,15 @@ export interface ConfigItem {
     confirm?: ConfigItemConfirmData;
     icon?: ConfigIconType;
     width?: string | number;
-
-    // generated from alsoDependsOn
     confirmDependsOn?: ConfigItemIndexed[];
     onChangeDependsOn?: ConfigItemIndexed[];
     hiddenDependsOn?: ConfigItemIndexed[];
     labelDependsOn?: ConfigItemIndexed[];
     helpDependsOn?: ConfigItemIndexed[];
 }
-
 interface ConfigItemIndexed extends ConfigItem {
     attr?: string;
 }
-
 interface ConfigItemTableIndexed extends ConfigItem {
     attr?: string;
     /** show filter options in the header of the table */
@@ -276,7 +132,6 @@ interface ConfigItemTableIndexed extends ConfigItem {
     /** tooltip in the header of the table */
     title?: string;
 }
-
 export interface ConfigItemAlive extends ConfigItem {
     type: 'alive';
     /** check if the instance is alive. If not defined, it will be used current instance. You can use the ` $ {data.number} ` pattern in the text. */
@@ -286,7 +141,6 @@ export interface ConfigItemAlive extends ConfigItem {
     /** the default text is `Instance %s is not alive`, where %s will be replaced by `ADAPTER.0`. The translation must exist in i18n files. */
     textNotAlive?: string;
 }
-
 export interface ConfigItemSelectOption {
     /** Label of option */
     label: ioBroker.StringOrTranslated;
@@ -297,9 +151,7 @@ export interface ConfigItemSelectOption {
     /** Formula or boolean value to show or hide the option */
     hidden?: string | boolean;
 }
-
 export interface ConfigItemPanel extends ConfigItem {
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     type: 'panel' | never;
     /** Label of tab */
     label?: ioBroker.StringOrTranslated;
@@ -312,10 +164,8 @@ export interface ConfigItemPanel extends ConfigItem {
     innerStyle?: CustomCSSProperties;
     /** i18n definitions: true - load from a file, string - name of subdirectory, object - translations */
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
-    // If defined, the tab will send a message by initializing to backend with command with string contained in "command"
     command?: string;
 }
-
 export interface ConfigItemPattern extends ConfigItem {
     type: 'pattern';
     /** if true - show copy button */
@@ -323,13 +173,11 @@ export interface ConfigItemPattern extends ConfigItem {
     /** pattern like 'https://${data.ip}:${data.port}' */
     pattern: string;
 }
-
 export interface ConfigItemChip extends ConfigItem {
     type: 'chips';
     /** if it is defined, so the option will be stored as string with delimiter instead of an array. E.g., by `delimiter=;` you will get `a;b;c` instead of `['a', 'b', 'c']` */
     delimiter?: string;
 }
-
 export interface ConfigItemTabs extends ConfigItem {
     type: 'tabs';
     /** Object with panels `{"tab1": {}, "tab2": {}...}` */
@@ -340,10 +188,8 @@ export interface ConfigItemTabs extends ConfigItem {
     tabsStyle?: CustomCSSProperties;
     /** i18n definitions: true - load from a file, string - name of subdirectory, object - translations */
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
-    // If defined, the tab will send a message by initializing to backend with command "tab" (string contained in "sendTo"). Used in jsonTab.json
     command?: string;
 }
-
 export interface ConfigItemText extends ConfigItem {
     type: 'text';
     /** max length of the text in the field */
@@ -369,19 +215,16 @@ export interface ConfigItemText extends ConfigItem {
     /** the value is time in ms or a string. Used only with readOnly flag */
     time?: boolean;
 }
-
 export interface ConfigItemColor extends ConfigItem {
     type: 'color';
     /** if true, the clear button will not be shown */
     noClearButton?: boolean;
 }
-
 export interface ConfigItemCheckbox extends ConfigItem {
     type: 'checkbox';
     /** Same as disabled */
     readOnly?: boolean;
 }
-
 export interface ConfigItemNumber extends ConfigItem {
     type: 'number';
     min?: number;
@@ -391,16 +234,13 @@ export interface ConfigItemNumber extends ConfigItem {
     /** Unit */
     unit?: string;
 }
-
 export interface ConfigItemOAuth2 extends ConfigItem {
     type: 'oauth2';
-    saveTokenIn?: string; // default is `oauth2Tokens`
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    saveTokenIn?: string;
     identifier: 'spotify' | 'google' | 'dropbox' | 'microsoft' | string;
-    scope?: string; // optional scopes divided by space, e.g. `user-read-private user-read-email`
-    refreshLabel?: ioBroker.StringOrTranslated; // label for the refresh button
+    scope?: string;
+    refreshLabel?: ioBroker.StringOrTranslated;
 }
-
 export interface ConfigItemQrCode extends ConfigItem {
     type: 'qrCode';
     /** Data to show in the QR code */
@@ -414,7 +254,6 @@ export interface ConfigItemQrCode extends ConfigItem {
     /** QR code level */
     level?: 'L' | 'M' | 'Q' | 'H';
 }
-
 export interface ConfigItemPassword extends ConfigItem {
     type: 'password';
     /** repeat password must be compared with password */
@@ -428,11 +267,9 @@ export interface ConfigItemPassword extends ConfigItem {
     /** @deprecated use maxLength */
     max?: number;
 }
-
 export interface ConfigItemObjectId extends ConfigItem {
     type: 'objectId';
     /** Desired type: `channel`, `device`, ... (has only `state` by default). It is plural, because `type` is already occupied. */
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     types?: ObjectBrowserType | ObjectBrowserType[];
     /** Show only this root object and its children */
     root?: string;
@@ -463,7 +300,6 @@ export interface ConfigItemObjectId extends ConfigItem {
     /** Cannot be used together with `type` settings. It is a function that will be called for every object and must return true or false. Example: `obj.common.type === 'number'` */
     filterFunc?: (obj: ioBroker.Object) => boolean;
 }
-
 export interface ConfigItemSlider extends ConfigItem {
     type: 'slider';
     min?: number;
@@ -472,7 +308,6 @@ export interface ConfigItemSlider extends ConfigItem {
     /** Unit of slider */
     unit?: string;
 }
-
 export interface ConfigItemTopic extends ConfigItem {
     type: 'topic';
     /** max length of the text in the field */
@@ -480,7 +315,6 @@ export interface ConfigItemTopic extends ConfigItem {
     /** @deprecated use maxLength */
     max?: number;
 }
-
 export interface ConfigItemIP extends ConfigItem {
     type: 'ip';
     listenOnAllPorts?: boolean;
@@ -488,27 +322,22 @@ export interface ConfigItemIP extends ConfigItem {
     onlyIp6?: boolean;
     noInternal?: boolean;
 }
-
 export interface ConfigItemUser extends ConfigItem {
     type: 'user';
     /** without "system.user." */
     short?: boolean;
 }
-
 export interface ConfigItemStaticDivider extends ConfigItem {
     type: 'divider';
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     color?: 'primary' | 'secondary' | string;
     height?: string | number;
 }
-
 export interface ConfigItemStaticHeader extends ConfigItem {
     type: 'header';
     size?: 1 | 2 | 3 | 4 | 5;
     text: ioBroker.StringOrTranslated;
     noTranslation?: boolean;
 }
-
 export interface ConfigItemStaticImage extends ConfigItem {
     type: 'staticImage';
     /** name of picture (from admin directory) */
@@ -516,7 +345,6 @@ export interface ConfigItemStaticImage extends ConfigItem {
     /** optional HTTP link */
     href?: string;
 }
-
 export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
     type: 'staticText';
     /** multi-language text */
@@ -540,7 +368,6 @@ export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
     /** styles for the button */
     controlStyle?: CustomCSSProperties;
 }
-
 export interface ConfigItemStaticInfo extends Omit<ConfigItem, 'data'> {
     type: 'staticInfo';
     /** multi-language text or value */
@@ -574,7 +401,6 @@ export interface ConfigItemStaticInfo extends Omit<ConfigItem, 'data'> {
     /** Show string values as HTML */
     html?: boolean;
 }
-
 export interface ConfigItemInfoBox extends ConfigItem {
     type: 'infoBox';
     /** multi-language text */
@@ -590,48 +416,40 @@ export interface ConfigItemInfoBox extends ConfigItem {
     /** Icon position */
     iconPosition?: 'top' | 'middle';
 }
-
 export interface ConfigItemRoom extends ConfigItem {
     type: 'room';
     short?: boolean;
     allowDeactivate?: boolean;
 }
-
 export interface ConfigItemFunc extends ConfigItem {
     type: 'func';
     short?: boolean;
     allowDeactivate?: boolean;
 }
-
 export interface ConfigItemSelect extends ConfigItem {
     type: 'select';
     /**
      * `[{label: {en: "option 1"}, value: 1}, ...]` or
      * `[{"items": [{"label": "Val1", "value": 1}, {"label": "Val2", value: "2}], "name": "group1"}, {"items": [{"label": "Val3", "value": 3}, {"label": "Val4", value: "4}], "name": "group2"}, {"label": "Val5", "value": 5}]`
      */
-    options: (
-        | ConfigItemSelectOption
-        | {
-              items: ConfigItemSelectOption[];
-              label: ioBroker.StringOrTranslated;
-              value?: number | string;
-              color?: string;
-              hidden?: string | boolean;
-          }
-    )[];
+    options: (ConfigItemSelectOption | {
+        items: ConfigItemSelectOption[];
+        label: ioBroker.StringOrTranslated;
+        value?: number | string;
+        color?: string;
+        hidden?: string | boolean;
+    })[];
     attr?: string;
     /** If multiple selection is possible. In this case, the value will be an array */
     multiple?: boolean;
     /** show an item even if no label was found for it (by multiple), default=`true` */
     showAllValues?: boolean;
 }
-
 export interface ConfigItemAutocomplete extends ConfigItem {
     type: 'autocomplete';
     options: (string | ConfigItemSelectOption)[];
     freeSolo?: boolean;
 }
-
 export interface ConfigItemSetState extends ConfigItem {
     type: 'setState';
     /** `system.adapter.myAdapter.%INSTANCE%.test`, you can use the placeholder `%INSTANCE%` to replace it with the current instance name */
@@ -645,9 +463,10 @@ export interface ConfigItemSetState extends ConfigItem {
     variant?: 'contained' | 'outlined';
     color?: 'primary' | 'secondary' | 'grey';
     /** Error translations */
-    error?: { [error: string]: ioBroker.StringOrTranslated };
+    error?: {
+        [error: string]: ioBroker.StringOrTranslated;
+    };
 }
-
 export interface ConfigItemAutocompleteSendTo extends Omit<ConfigItem, 'data'> {
     type: 'autocompleteSendTo';
     command?: string;
@@ -661,7 +480,6 @@ export interface ConfigItemAutocompleteSendTo extends Omit<ConfigItem, 'data'> {
     max?: string;
     alsoDependsOn?: string[];
 }
-
 export interface ConfigItemAccordion extends ConfigItem {
     type: 'accordion';
     /** Title shown on the accordion */
@@ -673,20 +491,16 @@ export interface ConfigItemAccordion extends ConfigItem {
     /** Items of accordion */
     items: ConfigItemIndexed[];
 }
-
 export interface ConfigItemDivider extends ConfigItem {
     type: 'divider';
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     color?: 'primary' | 'secondary' | string;
     height?: string | number;
 }
-
 export interface ConfigItemHeader extends ConfigItem {
     type: 'header';
     text?: ioBroker.StringOrTranslated;
     size?: 1 | 2 | 3 | 4 | 5 | 6;
 }
-
 export interface ConfigItemCoordinates extends ConfigItem {
     type: 'coordinates';
     /** divider between latitude and longitude. Default "," (Used if longitudeName and latitudeName are not defined) */
@@ -704,7 +518,6 @@ export interface ConfigItemCoordinates extends ConfigItem {
     /** @deprecated use maxLength */
     max?: number;
 }
-
 export interface ConfigItemCustom extends ConfigItem {
     type: 'custom';
     /** location of Widget, like "custom/customComponents.js" */
@@ -716,9 +529,10 @@ export interface ConfigItemCustom extends ConfigItem {
     /** i18n */
     i18n: boolean | Record<string, string>;
     /** custom properties */
-    custom?: { [prop: string]: any };
+    custom?: {
+        [prop: string]: any;
+    };
 }
-
 export interface ConfigItemDatePicker extends ConfigItem {
     type: 'datePicker';
     /** max length of the text in the field */
@@ -726,27 +540,22 @@ export interface ConfigItemDatePicker extends ConfigItem {
     /** @deprecated use maxLength */
     max?: number;
 }
-
 export interface ConfigItemDeviceManager extends ConfigItem {
     type: 'deviceManager';
 }
-
 export interface ConfigItemLanguage extends ConfigItem {
     type: 'language';
     system?: boolean;
     changeGuiLanguage?: boolean;
 }
-
 export interface ConfigItemPort extends ConfigItem {
     type: 'port';
     min?: number;
     max?: number;
     readOnly?: boolean;
 }
-
 export interface ConfigItemIFrame extends ConfigItem {
     type: 'iframe';
-    /* If URL is defined, the data attribute will be ignored. For static URLs */
     url?: string;
     sandbox?: string;
     allowFullscreen?: boolean;
@@ -758,14 +567,12 @@ export interface ConfigItemIFrame extends ConfigItem {
     /** CSS Styles in React format (`marginLeft` and not `margin-left`) for the IFrame component */
     innerStyle?: CustomCSSProperties;
 }
-
 export interface ConfigItemIFrameSendTo extends Omit<ConfigItemIFrame, 'data' | 'url' | 'type'> {
     type: 'iframeSendTo';
     command?: string;
     alsoDependsOn?: string[];
     data?: Record<string, any>;
 }
-
 export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
     type: 'imageSendTo';
     command?: string;
@@ -773,7 +580,6 @@ export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
     height?: number | string;
     data?: Record<string, any>;
 }
-
 export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
     type: 'sendto';
     command?: string;
@@ -801,7 +607,6 @@ export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
     /** Styles for the button itself */
     controlStyle?: CustomCSSProperties;
 }
-
 export interface ConfigItemState extends ConfigItem {
     type: 'state';
     /** Describes which object ID should be taken for the controlling. The ID is without `ADAPTER.I.` prefix */
@@ -859,7 +664,6 @@ export interface ConfigItemState extends ConfigItem {
     /** Options for `select`. If not defiled, the `common.states` in the object must exist. */
     options?: (string | ConfigItemSelectOption)[];
 }
-
 export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
     type: 'textSendTo';
     container?: 'text' | 'div';
@@ -874,7 +678,6 @@ export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
     /** object - `{"subject1": 1, "data": "static"}`. You can specify jsonData or data, but not both. This data will be sent to the backend if jsonData is not defined. */
     data?: Record<string, any>;
 }
-
 export interface ConfigItemSelectSendTo extends Omit<ConfigItem, 'data'> {
     type: 'selectSendTo';
     /** allow manual editing. Without a drop-down menu (if the instance is offline). Default `true`. */
@@ -894,7 +697,6 @@ export interface ConfigItemSelectSendTo extends Omit<ConfigItem, 'data'> {
     /** by change of which attributes, the command must be resent */
     alsoDependsOn?: string[];
 }
-
 export interface ConfigItemTable extends ConfigItem {
     type: 'table';
     items?: ConfigItemTableIndexed[];
@@ -927,25 +729,30 @@ export interface ConfigItemTable extends ConfigItem {
     /** Breakpoint that will be rendered as cards */
     useCardFor?: ('xs' | 'sm' | 'md' | 'lg' | 'xl')[];
 }
-
 export interface ConfigItemTimePicker extends ConfigItem {
     type: 'timePicker';
     /** format passed to the date picker defaults to `HH:mm:ss` */
     format?: string;
     views?: ('hours' | 'minutes' | 'seconds')[];
     /** Represent the available time steps for each view. Defaults to `{ hours: 1, minutes: 5, seconds: 5 }` */
-    timeSteps?: { hours?: number; minutes?: number; seconds?: number };
+    timeSteps?: {
+        hours?: number;
+        minutes?: number;
+        seconds?: number;
+    };
     /** @deprecated use timeSteps */
-    timesteps?: { hours?: number; minutes?: number; seconds?: number };
+    timesteps?: {
+        hours?: number;
+        minutes?: number;
+        seconds?: number;
+    };
     /**  `fullDate` or `HH:mm:ss`. Defaults to full date for backward compatibility reasons */
     returnFormat?: string;
 }
-
 export interface ConfigItemCertCollection extends ConfigItem {
     type: 'certCollection';
     leCollectionName?: string;
 }
-
 export interface ConfigItemCRON extends ConfigItem {
     type: 'cron';
     /** show CRON with "minutes", "seconds" and so on */
@@ -953,11 +760,9 @@ export interface ConfigItemCRON extends ConfigItem {
     /** show simple CRON settings */
     simple?: boolean;
 }
-
 export interface ConfigItemCertificateSelect extends ConfigItem {
     type: 'certificate';
 }
-
 export interface ConfigItemLicense extends ConfigItem {
     type: 'license';
     /** array of paragraphs with texts, which will be shown each as a separate paragraph */
@@ -971,7 +776,6 @@ export interface ConfigItemLicense extends ConfigItem {
     /** If defined, the checkbox with the given name will be shown. If checked, the agreed button will be enabled. */
     checkBox?: string;
 }
-
 export interface ConfigItemCertificates extends ConfigItem {
     type: 'certificates';
     leCollectionName?: string;
@@ -979,7 +783,6 @@ export interface ConfigItemCertificates extends ConfigItem {
     certPrivateName?: string;
     certChainedName?: string;
 }
-
 export interface ConfigItemCheckLicense extends ConfigItem {
     type: 'checkLicense';
     /** Check UUID */
@@ -989,17 +792,14 @@ export interface ConfigItemCheckLicense extends ConfigItem {
     variant?: 'text' | 'outlined' | 'contained';
     color?: 'primary' | 'secondary';
 }
-
 export interface ConfigItemCheckDocker extends ConfigItem {
     type: 'checkDocker';
     /** Hide the version of docker */
     hideVersion?: boolean;
 }
-
 export interface ConfigItemUUID extends ConfigItem {
     type: 'uuid';
 }
-
 export interface ConfigItemJsonEditor extends ConfigItem {
     type: 'jsonEditor';
     /** if false, the text will be not validated as JSON */
@@ -1013,7 +813,6 @@ export interface ConfigItemJsonEditor extends ConfigItem {
     /** Open the editor in read-only mode - editor can be opened but content cannot be modified */
     readOnly?: boolean;
 }
-
 export interface ConfigItemYamlEditor extends ConfigItem {
     type: 'yamlEditor';
     /** if false, the text will be not validated as YAML */
@@ -1025,7 +824,6 @@ export interface ConfigItemYamlEditor extends ConfigItem {
     /** Open the editor in read-only mode - editor can be opened but content cannot be modified */
     readOnly?: boolean;
 }
-
 export interface ConfigItemInterface extends ConfigItem {
     type: 'interface';
     /** do not show loopback interface (127.0.0.1) */
@@ -1033,7 +831,6 @@ export interface ConfigItemInterface extends ConfigItem {
     /** do not show internal interfaces (normally it is 127.0.0.1 too) */
     ignoreInternal?: boolean;
 }
-
 export interface ConfigItemImageUpload extends ConfigItem {
     type: 'image';
     /** the name of a file is the structure name. In the below example `login-bg.png` is the file name for `writeFile("myAdapter.INSTANCE", "login-bg.png")` */
@@ -1047,7 +844,6 @@ export interface ConfigItemImageUpload extends ConfigItem {
     /** if true, allow the user to crop the image */
     crop?: boolean;
 }
-
 export interface ConfigItemInstanceSelect extends ConfigItem {
     type: 'instance';
     /** name of adapter. With the special name `_dataSources` you can get all adapters with the flag `common.getHistory`. */
@@ -1065,7 +861,6 @@ export interface ConfigItemInstanceSelect extends ConfigItem {
     /** Add to the options "all" option with value `*` */
     all?: boolean;
 }
-
 export interface ConfigItemFile extends ConfigItem {
     type: 'file';
     /** if a user can manually enter the file name and not only through a select dialog */
@@ -1093,7 +888,6 @@ export interface ConfigItemFile extends ConfigItem {
     /** @deprecated use maxLength */
     max?: number;
 }
-
 export interface ConfigItemFileSelector extends ConfigItem {
     type: 'fileSelector';
     /** File extension pattern. Allowed `**\/*.ext` to show all files from subfolders too, `*.ext` to show from the root folder or `folderName\/*.ext` to show all files in subfolder `folderName`. Default `**\/*.*`. */
@@ -1117,73 +911,7 @@ export interface ConfigItemFileSelector extends ConfigItem {
     /** Do not show the size of files */
     noSize?: boolean;
 }
-
-export type ConfigItemAny =
-    | ConfigItemAlive
-    | ConfigItemAutocomplete
-    | ConfigItemAutocompleteSendTo
-    | ConfigItemPanel
-    | ConfigItemTabs
-    | ConfigItemText
-    | ConfigItemNumber
-    | ConfigItemOAuth2
-    | ConfigItemColor
-    | ConfigItemCheckbox
-    | ConfigItemSlider
-    | ConfigItemIP
-    | ConfigItemInfoBox
-    | ConfigItemUser
-    | ConfigItemRoom
-    | ConfigItemFunc
-    | ConfigItemSelect
-    | ConfigItemAccordion
-    | ConfigItemCoordinates
-    | ConfigItemDivider
-    | ConfigItemHeader
-    | ConfigItemCustom
-    | ConfigItemDatePicker
-    | ConfigItemDeviceManager
-    | ConfigItemLanguage
-    | ConfigItemPort
-    | ConfigItemSendTo
-    | ConfigItemState
-    | ConfigItemTable
-    | ConfigItemTimePicker
-    | ConfigItemTextSendTo
-    | ConfigItemSelectSendTo
-    | ConfigItemCertCollection
-    | ConfigItemCertificateSelect
-    | ConfigItemCertificates
-    | ConfigItemUUID
-    | ConfigItemCheckDocker
-    | ConfigItemCheckLicense
-    | ConfigItemPattern
-    | ConfigItemChip
-    | ConfigItemCRON
-    | ConfigItemFile
-    | ConfigItemFileSelector
-    | ConfigItemIFrame
-    | ConfigItemIFrameSendTo
-    | ConfigItemImageSendTo
-    | ConfigItemInstanceSelect
-    | ConfigItemImageUpload
-    | ConfigItemInterface
-    | ConfigItemJsonEditor
-    | ConfigItemYamlEditor
-    | ConfigItemLicense
-    | ConfigItemPassword
-    | ConfigItemSetState
-    | ConfigItemStaticDivider
-    | ConfigItemStaticHeader
-    | ConfigItemStaticInfo
-    | ConfigItemStaticImage
-    | ConfigItemStaticText
-    | ConfigItemTopic
-    | ConfigItemObjectId
-    | ConfigItemQrCode;
-
-// -- STOP OF DYNAMIC GENERATED CODE
-
+export type ConfigItemAny = ConfigItemAlive | ConfigItemAutocomplete | ConfigItemAutocompleteSendTo | ConfigItemPanel | ConfigItemTabs | ConfigItemText | ConfigItemNumber | ConfigItemOAuth2 | ConfigItemColor | ConfigItemCheckbox | ConfigItemSlider | ConfigItemIP | ConfigItemInfoBox | ConfigItemUser | ConfigItemRoom | ConfigItemFunc | ConfigItemSelect | ConfigItemAccordion | ConfigItemCoordinates | ConfigItemDivider | ConfigItemHeader | ConfigItemCustom | ConfigItemDatePicker | ConfigItemDeviceManager | ConfigItemLanguage | ConfigItemPort | ConfigItemSendTo | ConfigItemState | ConfigItemTable | ConfigItemTimePicker | ConfigItemTextSendTo | ConfigItemSelectSendTo | ConfigItemCertCollection | ConfigItemCertificateSelect | ConfigItemCertificates | ConfigItemUUID | ConfigItemCheckDocker | ConfigItemCheckLicense | ConfigItemPattern | ConfigItemChip | ConfigItemCRON | ConfigItemFile | ConfigItemFileSelector | ConfigItemIFrame | ConfigItemIFrameSendTo | ConfigItemImageSendTo | ConfigItemInstanceSelect | ConfigItemImageUpload | ConfigItemInterface | ConfigItemJsonEditor | ConfigItemYamlEditor | ConfigItemLicense | ConfigItemPassword | ConfigItemSetState | ConfigItemStaticDivider | ConfigItemStaticHeader | ConfigItemStaticInfo | ConfigItemStaticImage | ConfigItemStaticText | ConfigItemTopic | ConfigItemObjectId | ConfigItemQrCode;
 export type ActionButton = {
     label: ioBroker.StringOrTranslated;
     type: 'apply' | 'cancel' | 'copyToClipboard';
@@ -1197,7 +925,6 @@ export type ActionButton = {
     /** Name of the attribute in data that should be copied to clipboard */
     copyToClipboardAttr?: string;
 };
-
 export type BackEndCommandJsonFormOptions = {
     /** Data for the form */
     data?: JsonFormData;
@@ -1214,13 +941,11 @@ export type BackEndCommandJsonFormOptions = {
     /** Always allow the apply button. Even when nothing was changed */
     ignoreApplyDisabled?: boolean;
 };
-
 export type JsonFormSchema = ConfigItemPanel | ConfigItemTabs;
-
 export type JsonFormData = Record<string, any>;
-
 export interface DeviceDetails<TId extends DeviceId = DeviceId> {
     id: TId;
     schema: JsonFormSchema;
     data?: JsonFormData;
 }
+export {};

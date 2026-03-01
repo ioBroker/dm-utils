@@ -15,7 +15,7 @@
     "build": "tsc -p tsconfig.json",
     "test:package": "node -e \"process.exit(0)\"",
     "lint": "eslint -c eslint.config.mjs src",
-    "updateCommonTs": "node tasks.js",
+    "updateCommonTs": "npx -y tsx tasks.ts",
     "prettier": "prettier -u -w examples src",
     "release": "release-script",
     "release-patch": "release-script patch --yes",

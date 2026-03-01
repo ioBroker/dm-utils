@@ -1,6 +1,5 @@
 import type * as base from './base';
 import type { DeviceId } from './common';
-
 export type ActionBase = base.ActionBase<'adapter'>;
 export type InstanceAction = base.InstanceAction<'adapter'>;
 export type DeviceAction<TId extends DeviceId> = base.DeviceAction<'adapter', TId>;
