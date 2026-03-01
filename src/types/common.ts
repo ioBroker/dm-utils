@@ -432,7 +432,6 @@ export interface ConfigItemPassword extends ConfigItem {
 export interface ConfigItemObjectId extends ConfigItem {
     type: 'objectId';
     /** Desired type: `channel`, `device`, ... (has only `state` by default). It is plural, because `type` is already occupied. */
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     types?: ObjectBrowserType | ObjectBrowserType[];
     /** Show only this root object and its children */
     root?: string;

@@ -391,7 +391,6 @@ In version 2.x, the refresh response of device actions has changed.
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-
 ### **WORK IN PROGRESS**
 
 - (@UncleSamSwiss) Enabled incremental loading of devices
