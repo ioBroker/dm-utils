@@ -361,14 +361,14 @@ class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
 }
 ```
 
-## Migration from 1.x to 2.x
+## Migration from 2.x to 3.x
 
-Between versions 1.x and 2.x, there are some breaking changes. Please also have a look at the changelog below for more information.
+Between versions 2.x and 3.x, there are some breaking changes. Please also have a look at the changelog below for more information.
 
 ### Incremental loading of devices
 
-In version 1.x, the `listDevices()` method had to return the full list of devices.
-In version 2.x, this method was replaced by `loadDevices(context: DeviceLoadContext)` that allows incremental loading of devices.
+In versions 1.x and 2.x, the `listDevices()` method had to return the full list of devices.
+In version 3.x, this method was replaced by `loadDevices(context: DeviceLoadContext)` that allows incremental loading of devices.
 
 Instead of creating and returning an array of `DeviceInfo` objects, you have to call `context.addDevice(deviceInfo)` for each device you want to add to the list.
 
@@ -376,9 +376,9 @@ You may also call `context.setTotalDevices(count: number)` as soon as possible t
 
 ### Refresh response of device actions
 
-In version 2.x, the refresh response of device actions has changed.
+In version 3.x, the refresh response of device actions has changed.
 
-| Version 1.x  | Version 2.x  | Description                                                                 |
+| Version 1.x/2.x  | Version 3.x  | Description                                                                 |
 | ------------ | ------------ | --------------------------------------------------------------------------- |
 | `true`       | `'all'`      | the instance information as well as the entire device list will be reloaded |
 | `false`      | `'none'`     | nothing will be reloaded                                                    |
