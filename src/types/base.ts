@@ -8,7 +8,6 @@ import type {
     ValueOrStateOrObject,
 } from '..';
 import type { ApiVersion, DeviceId, DeviceStatus, RetVal } from './common';
-import { PatternControl } from '@iobroker/type-detector';
 
 type ActionType = 'api' | 'adapter';
 export type Color = 'primary' | 'secondary' | (string & {}); // color (you can use primary, secondary or color rgb value or hex)

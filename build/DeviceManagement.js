@@ -520,7 +520,7 @@ function convertActions(actions) {
         }
         ids.add(a.id);
     });
-    // remove handler function to send it as JSON
+    // remove a handler function to send it as JSON
     return actions.map((a) => (Object.assign(Object.assign({}, a), { handler: undefined, disabled: !a.handler && !a.url })));
 }
 function convertControls(controls) {

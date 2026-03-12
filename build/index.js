@@ -15,5 +15,3 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./DeviceManagement"), exports);
-// don't export * from "./MessageContext" as it is private
-__exportStar(require("./types"), exports);
