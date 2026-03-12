@@ -673,7 +673,7 @@ function convertActions<T extends ActionBase, U extends api.ActionBase>(actions?
         ids.add(a.id);
     });
 
-    // remove handler function to send it as JSON
+    // remove a handler function to send it as JSON
     return actions.map((a: any) => ({ ...a, handler: undefined, disabled: !a.handler && !a.url }));
 }
 

@@ -8,6 +8,7 @@ import type {
     ValueOrStateOrObject,
 } from '..';
 import type { ApiVersion, DeviceId, DeviceStatus, RetVal } from './common';
+import { PatternControl } from '@iobroker/type-detector';
 
 type ActionType = 'api' | 'adapter';
 export type Color = 'primary' | 'secondary' | (string & {}); // color (you can use primary, secondary or color rgb value or hex)
@@ -16,9 +17,9 @@ export type ControlState = string | number | boolean | null;
 
 /** Reserved action names */
 export const ACTIONS = {
-    /** This action will be called when user clicks on connection icon */
+    /** This action will be called when the user clicks on the connection icon */
     STATUS: 'status',
-    /** This action will be called when the user clicks on enabled/disabled icon. The enabled/disabled icon will be shown only if the node status has "enabled" flag set to false or true */
+    /** This action will be called when the user clicks on the enabled / disabled icon. The enabled/disabled icon will be shown only if the node status has the "enabled" flag set to false or true */
     ENABLE_DISABLE: 'enable/disable',
 };
 
@@ -101,7 +102,7 @@ export interface ControlBase {
     id: string; // unique id of control for one device. Controls must be unique for one device
     type: 'button' | 'switch' | 'slider' | 'select' | 'icon' | 'color' | 'text' | 'number' | 'info';
     state?: ioBroker.State; // actual state for all types except button
-    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if state changed, GUI will request update of control
+    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if the state is changed, GUI will request update of control
 
     icon?: string; // base64 or url - icon could be by all types except select
     iconOn?: string; // base64 or url - by type button, switch, slider, icon
@@ -184,7 +185,7 @@ export interface InstanceDetails<T extends ActionType = 'api'> {
 }
 
 export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId = DeviceId> {
-    /** ID of the device. Must be unique only in one adapter. Other adapters could have same IDs */
+    /** ID of the device. Must be unique only in one adapter. Other adapters could have the same IDs */
     id: TId;
     /** Human-readable identifier of the device */
     identifier?: ValueOrObject<string>;
@@ -201,7 +202,7 @@ export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId =
     status?: DeviceStatus | DeviceStatus[];
     /** Connection type, how the device is connected */
     connectionType?: ValueOrStateOrObject<ConfigConnectionType>;
-    /** If this flag is true or false, the according indication will be shown. Additionally, if ACTIONS.ENABLE_DISABLE is implemented, this action will be sent to backend by clicking on this indication */
+    /** If this flag is true or false, the according indication will be shown. Additionally, if ACTIONS.ENABLE_DISABLE is implemented, this action will be sent to the backend by clicking on this indication */
     enabled?: ValueOrState<boolean>;
     /** List of actions on the card */
     actions?: DeviceAction<T, TId>[];
@@ -219,20 +220,20 @@ export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId =
 }
 
 export interface BackendToGuiCommandDeviceInfoUpdate<TId extends DeviceId = DeviceId> {
-    /** Used for updating and for adding new device */
+    /** Used for updating and for adding a new device */
     command: 'infoUpdate';
     /** Device ID */
     deviceId: TId;
-    /** Backend can send directly new information about device to avoid extra request from GUI */
+    /** Backend can directly send new information about a device to avoid extra request from GUI */
     info?: DeviceInfo;
 }
 
 export interface BackendToGuiCommandDeviceStatusUpdate<TId extends DeviceId = DeviceId> {
-    /** Status of device was updated */
+    /** Status of a device was updated */
     command: 'statusUpdate';
     /** Device ID */
     deviceId: TId;
-    /** Backend can send directly new status to avoid extra request from GUI */
+    /** Backend can directly send new status to avoid extra request from GUI */
     status?: DeviceStatus;
 }
 
