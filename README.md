@@ -131,7 +131,7 @@ Every item is an object of type `DeviceInfo` which has the following properties:
 - `identifier` (optional): a human-readable identifier of the device
 - `name` (string or translations): the human-readable name of this device
 - `status` (optional): the current status of the device, which has to be an object containing:
-    - `connection` (string): alowed values are: `"connected"` / `"disconnected"`
+    - `connection` (string): allowed values are: `"connected"` / `"disconnected"`
     - `rssi` (number): rssi value of the connection
     - `battery` (boolean / number): if boolean: false - the battery is empty. If number: the battery level of the device (shows also a battery symbol on the card)
     - `warning` (boolean / string): if boolean: true indicates a warning. If a string: shows also the warning with mouseover
@@ -214,6 +214,9 @@ The returned object must contain:
     - `"device"`: if you want the device details to be reloaded after this action
     - `"instance"`: if you want the entire device list to be reloaded after this action
     - `false`: if you don't want anything to be refreshed (important: this is a boolean, not a string!)
+or  
+- `url` (string) This URL must be opened
+- `target` (string) Target window for url (`_blank` is default)
 
 This method can be implemented asynchronously and can take a lot of time to complete.
 
@@ -378,12 +381,12 @@ You may also call `context.setTotalDevices(count: number)` as soon as possible t
 
 In version 3.x, the refresh response of device actions has changed.
 
-| Version 1.x/2.x  | Version 3.x  | Description                                                                 |
-| ------------ | ------------ | --------------------------------------------------------------------------- |
-| `true`       | `'all'`      | the instance information as well as the entire device list will be reloaded |
-| `false`      | `'none'`     | nothing will be reloaded                                                    |
-| `'device'`   | `'devices'`  | the entire device list will be reloaded                                     |
-| `'instance'` | `'instance'` | (unchanged) only the instance information will be reloaded                  |
+| Version 1.x/2.x | Version 3.x  | Description                                                                 |
+|-----------------|--------------|-----------------------------------------------------------------------------|
+| `true`          | `'all'`      | the instance information as well as the entire device list will be reloaded |
+| `false`         | `'none'`     | nothing will be reloaded                                                    |
+| `'device'`      | `'devices'`  | the entire device list will be reloaded                                     |
+| `'instance'`    | `'instance'` | (unchanged) only the instance information will be reloaded                  |
 
 ## Changelog
 
@@ -391,6 +394,9 @@ In version 3.x, the refresh response of device actions has changed.
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added types to call URL directly on the action button
+
 ### 3.0.0 (2026-03-01)
 
 - (@UncleSamSwiss) Enabled incremental loading of devices
