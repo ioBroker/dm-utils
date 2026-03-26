@@ -10,6 +10,7 @@ export {
     type BackendToGuiCommandDeviceDelete,
     type BackendToGuiCommandDeviceStatusUpdate,
     type BackendToGuiCommandDeviceInfoUpdate,
+    type DeviceRefresh,
 } from './base';
 export type * from './common';
 export * from './errorCodes';

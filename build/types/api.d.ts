@@ -39,6 +39,13 @@ export type DmActionConfirmResponse = DmResponseBase & {
     type: 'confirm';
     confirm: ioBroker.StringOrTranslated;
 };
+export type DmActionUrlResponse = DmResponseBase & {
+    type: 'url';
+    result: {
+        url: string;
+        target: string;
+    };
+};
 export interface CommunicationForm {
     title?: ioBroker.StringOrTranslated | null | undefined;
     label?: ioBroker.StringOrTranslated | null | undefined;
@@ -49,7 +56,7 @@ export interface CommunicationForm {
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     /** Minimal width of the dialog */
     minWidth?: number;
-    /** Always allow the apply button. Even when nothing was changed */
+    /** Always allow the Apply button. Even when nothing was changed */
     ignoreApplyDisabled?: boolean;
 }
 export type DmActionFormResponse = DmResponseBase & {
@@ -62,4 +69,4 @@ export type DmActionProgressResponse = DmResponseBase & {
         open?: boolean;
     };
 };
-export type DmActionResponse = DmActionResultResponse | DmActionMessageResponse | DmActionConfirmResponse | DmActionFormResponse | DmActionProgressResponse;
+export type DmActionResponse = DmActionResultResponse | DmActionMessageResponse | DmActionConfirmResponse | DmActionUrlResponse | DmActionFormResponse | DmActionProgressResponse;
