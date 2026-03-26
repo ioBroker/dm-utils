@@ -41,7 +41,7 @@ export type DmActionConfirmResponse = DmResponseBase & {
 };
 export type DmActionUrlResponse = DmResponseBase & {
     type: 'url';
-    result: {
+    data: {
         url: string;
         target: string;
     };
