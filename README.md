@@ -394,7 +394,7 @@ In version 3.x, the refresh response of device actions has changed.
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.0.1 (2026-03-26)
 - (@GermanBluefox) Added types to call URL directly on the action button
 
 ### 3.0.0 (2026-03-01)
