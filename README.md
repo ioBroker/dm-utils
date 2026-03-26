@@ -394,7 +394,7 @@ In version 3.x, the refresh response of device actions has changed.
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.0.3 (2026-03-26)
 
 - (@UncleSamSwiss) Enabled incremental loading of devices
 - (@UncleSamSwiss) Removed direct access to `DeviceManagement.handleXxx()` methods (use `handler` and similar properties instead)

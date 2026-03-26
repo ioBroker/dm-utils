@@ -39,13 +39,6 @@ export type DmActionConfirmResponse = DmResponseBase & {
     type: 'confirm';
     confirm: ioBroker.StringOrTranslated;
 };
-export type DmActionUrlResponse = DmResponseBase & {
-    type: 'url';
-    data: {
-        url: string;
-        target: string;
-    };
-};
 export interface CommunicationForm {
     title?: ioBroker.StringOrTranslated | null | undefined;
     label?: ioBroker.StringOrTranslated | null | undefined;
@@ -69,4 +62,4 @@ export type DmActionProgressResponse = DmResponseBase & {
         open?: boolean;
     };
 };
-export type DmActionResponse = DmActionResultResponse | DmActionMessageResponse | DmActionConfirmResponse | DmActionUrlResponse | DmActionFormResponse | DmActionProgressResponse;
+export type DmActionResponse = DmActionResultResponse | DmActionMessageResponse | DmActionConfirmResponse | DmActionFormResponse | DmActionProgressResponse;
