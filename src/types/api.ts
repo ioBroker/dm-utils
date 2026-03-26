@@ -48,14 +48,6 @@ export type DmActionConfirmResponse = DmResponseBase & {
     confirm: ioBroker.StringOrTranslated;
 };
 
-export type DmActionUrlResponse = DmResponseBase & {
-    type: 'url';
-    data: {
-        url: string;
-        target: string; // default "_blank"
-    };
-};
-
 export interface CommunicationForm {
     title?: ioBroker.StringOrTranslated | null | undefined;
     label?: ioBroker.StringOrTranslated | null | undefined; // same as title
@@ -84,6 +76,5 @@ export type DmActionResponse =
     | DmActionResultResponse
     | DmActionMessageResponse
     | DmActionConfirmResponse
-    | DmActionUrlResponse
     | DmActionFormResponse
     | DmActionProgressResponse;
