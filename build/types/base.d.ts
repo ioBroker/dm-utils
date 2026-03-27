@@ -1,4 +1,4 @@
-import { ActionContext, ConfigConnectionType, DeviceDetails, ErrorResponse, MessageContext, ValueOrObject, ValueOrState, ValueOrStateOrObject } from '..';
+import type { ActionContext, ConfigConnectionType, DeviceDetails, ErrorResponse, MessageContext, ValueOrObject, ValueOrState, ValueOrStateOrObject } from '..';
 import type { ApiVersion, DeviceId, DeviceStatus, RetVal } from './common';
 type ActionType = 'api' | 'adapter';
 export type Color = 'primary' | 'secondary' | (string & {});
