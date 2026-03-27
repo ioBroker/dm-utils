@@ -1,7 +1,8 @@
-import type {
+import  {
     ActionContext,
-    ConfigConnectionType,
+    ConfigConnectionType, DeviceDetails,
     ErrorResponse,
+    JsonFormSchema,
     MessageContext,
     ValueOrObject,
     ValueOrState,
@@ -209,6 +210,8 @@ export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId =
     controls?: DeviceControl<T, TId>[];
     /** If true, the button `more` will be shown on the card and called `dm:deviceDetails` action to get the details  */
     hasDetails?: ValueOrStateOrObject<boolean>;
+    /** Following optional information will be shown on the card directly. Do not try to show a table or other big objects on a card. It is suggested to use "state" components */
+    customInfo?: DeviceDetails<TId>;
     /** Device type for grouping */
     group?: {
         // key could be a string, divided by / to define the subgroup

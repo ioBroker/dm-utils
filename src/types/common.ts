@@ -1197,6 +1197,8 @@ export type ActionButton = {
     copyToClipboardAttr?: string;
 };
 
+export type JsonFormData = Record<string, any>;
+
 export type BackEndCommandJsonFormOptions = {
     /** Data for the form */
     data?: JsonFormData;
@@ -1208,15 +1210,13 @@ export type BackEndCommandJsonFormOptions = {
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     /** Minimal width of the dialog */
     minWidth?: number;
-    /** Do not translate title */
+    /** Do not translate a title */
     noTranslation?: boolean;
     /** Always allow the apply button. Even when nothing was changed */
     ignoreApplyDisabled?: boolean;
 };
 
 export type JsonFormSchema = ConfigItemPanel | ConfigItemTabs;
-
-export type JsonFormData = Record<string, any>;
 
 export interface DeviceDetails<TId extends DeviceId = DeviceId> {
     id: TId;
