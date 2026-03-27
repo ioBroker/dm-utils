@@ -94,7 +94,7 @@ export type WithHandlerOrUrl<TType extends ActionType, THandler> = {
     url: ioBroker.StringOrTranslated;
 };
 export type InstanceAction<T extends ActionType = 'api'> = ActionBase<T> & WithHandlerOrUrl<T, (context: ActionContext, options?: Record<string, any>) => RetVal<InstanceRefreshResponse>> & {
-    title: ioBroker.StringOrTranslated;
+    title?: ioBroker.StringOrTranslated;
 };
 export type DeviceUpdate<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = {
     update: DeviceInfo<T, TId>;
