@@ -1,8 +1,8 @@
-import  {
+import type {
     ActionContext,
-    ConfigConnectionType, DeviceDetails,
+    ConfigConnectionType,
+    DeviceDetails,
     ErrorResponse,
-    JsonFormSchema,
     MessageContext,
     ValueOrObject,
     ValueOrState,
