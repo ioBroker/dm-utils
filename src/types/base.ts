@@ -58,7 +58,11 @@ export interface ActionBase<T extends ActionType> {
         | 'users'
         | 'group'
         | 'user'
+        | 'update'
+        | 'qrcode'
         | 'info'
+        | 'lines'
+        | 'web'
         | (string & {}); // base64 or url
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends 'api' ? boolean : never;
@@ -87,15 +91,21 @@ export interface ActionBase<T extends ActionType> {
     };
     /** Timeout in ms for waiting an answer from backend */
     timeout?: number;
+    /** Sx Style for button */
+    style?: Record<string, unknown>;
 }
 
 export interface ChannelInfo {
     name: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
-    icon?: string; // base64 or url
-    color?: Color; // color of name
-    backgroundColor?: Color; // background color of card (you can use primary, secondary or color rgb value or hex)
+    /** base64 or url or name */
+    icon?: string;
+    /** color of name */
+    color?: Color;
+    /** Background color of card (you can use primary, secondary or color rgb value or hex) */
     order?: number;
+    /** Sx Style for header */
+    style?: Record<string, unknown>;
 }
 
 export interface ControlBase {
@@ -118,6 +128,8 @@ export interface ControlBase {
     controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
     options?: { label: ioBroker.StringOrTranslated; value: ControlState; icon?: string; color?: Color }[]; // only for select
     channel?: ChannelInfo;
+    /** Sx Style for button */
+    style?: Record<string, unknown>;
 }
 
 export interface DeviceControl<TType extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ControlBase {

@@ -16,7 +16,7 @@ export interface ActionBase<T extends ActionType> {
     /**
      * This can either be base64 or the URL to an icon.
      */
-    icon?: 'edit' | 'rename' | 'delete' | 'refresh' | 'newDevice' | 'new' | 'add' | 'discover' | 'search' | 'unpairDevice' | 'pairDevice' | 'identify' | 'play' | 'stop' | 'pause' | 'forward' | 'next' | 'rewind' | 'previous' | 'lamp' | 'light' | 'backlight' | 'dimmer' | 'socket' | 'settings' | 'users' | 'group' | 'user' | 'info' | (string & {});
+    icon?: 'edit' | 'rename' | 'delete' | 'refresh' | 'newDevice' | 'new' | 'add' | 'discover' | 'search' | 'unpairDevice' | 'unpair' | 'pairDevice' | 'pair' | 'identify' | 'play' | 'stop' | 'pause' | 'forward' | 'next' | 'rewind' | 'previous' | 'lamp' | 'light' | 'backlight' | 'dimmer' | 'socket' | 'settings' | 'users' | 'group' | 'user' | 'update' | 'qrcode' | 'info' | 'lines' | 'web' | (string & {});
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends 'api' ? boolean : never;
     color?: Color;
@@ -47,14 +47,20 @@ export interface ActionBase<T extends ActionType> {
     };
     /** Timeout in ms for waiting an answer from backend */
     timeout?: number;
+    /** Sx Style for button */
+    style?: Record<string, unknown>;
 }
 export interface ChannelInfo {
     name: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
+    /** base64 or url or name */
     icon?: string;
+    /** color of name */
     color?: Color;
-    backgroundColor?: Color;
+    /** Background color of card (you can use primary, secondary or color rgb value or hex) */
     order?: number;
+    /** Sx Style for header */
+    style?: Record<string, unknown>;
 }
 export interface ControlBase {
     id: string;
@@ -80,6 +86,8 @@ export interface ControlBase {
         color?: Color;
     }[];
     channel?: ChannelInfo;
+    /** Sx Style for button */
+    style?: Record<string, unknown>;
 }
 export interface DeviceControl<TType extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ControlBase {
     handler?: TType extends 'api' ? never : (deviceId: TId, actionId: string, state: ControlState, context: MessageContext<TId>) => RetVal<ErrorResponse | ioBroker.State>;
