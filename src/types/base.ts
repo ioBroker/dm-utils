@@ -158,7 +158,7 @@ export type InstanceAction<T extends ActionType = 'api'> = ActionBase<T> &
     WithHandlerOrUrl<T, (context: ActionContext, options?: Record<string, any>) => RetVal<InstanceRefreshResponse>> & {
         title?: ioBroker.StringOrTranslated;
         /** Type of button if the title is used */
-        variant?: 'outlined' | 'contained' | 'standard';
+        variant?: 'text' | 'outlined' | 'contained';
     };
 
 export type DeviceUpdate<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = {
