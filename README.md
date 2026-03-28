@@ -454,7 +454,7 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.0.9 (2026-03-28)
 - (@GermanBluefox) Added description of icons and the possibility to show an information directly on the card
 - (@GermanBluefox) Added style property for action and control buttons
 
