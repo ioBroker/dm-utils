@@ -189,13 +189,15 @@ export type DeviceAction<T extends ActionType = 'api', TId extends DeviceId = De
     >;
 
 export interface InstanceDetails<T extends ActionType = 'api'> {
-    /** API Version: 1 - till 2025 (including), 2 - from 2026 */
+    /** API Version: 1 - till 2025 (including), v3 - from 2026 */
     apiVersion: ApiVersion;
     actions?: InstanceAction<T>[];
     /** ID of state used for communication with GUI */
     communicationStateId?: string;
     /** Human-readable label next to the identifier */
     identifierLabel?: ioBroker.StringOrTranslated;
+    /** Force the compact cards representation */
+    smallCards?: boolean;
 }
 
 export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId = DeviceId> {
