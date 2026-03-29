@@ -101,6 +101,7 @@ export type ConfigItemType =
     | 'pattern'
     | 'port'
     | 'qrCode'
+    | 'qrCodeSendTo'
     | 'room'
     | 'select'
     | 'selectSendTo'
@@ -267,7 +268,7 @@ interface ConfigItemIndexed extends ConfigItem {
     attr?: string;
 }
 
-interface ConfigItemTableIndexed extends ConfigItem {
+type ConfigItemTableIndexed = ConfigItemAny & {
     attr?: string;
     /** show filter options in the header of the table */
     filter?: boolean;
@@ -275,7 +276,7 @@ interface ConfigItemTableIndexed extends ConfigItem {
     sort?: boolean;
     /** tooltip in the header of the table */
     title?: string;
-}
+};
 
 export interface ConfigItemAlive extends ConfigItem {
     type: 'alive';
@@ -296,6 +297,8 @@ export interface ConfigItemSelectOption {
     color?: string;
     /** Formula or boolean value to show or hide the option */
     hidden?: string | boolean;
+    /** Description for the value */
+    description?: ioBroker.StringOrTranslated;
 }
 
 export interface ConfigItemPanel extends ConfigItem {
@@ -314,6 +317,8 @@ export interface ConfigItemPanel extends ConfigItem {
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
     // If defined, the tab will send a message by initializing to backend with command with string contained in "command"
     command?: string;
+    /** Filter states for custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
+    statesFilter?: true | string;
 }
 
 export interface ConfigItemPattern extends ConfigItem {
@@ -342,6 +347,8 @@ export interface ConfigItemTabs extends ConfigItem {
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
     // If defined, the tab will send a message by initializing to backend with command "tab" (string contained in "sendTo"). Used in jsonTab.json
     command?: string;
+    /** Filter states for custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
+    statesFilter?: true | string;
 }
 
 export interface ConfigItemText extends ConfigItem {
@@ -398,6 +405,8 @@ export interface ConfigItemOAuth2 extends ConfigItem {
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     identifier: 'spotify' | 'google' | 'dropbox' | 'microsoft' | string;
     scope?: string; // optional scopes divided by space, e.g. `user-read-private user-read-email`
+    ownClientId?: string; // Optional. User can provide own Client ID and this is a attribut name where the client ID must be stored
+    ownClientSecret?: string; // Optional. User can provide own Client secret and this is a attribut name where the client secret must be stored
     refreshLabel?: ioBroker.StringOrTranslated; // label for the refresh button
 }
 
@@ -405,6 +414,22 @@ export interface ConfigItemQrCode extends ConfigItem {
     type: 'qrCode';
     /** Data to show in the QR code */
     data: string;
+    /** Size of the QR code */
+    size?: number;
+    /** Foreground color */
+    fgColor?: string;
+    /** Background color */
+    bgColor?: string;
+    /** QR code level */
+    level?: 'L' | 'M' | 'Q' | 'H';
+}
+
+export interface ConfigItemQrCodeSendTo extends Omit<ConfigItem, 'data'> {
+    type: 'qrCodeSendTo';
+    command?: string;
+    alsoDependsOn?: string[];
+    data?: Record<string, any>;
+    sendFirstByClick?: boolean | ioBroker.StringOrTranslated;
     /** Size of the QR code */
     size?: number;
     /** Foreground color */
@@ -432,6 +457,7 @@ export interface ConfigItemPassword extends ConfigItem {
 export interface ConfigItemObjectId extends ConfigItem {
     type: 'objectId';
     /** Desired type: `channel`, `device`, ... (has only `state` by default). It is plural, because `type` is already occupied. */
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     types?: ObjectBrowserType | ObjectBrowserType[];
     /** Show only this root object and its children */
     root?: string;
@@ -461,6 +487,8 @@ export interface ConfigItemObjectId extends ConfigItem {
     };
     /** Cannot be used together with `type` settings. It is a function that will be called for every object and must return true or false. Example: `obj.common.type === 'number'` */
     filterFunc?: (obj: ioBroker.Object) => boolean;
+    /** Special case to fill other field, when the ID is selected. Example "common.name=>name,common.color=>color(X)" - fills the field name and color with object name and colors. The color will be overwritten with the new value event when it is not empty */
+    fillOnSelect?: string;
 }
 
 export interface ConfigItemSlider extends ConfigItem {
@@ -514,6 +542,12 @@ export interface ConfigItemStaticImage extends ConfigItem {
     src: string;
     /** optional HTTP link */
     href?: string;
+    /** It will be shown small image 100px, and by click on it the dialog will be opened with bigger image */
+    showInDialog?: boolean;
+    /** If showInDialog, the label for the button */
+    showInDialogButtonLabel?: ioBroker.StringOrTranslated;
+    /** If showInDialog, the size of small image (default 100px) */
+    showInDialogSmallSize?: number;
 }
 
 export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
@@ -538,6 +572,8 @@ export interface ConfigItemStaticText extends Omit<ConfigItem, 'button'> {
     icon?: ConfigIconType;
     /** styles for the button */
     controlStyle?: CustomCSSProperties;
+    /** Show text as HTML, text or pretty-printed JSON */
+    format?: 'text' | 'html' | 'json';
 }
 
 export interface ConfigItemStaticInfo extends Omit<ConfigItem, 'data'> {
@@ -616,8 +652,10 @@ export interface ConfigItemSelect extends ConfigItem {
               value?: number | string;
               color?: string;
               hidden?: string | boolean;
+              description?: ioBroker.StringOrTranslated;
           }
     )[];
+    format: 'dropdown' | 'radio';
     attr?: string;
     /** If multiple selection is possible. In this case, the value will be an array */
     multiple?: boolean;
@@ -728,6 +766,7 @@ export interface ConfigItemDatePicker extends ConfigItem {
 
 export interface ConfigItemDeviceManager extends ConfigItem {
     type: 'deviceManager';
+    smallCards?: boolean;
 }
 
 export interface ConfigItemLanguage extends ConfigItem {
@@ -771,6 +810,7 @@ export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
     alsoDependsOn?: string[];
     height?: number | string;
     data?: Record<string, any>;
+    sendFirstByClick?: boolean | ioBroker.StringOrTranslated;
 }
 
 export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
@@ -816,11 +856,11 @@ export interface ConfigItemState extends ConfigItem {
     /** Add a unit to the value */
     unit?: string;
     /** this text will be shown if the value is true */
-    trueText?: string;
+    trueText?: ioBroker.StringOrTranslated;
     /** Style of the text if the value is true */
     trueTextStyle?: CustomCSSProperties;
     /** this text will be shown if the value is false or if the control is a "button" */
-    falseText?: string;
+    falseText?: ioBroker.StringOrTranslated;
     /** Style of the text if the value is false or if the control is a "button" */
     falseTextStyle?: CustomCSSProperties;
     /** This image will be shown if the value is true */
@@ -857,6 +897,8 @@ export interface ConfigItemState extends ConfigItem {
     setOnEnterKey?: boolean;
     /** Options for `select`. If not defiled, the `common.states` in the object must exist. */
     options?: (string | ConfigItemSelectOption)[];
+    /** Number of decimal places to display for numeric values in text/html mode */
+    digits?: number;
 }
 
 export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
@@ -1179,7 +1221,8 @@ export type ConfigItemAny =
     | ConfigItemStaticText
     | ConfigItemTopic
     | ConfigItemObjectId
-    | ConfigItemQrCode;
+    | ConfigItemQrCode
+    | ConfigItemQrCodeSendTo;
 
 // -- STOP OF DYNAMIC GENERATED CODE
 
