@@ -454,7 +454,7 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.0.11 (2026-03-29)
 - (@GermanBluefox) Updated JsonConfig
 
 ### 3.0.9 (2026-03-28)

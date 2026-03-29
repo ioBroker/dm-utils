@@ -118,13 +118,15 @@ export type DeviceRefreshResponse<T extends ActionType = 'api', TId extends Devi
 } | DeviceUpdate<T, TId> | DeviceDelete<TId>;
 export type DeviceAction<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = ActionBase<T> & WithHandlerOrUrl<T, (deviceId: TId, context: ActionContext, options?: Record<string, any>) => RetVal<DeviceRefreshResponse<'adapter', TId>>>;
 export interface InstanceDetails<T extends ActionType = 'api'> {
-    /** API Version: 1 - till 2025 (including), 2 - from 2026 */
+    /** API Version: 1 - till 2025 (including), v3 - from 2026 */
     apiVersion: ApiVersion;
     actions?: InstanceAction<T>[];
     /** ID of state used for communication with GUI */
     communicationStateId?: string;
     /** Human-readable label next to the identifier */
     identifierLabel?: ioBroker.StringOrTranslated;
+    /** Force the compact cards representation */
+    smallCards?: boolean;
 }
 export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId = DeviceId> {
     /** ID of the device. Must be unique only in one adapter. Other adapters could have the same IDs */
