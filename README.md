@@ -454,11 +454,12 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### 3.0.12 (2026-03-30)
+### **WORK IN PROGRESS**
 - (@GermanBluefox) Updated JsonConfig
+- (@GermanBluefox) Added divider, header and group to controls
 
 ### 3.0.9 (2026-03-28)
-- (@GermanBluefox) Added description of icons and the possibility to show an information directly on the card
+- (@GermanBluefox) Added description of icons and the possibility to show information directly on the card
 - (@GermanBluefox) Added style property for action and control buttons
 
 ### 3.0.3 (2026-03-26)

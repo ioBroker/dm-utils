@@ -108,9 +108,56 @@ export interface ChannelInfo {
     style?: Record<string, unknown>;
 }
 
-export interface ControlBase {
+export interface ControlBaseGeneric {
     id: string; // unique id of control for one device. Controls must be unique for one device
-    type: 'button' | 'switch' | 'slider' | 'select' | 'icon' | 'color' | 'text' | 'number' | 'info';
+    type:
+        | 'button'
+        | 'switch'
+        | 'slider'
+        | 'select'
+        | 'icon'
+        | 'color'
+        | 'text'
+        | 'number'
+        | 'info'
+        | 'divider'
+        | 'header'
+        | 'group';
+    icon?: string; // base64 or url - icon could be by all types except select
+    label?: ioBroker.StringOrTranslated;
+    description?: ioBroker.StringOrTranslated;
+    color?: Color;
+    /** Sx Style for button */
+    style?: Record<string, unknown>;
+    channel?: ChannelInfo;
+    // This control will belong to a specific group. It is required that before the element with id="groupName" and type="group" exists
+    group?: string;
+}
+
+export interface ControlBaseButton extends ControlBaseGeneric {
+    type: 'button';
+    icon?: string; // base64 or url - icon could be by all types except select
+    label?: ioBroker.StringOrTranslated;
+    variant?: 'text' | 'outlined' | 'contained'; // Button style
+    color?: Color;
+}
+
+export interface ControlBaseSwitch extends ControlBaseGeneric {
+    type: 'switch';
+    state?: ioBroker.State; // actual state for all types except button
+    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if the state is changed, GUI will request update of control
+
+    icon?: string; // base64 or url - icon could be by all types except select
+    iconOn?: string; // base64 or url - by type button, switch, slider, icon
+    label?: ioBroker.StringOrTranslated;
+    labelOn?: ioBroker.StringOrTranslated;
+    color?: Color;
+    colorOn?: Color;
+}
+
+export interface ControlBaseSlider extends ControlBaseGeneric {
+    id: string; // unique id of control for one device. Controls must be unique for one device
+    type: 'slider';
     state?: ioBroker.State; // actual state for all types except button
     stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if the state is changed, GUI will request update of control
 
@@ -122,15 +169,117 @@ export interface ControlBase {
     unit?: string; // only for slider and number
     label?: ioBroker.StringOrTranslated;
     labelOn?: ioBroker.StringOrTranslated;
+    color?: Color;
+    colorOn?: Color;
+    controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
+}
+
+export interface ControlBaseSelect extends ControlBaseGeneric {
+    id: string; // unique id of control for one device. Controls must be unique for one device
+    type: 'select';
+    state?: ioBroker.State; // actual state for all types except button
+    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if the state is changed, GUI will request update of control
+
+    icon?: string; // base64 or url - icon could be by all types except select
+    label?: ioBroker.StringOrTranslated;
+    color?: Color;
+    options?: { label: ioBroker.StringOrTranslated; value: ControlState; icon?: string; color?: Color }[]; // only for select
+}
+
+export interface ControlBaseIcon extends ControlBaseGeneric {
+    type: 'icon';
+    state?: ioBroker.State; // actual state for all types except button
+    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if the state is changed, GUI will request update of control
+
+    icon?: string; // base64 or url - icon could be by all types except select
+    iconOn?: string; // base64 or url - by type button, switch, slider, icon
+    label?: ioBroker.StringOrTranslated;
+    labelOn?: ioBroker.StringOrTranslated;
+    variant?: 'text' | 'outlined' | 'contained'; // Button style
+    color?: Color;
+    colorOn?: Color;
+}
+
+export interface ControlBaseText extends ControlBaseGeneric {
+    type: 'color' | 'text';
+    state?: ioBroker.State; // actual state for all types except button
+    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if the state is changed, GUI will request update of control
+
+    icon?: string; // base64 or url - icon could be by all types except select
+    label?: ioBroker.StringOrTranslated;
+    color?: Color;
+    controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
+}
+
+export interface ControlBaseNumber extends ControlBaseGeneric {
+    type: 'number';
+    state?: ioBroker.State; // actual state for all types except button
+    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if the state is changed, GUI will request update of control
+
+    icon?: string; // base64 or url - icon could be by all types except select
+    min?: number; // only for slider and number
+    max?: number; // only for slider and number
+    step?: number; // only for slider and number
+    unit?: string; // only for slider and number
+    label?: ioBroker.StringOrTranslated;
+    color?: Color;
+}
+
+export interface ControlBaseInfo extends ControlBaseGeneric {
+    id: string; // unique id of control for one device. Controls must be unique for one device
+    type: 'info';
+    state?: ioBroker.State; // actual state for all types except button
+    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if the state is changed, GUI will request update of control
+
+    icon?: string; // base64 or url - icon could be by all types except select
+    iconOn?: string; // base64 or url - by type button, switch, slider, icon
+    unit?: string; // only for slider and number
+    label?: ioBroker.StringOrTranslated;
+    labelOn?: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
+    color?: Color;
+    colorOn?: Color;
+}
+
+export interface ControlBaseHeader extends ControlBaseGeneric {
+    type: 'header';
+    icon?: string; // base64 or url - icon could be by all types except select
+    label?: ioBroker.StringOrTranslated;
+    description?: ioBroker.StringOrTranslated;
+    color?: Color;
+}
+
+export interface ControlBaseDivider extends ControlBaseGeneric {
+    type: 'divider';
+    color?: Color;
+}
+
+export interface ControlBaseGroup extends ControlBaseGeneric {
+    id: string; // unique id of control for one device. Controls must be unique for one device
+    type: 'group';
+    icon?: string; // base64 or url - icon could be by all types except select
+    label?: ioBroker.StringOrTranslated;
+    description?: ioBroker.StringOrTranslated;
+    color?: Color;
+}
+
+export interface ControlBase extends ControlBaseGeneric {
+    state?: ioBroker.State; // actual state for all types except button
+    stateId?: string; // state id for all types except button. GUI will subscribe to this state, and if the state is changed, GUI will request update of control
+
+    icon?: string; // base64 or url - icon could be by all types except select
+    iconOn?: string; // base64 or url - by type button, switch, slider, icon
+    min?: number; // only for slider and number
+    max?: number; // only for slider and number
+    step?: number; // only for slider and number
+    unit?: string; // only for slider and number
+    label?: ioBroker.StringOrTranslated;
+    labelOn?: ioBroker.StringOrTranslated;
     variant?: 'text' | 'outlined' | 'contained'; // Button style
     color?: Color;
     colorOn?: Color;
     controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
     options?: { label: ioBroker.StringOrTranslated; value: ControlState; icon?: string; color?: Color }[]; // only for select
-    channel?: ChannelInfo;
-    /** Sx Style for button */
-    style?: Record<string, unknown>;
 }
 
 export interface DeviceControl<TType extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ControlBase {
