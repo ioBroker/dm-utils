@@ -123,6 +123,7 @@ export interface ControlBaseSelect extends ControlBaseGeneric {
         icon?: string;
         color?: Color;
     }[];
+    noTranslation?: boolean;
 }
 export interface ControlBaseIcon extends ControlBaseGeneric {
     type: 'icon';
@@ -170,11 +171,15 @@ export interface ControlBaseInfo extends ControlBaseGeneric {
     description?: ioBroker.StringOrTranslated;
     color?: Color;
     colorOn?: Color;
+    noTranslation?: boolean;
+    showSemicolon?: boolean;
+    textFalse?: ioBroker.StringOrTranslated;
+    textTrue?: ioBroker.StringOrTranslated;
 }
 export interface ControlBaseHeader extends ControlBaseGeneric {
     type: 'header';
     icon?: string;
-    label?: ioBroker.StringOrTranslated;
+    label: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
     color?: Color;
 }
@@ -204,6 +209,7 @@ export interface ControlBase extends ControlBaseGeneric {
     variant?: 'text' | 'outlined' | 'contained';
     color?: Color;
     colorOn?: Color;
+    noTranslation?: boolean;
     controlDelay?: number;
     options?: {
         label: ioBroker.StringOrTranslated;
@@ -211,6 +217,9 @@ export interface ControlBase extends ControlBaseGeneric {
         icon?: string;
         color?: Color;
     }[];
+    showSemicolon?: boolean;
+    textFalse?: ioBroker.StringOrTranslated;
+    textTrue?: ioBroker.StringOrTranslated;
 }
 export interface DeviceControl<TType extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ControlBase {
     handler?: TType extends 'api' ? never : (deviceId: TId, actionId: string, state: ControlState, context: MessageContext<TId>) => RetVal<ErrorResponse | ioBroker.State>;
