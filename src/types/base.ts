@@ -184,6 +184,7 @@ export interface ControlBaseSelect extends ControlBaseGeneric {
     label?: ioBroker.StringOrTranslated;
     color?: Color;
     options?: { label: ioBroker.StringOrTranslated; value: ControlState; icon?: string; color?: Color }[]; // only for select
+    noTranslation?: boolean; // Do not translate options or info
 }
 
 export interface ControlBaseIcon extends ControlBaseGeneric {
@@ -239,12 +240,16 @@ export interface ControlBaseInfo extends ControlBaseGeneric {
     description?: ioBroker.StringOrTranslated;
     color?: Color;
     colorOn?: Color;
+    noTranslation?: boolean; // Do not translate options or info
+    showSemicolon?: boolean; // Show after label the semicolon
+    textFalse?: ioBroker.StringOrTranslated;
+    textTrue?: ioBroker.StringOrTranslated;
 }
 
 export interface ControlBaseHeader extends ControlBaseGeneric {
     type: 'header';
     icon?: string; // base64 or url - icon could be by all types except select
-    label?: ioBroker.StringOrTranslated;
+    label: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
     color?: Color;
 }
@@ -278,8 +283,12 @@ export interface ControlBase extends ControlBaseGeneric {
     variant?: 'text' | 'outlined' | 'contained'; // Button style
     color?: Color;
     colorOn?: Color;
+    noTranslation?: boolean; // Do not translate options or info
     controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
     options?: { label: ioBroker.StringOrTranslated; value: ControlState; icon?: string; color?: Color }[]; // only for select
+    showSemicolon?: boolean; // Show after label the semicolon by info
+    textFalse?: ioBroker.StringOrTranslated;
+    textTrue?: ioBroker.StringOrTranslated;
 }
 
 export interface DeviceControl<TType extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ControlBase {
