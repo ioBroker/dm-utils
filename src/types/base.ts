@@ -123,6 +123,7 @@ export interface ControlBase {
     label?: ioBroker.StringOrTranslated;
     labelOn?: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
+    variant?: 'text' | 'outlined' | 'contained'; // Button style
     color?: Color;
     colorOn?: Color;
     controlDelay?: number; // delay in ms between sending commands to the device. Only for slider or color control
