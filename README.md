@@ -454,6 +454,9 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Made the title of the progress dialog multi-language
+
 ### 3.0.14 (2026-03-30)
 - (@GermanBluefox) Updated JsonConfig
 - (@GermanBluefox) Added divider, header and group to controls
