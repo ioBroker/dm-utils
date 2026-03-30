@@ -62,9 +62,39 @@ export interface ChannelInfo {
     /** Sx Style for header */
     style?: Record<string, unknown>;
 }
-export interface ControlBase {
+export interface ControlBaseGeneric {
     id: string;
-    type: 'button' | 'switch' | 'slider' | 'select' | 'icon' | 'color' | 'text' | 'number' | 'info';
+    type: 'button' | 'switch' | 'slider' | 'select' | 'icon' | 'color' | 'text' | 'number' | 'info' | 'divider' | 'header' | 'group';
+    icon?: string;
+    label?: ioBroker.StringOrTranslated;
+    description?: ioBroker.StringOrTranslated;
+    color?: Color;
+    /** Sx Style for button */
+    style?: Record<string, unknown>;
+    channel?: ChannelInfo;
+    group?: string;
+}
+export interface ControlBaseButton extends ControlBaseGeneric {
+    type: 'button';
+    icon?: string;
+    label?: ioBroker.StringOrTranslated;
+    variant?: 'text' | 'outlined' | 'contained';
+    color?: Color;
+}
+export interface ControlBaseSwitch extends ControlBaseGeneric {
+    type: 'switch';
+    state?: ioBroker.State;
+    stateId?: string;
+    icon?: string;
+    iconOn?: string;
+    label?: ioBroker.StringOrTranslated;
+    labelOn?: ioBroker.StringOrTranslated;
+    color?: Color;
+    colorOn?: Color;
+}
+export interface ControlBaseSlider extends ControlBaseGeneric {
+    id: string;
+    type: 'slider';
     state?: ioBroker.State;
     stateId?: string;
     icon?: string;
@@ -75,7 +105,102 @@ export interface ControlBase {
     unit?: string;
     label?: ioBroker.StringOrTranslated;
     labelOn?: ioBroker.StringOrTranslated;
+    color?: Color;
+    colorOn?: Color;
+    controlDelay?: number;
+}
+export interface ControlBaseSelect extends ControlBaseGeneric {
+    id: string;
+    type: 'select';
+    state?: ioBroker.State;
+    stateId?: string;
+    icon?: string;
+    label?: ioBroker.StringOrTranslated;
+    color?: Color;
+    options?: {
+        label: ioBroker.StringOrTranslated;
+        value: ControlState;
+        icon?: string;
+        color?: Color;
+    }[];
+}
+export interface ControlBaseIcon extends ControlBaseGeneric {
+    type: 'icon';
+    state?: ioBroker.State;
+    stateId?: string;
+    icon?: string;
+    iconOn?: string;
+    label?: ioBroker.StringOrTranslated;
+    labelOn?: ioBroker.StringOrTranslated;
+    variant?: 'text' | 'outlined' | 'contained';
+    color?: Color;
+    colorOn?: Color;
+}
+export interface ControlBaseText extends ControlBaseGeneric {
+    type: 'color' | 'text';
+    state?: ioBroker.State;
+    stateId?: string;
+    icon?: string;
+    label?: ioBroker.StringOrTranslated;
+    color?: Color;
+    controlDelay?: number;
+}
+export interface ControlBaseNumber extends ControlBaseGeneric {
+    type: 'number';
+    state?: ioBroker.State;
+    stateId?: string;
+    icon?: string;
+    min?: number;
+    max?: number;
+    step?: number;
+    unit?: string;
+    label?: ioBroker.StringOrTranslated;
+    color?: Color;
+}
+export interface ControlBaseInfo extends ControlBaseGeneric {
+    id: string;
+    type: 'info';
+    state?: ioBroker.State;
+    stateId?: string;
+    icon?: string;
+    iconOn?: string;
+    unit?: string;
+    label?: ioBroker.StringOrTranslated;
+    labelOn?: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
+    color?: Color;
+    colorOn?: Color;
+}
+export interface ControlBaseHeader extends ControlBaseGeneric {
+    type: 'header';
+    icon?: string;
+    label?: ioBroker.StringOrTranslated;
+    description?: ioBroker.StringOrTranslated;
+    color?: Color;
+}
+export interface ControlBaseDivider extends ControlBaseGeneric {
+    type: 'divider';
+    color?: Color;
+}
+export interface ControlBaseGroup extends ControlBaseGeneric {
+    id: string;
+    type: 'group';
+    icon?: string;
+    label?: ioBroker.StringOrTranslated;
+    description?: ioBroker.StringOrTranslated;
+    color?: Color;
+}
+export interface ControlBase extends ControlBaseGeneric {
+    state?: ioBroker.State;
+    stateId?: string;
+    icon?: string;
+    iconOn?: string;
+    min?: number;
+    max?: number;
+    step?: number;
+    unit?: string;
+    label?: ioBroker.StringOrTranslated;
+    labelOn?: ioBroker.StringOrTranslated;
     variant?: 'text' | 'outlined' | 'contained';
     color?: Color;
     colorOn?: Color;
@@ -86,9 +211,6 @@ export interface ControlBase {
         icon?: string;
         color?: Color;
     }[];
-    channel?: ChannelInfo;
-    /** Sx Style for button */
-    style?: Record<string, unknown>;
 }
 export interface DeviceControl<TType extends ActionType = 'api', TId extends DeviceId = DeviceId> extends ControlBase {
     handler?: TType extends 'api' ? never : (deviceId: TId, actionId: string, state: ControlState, context: MessageContext<TId>) => RetVal<ErrorResponse | ioBroker.State>;
