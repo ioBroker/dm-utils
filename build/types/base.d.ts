@@ -76,6 +76,7 @@ export interface ControlBase {
     label?: ioBroker.StringOrTranslated;
     labelOn?: ioBroker.StringOrTranslated;
     description?: ioBroker.StringOrTranslated;
+    variant?: 'text' | 'outlined' | 'contained';
     color?: Color;
     colorOn?: Color;
     controlDelay?: number;
