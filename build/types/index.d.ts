@@ -1,4 +1,5 @@
 export type * from './adapter';
-export { ACTIONS, type ChannelInfo, type Color, type ControlBase, type ControlState, type BackendToGuiCommand, type BackendToGuiCommandAllUpdate, type BackendToGuiCommandDeviceDelete, type BackendToGuiCommandDeviceStatusUpdate, type BackendToGuiCommandDeviceInfoUpdate, type DeviceRefresh, } from './base';
+export type * as api from './api';
+export type { BackendToGuiCommand, BackendToGuiCommandAllUpdate, BackendToGuiCommandDeviceDelete, BackendToGuiCommandDeviceInfoUpdate, BackendToGuiCommandDeviceStatusUpdate, ChannelInfo, Color, ControlBase, ControlState, DeviceRefresh, } from './base';
 export type * from './common';
 export * from './errorCodes';

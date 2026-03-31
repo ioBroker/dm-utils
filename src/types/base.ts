@@ -15,14 +15,6 @@ export type Color = 'primary' | 'secondary' | (string & {}); // color (you can u
 
 export type ControlState = string | number | boolean | null;
 
-/** Reserved action names */
-export const ACTIONS = {
-    /** This action will be called when the user clicks on the connection icon */
-    STATUS: 'status',
-    /** This action will be called when the user clicks on the enabled / disabled icon. The enabled/disabled icon will be shown only if the node status has the "enabled" flag set to false or true */
-    ENABLE_DISABLE: 'enable/disable',
-};
-
 export interface ActionBase<T extends ActionType> {
     /** Unique (for this adapter) action ID. It could be the name from ACTIONS too, but in this case some predefined appearance will be applied */
     id: string;

@@ -1,4 +1,5 @@
 export type * from './ActionContext';
 export * from './DeviceManagement';
 // don't export * from "./MessageContext" as it is private
+export { ACTIONS } from './consts';
 export type * from './types';
