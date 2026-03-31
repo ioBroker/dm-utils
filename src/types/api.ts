@@ -58,6 +58,8 @@ export interface CommunicationForm {
     maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
     /** Minimal width of the dialog */
     minWidth?: number;
+    /** Execute this JS formula to enable or disable the Apply button. It will be ignored if `ignoreApplyDisabled` is true. Example: "!data.requiredAttribute" */
+    applyDisabledRule?: string;
     /** Always allow the Apply button. Even when nothing was changed */
     ignoreApplyDisabled?: boolean;
 }
