@@ -56,7 +56,7 @@ export abstract class DeviceManagement<
             this.communicationStateId = communicationStateId;
         }
         if (this.communicationStateId) {
-            this.ensureCommunicationState().catch(e => this.log().error(`Cannot initialize communication state: ${e}`));
+            this.ensureCommunicationState().catch(e => this.log.error(`Cannot initialize communication state: ${e}`));
         }
     }
 
@@ -89,7 +89,7 @@ export abstract class DeviceManagement<
         }
     }
 
-    protected get log(): ioBroker.Log {
+    protected get log(): ioBroker.Logger {
         return this.adapter.log;
     }
 

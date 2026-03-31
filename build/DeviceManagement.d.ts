@@ -18,7 +18,7 @@ export declare abstract class DeviceManagement<TAdapter extends AdapterInstance 
     constructor(adapter: TAdapter, communicationStateId?: string | boolean);
     private ensureCommunicationState;
     protected sendCommandToGui(command: BackendToGuiCommand<TId>): Promise<void>;
-    protected get log(): ioBroker.Log;
+    protected get log(): ioBroker.Logger;
     protected getInstanceInfo(): RetVal<InstanceDetails>;
     protected abstract loadDevices(context: DeviceLoadContext<TId>): RetVal<void>;
     protected getDeviceInfo(_deviceId: TId): RetVal<DeviceInfo<TId>>;
