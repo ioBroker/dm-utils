@@ -317,7 +317,7 @@ export interface ConfigItemPanel extends ConfigItem {
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
     // If defined, the tab will send a message by initializing to backend with command with string contained in "command"
     command?: string;
-    /** Filter states for custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
+    /** Filter states for the custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
     statesFilter?: true | string;
 }
 
@@ -347,7 +347,7 @@ export interface ConfigItemTabs extends ConfigItem {
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
     // If defined, the tab will send a message by initializing to backend with command "tab" (string contained in "sendTo"). Used in jsonTab.json
     command?: string;
-    /** Filter states for custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
+    /** Filter states for the custom editor dialog. If true, only states of this adapter instance can be edited. If the string, it is a regex to filter state IDs. */
     statesFilter?: true | string;
 }
 
@@ -405,8 +405,8 @@ export interface ConfigItemOAuth2 extends ConfigItem {
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     identifier: 'spotify' | 'google' | 'dropbox' | 'microsoft' | string;
     scope?: string; // optional scopes divided by space, e.g. `user-read-private user-read-email`
-    ownClientId?: string; // Optional. User can provide own Client ID and this is a attribut name where the client ID must be stored
-    ownClientSecret?: string; // Optional. User can provide own Client secret and this is a attribut name where the client secret must be stored
+    ownClientId?: string; // Optional. User can provide their own Client ID, and this is an attribut name where the client ID must be stored
+    ownClientSecret?: string; // Optional. User can provide their own Client secret, and this is an attribut name where the client secret must be stored
     refreshLabel?: ioBroker.StringOrTranslated; // label for the refresh button
 }
 
@@ -466,7 +466,7 @@ export interface ConfigItemObjectId extends ConfigItem {
      *  - `{common: {custom: true}}` - show only objects with some custom settings
      *  - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)
      *  - `{common: {custom: '_dataSources'}}` - show only objects of adapters `influxdb` or `sql` or `history`
-     *  - `{common: {custom: 'adapterName.'}}` - show only objects of custom settings of specific adapter (all instances)
+     *  - `{common: {custom: 'adapterName.'}}` - show only objects of custom settings of a specific adapter (all instances)
      *  - `{type: 'channel'}` - show only channels
      *  - `{type: ['channel', 'device']}` - show only channels and devices
      *  - `{common: {type: 'number'}` - show only states of type 'number
@@ -487,7 +487,7 @@ export interface ConfigItemObjectId extends ConfigItem {
     };
     /** Cannot be used together with `type` settings. It is a function that will be called for every object and must return true or false. Example: `obj.common.type === 'number'` */
     filterFunc?: (obj: ioBroker.Object) => boolean;
-    /** Special case to fill other field, when the ID is selected. Example "common.name=>name,common.color=>color(X)" - fills the field name and color with object name and colors. The color will be overwritten with the new value event when it is not empty */
+    /** Special case to fill another field, when the ID is selected. Example "common.name=>name,common.color=>color(X)" - fills the field name and color with object name and colors. The color will be overwritten with the new value event when it is not empty */
     fillOnSelect?: string;
 }
 
@@ -542,11 +542,11 @@ export interface ConfigItemStaticImage extends ConfigItem {
     src: string;
     /** optional HTTP link */
     href?: string;
-    /** It will be shown small image 100px, and by click on it the dialog will be opened with bigger image */
+    /** It will be shown small image 100px, and by click on it the dialog will be opened with a bigger image */
     showInDialog?: boolean;
     /** If showInDialog, the label for the button */
     showInDialogButtonLabel?: ioBroker.StringOrTranslated;
-    /** If showInDialog, the size of small image (default 100px) */
+    /** If showInDialog, the size of a small image (default 100px) */
     showInDialogSmallSize?: number;
 }
 
