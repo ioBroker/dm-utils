@@ -6,3 +6,5 @@ export type DeviceAction<TId extends DeviceId> = base.DeviceAction<'adapter', TI
 export type InstanceDetails = base.InstanceDetails<'adapter'>;
 export type DeviceInfo<TId extends DeviceId> = base.DeviceInfo<'adapter', TId>;
 export type DeviceControl<TId extends DeviceId> = base.DeviceControl<'adapter', TId>;
+export type DeviceRefreshResponse<TId extends DeviceId> = base.DeviceRefreshResponse<'adapter', TId>;
+export type InstanceRefreshResponse = base.InstanceRefreshResponse;

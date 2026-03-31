@@ -210,11 +210,8 @@ The parameters of this function are:
 
 The returned object must contain:
 
-- `refresh` (string / boolean): the following values are allowed:
-    - `"device"`: if you want the device details to be reloaded after this action
-    - `"instance"`: if you want the entire device list to be reloaded after this action
-    - `false`: if you don't want anything to be refreshed (important: this is a boolean, not a string!)
-or  
+- `refresh` (string / boolean): the following values are allowed: - `"device"`: if you want the device details to be reloaded after this action - `"instance"`: if you want the entire device list to be reloaded after this action - `false`: if you don't want anything to be refreshed (important: this is a boolean, not a string!)
+  or
 - `url` (string) This URL must be opened
 - `target` (string) Target window for url (`_blank` is default)
 
@@ -382,7 +379,7 @@ You may also call `context.setTotalDevices(count: number)` as soon as possible t
 In version 3.x, the refresh response of device actions has changed.
 
 | Version 1.x/2.x | Version 3.x  | Description                                                                 |
-|-----------------|--------------|-----------------------------------------------------------------------------|
+| --------------- | ------------ | --------------------------------------------------------------------------- |
 | `true`          | `'all'`      | the instance information as well as the entire device list will be reloaded |
 | `false`         | `'none'`     | nothing will be reloaded                                                    |
 | `'device'`      | `'devices'`  | the entire device list will be reloaded                                     |
@@ -395,33 +392,33 @@ Icons are resolved by the action/control `id` or by the `icon` property. You can
 
 ### Action and control icons (by name)
 
-| Name(s)                    | MUI Icon           | Description                          |
-|----------------------------|--------------------|--------------------------------------|
-| `edit`, `rename`           | Edit               | Edit or rename an item               |
-| `delete`                   | Delete             | Delete an item                       |
-| `refresh`                  | Refresh            | Refresh / reload                     |
-| `newDevice`, `new`, `add`  | Add                | Add or create a new item             |
-| `discover`, `search`       | Search             | Discover or search for devices       |
-| `unpairDevice`, `unpair`   | LinkOff            | Unpair / unlink a device             |
-| `pairDevice`, `pair`       | Link               | Pair / link a device                 |
-| `identify`                 | NotListedLocation  | Identify / locate a device           |
-| `play`                     | PlayArrow          | Start playback                       |
-| `stop`                     | Stop               | Stop playback                        |
-| `pause`                    | Pause              | Pause playback                       |
-| `forward`, `next`          | FastForward        | Skip forward / next track            |
-| `rewind`, `previous`       | FastRewind         | Skip backward / previous track       |
-| `lamp`, `light`            | Lightbulb          | Light / lamp control                 |
-| `backlight`                | Fluorescent        | Backlight control                    |
-| `dimmer`                   | WbIncandescent     | Dimmer control                       |
-| `socket`                   | Power              | Power socket control                 |
-| `settings`                 | Settings           | Settings / configuration             |
-| `users`, `group`           | Group              | User group                           |
-| `user`                     | Person             | Single user                          |
-| `update`                   | Upgrade            | Update / upgrade                     |
-| `qrcode`                   | QrCode             | QR code                              |
-| `info`                     | Info               | Information                          |
-| `lines`                    | Article            | Text lines / log                     |
-| `web`                      | Launch             | Open web link                        |
+| Name(s)                   | MUI Icon          | Description                    |
+| ------------------------- | ----------------- | ------------------------------ |
+| `edit`, `rename`          | Edit              | Edit or rename an item         |
+| `delete`                  | Delete            | Delete an item                 |
+| `refresh`                 | Refresh           | Refresh / reload               |
+| `newDevice`, `new`, `add` | Add               | Add or create a new item       |
+| `discover`, `search`      | Search            | Discover or search for devices |
+| `unpairDevice`, `unpair`  | LinkOff           | Unpair / unlink a device       |
+| `pairDevice`, `pair`      | Link              | Pair / link a device           |
+| `identify`                | NotListedLocation | Identify / locate a device     |
+| `play`                    | PlayArrow         | Start playback                 |
+| `stop`                    | Stop              | Stop playback                  |
+| `pause`                   | Pause             | Pause playback                 |
+| `forward`, `next`         | FastForward       | Skip forward / next track      |
+| `rewind`, `previous`      | FastRewind        | Skip backward / previous track |
+| `lamp`, `light`           | Lightbulb         | Light / lamp control           |
+| `backlight`               | Fluorescent       | Backlight control              |
+| `dimmer`                  | WbIncandescent    | Dimmer control                 |
+| `socket`                  | Power             | Power socket control           |
+| `settings`                | Settings          | Settings / configuration       |
+| `users`, `group`          | Group             | User group                     |
+| `user`                    | Person            | Single user                    |
+| `update`                  | Upgrade           | Update / upgrade               |
+| `qrcode`                  | QrCode            | QR code                        |
+| `info`                    | Info              | Information                    |
+| `lines`                   | Article           | Text lines / log               |
+| `web`                     | Launch            | Open web link                  |
 
 Any unrecognized name renders a **QuestionMark** icon as fallback.
 
@@ -429,39 +426,49 @@ Any unrecognized name renders a **QuestionMark** icon as fallback.
 
 These names are supported for backward compatibility. Prefer the names from the table above.
 
-| Name(s)                        | MUI Icon           | Description                    |
-|--------------------------------|--------------------|--------------------------------|
-| `fa-trash-can`, `fa-trash`     | Delete             | Delete                         |
-| `fa-pen`                       | Edit               | Edit                           |
-| `fa-redo-alt`                  | Refresh            | Refresh / redo                 |
-| `fa-plus`                      | Add                | Add                            |
-| `fa-qrcode`, `qrcode`          | QrCode             | QR code                        |
-| `fa-wifi`                      | Wifi               | Wi-Fi enabled                  |
-| `fa-wifi-slash`                | WifiOff            | Wi-Fi disabled                 |
-| `fa-bluetooth`                 | Bluetooth          | Bluetooth enabled              |
-| `fa-bluetooth-slash`           | BluetoothDisabled  | Bluetooth disabled             |
-| `fa-eye`                       | Visibility         | View / visible                 |
-| `fa-search`                    | Search             | Search                         |
-| `fa-unlink`                    | LinkOff            | Unlink                         |
-| `fa-link`                      | Link               | Link                           |
-| `fa-search-location`           | NotListedLocation  | Search location / identify     |
-| `fa-play`                      | PlayArrow          | Play                           |
-| `fa-stop`                      | Stop               | Stop                           |
-| `fa-pause`                     | Pause              | Pause                          |
+| Name(s)                    | MUI Icon          | Description                |
+| -------------------------- | ----------------- | -------------------------- |
+| `fa-trash-can`, `fa-trash` | Delete            | Delete                     |
+| `fa-pen`                   | Edit              | Edit                       |
+| `fa-redo-alt`              | Refresh           | Refresh / redo             |
+| `fa-plus`                  | Add               | Add                        |
+| `fa-qrcode`, `qrcode`      | QrCode            | QR code                    |
+| `fa-wifi`                  | Wifi              | Wi-Fi enabled              |
+| `fa-wifi-slash`            | WifiOff           | Wi-Fi disabled             |
+| `fa-bluetooth`             | Bluetooth         | Bluetooth enabled          |
+| `fa-bluetooth-slash`       | BluetoothDisabled | Bluetooth disabled         |
+| `fa-eye`                   | Visibility        | View / visible             |
+| `fa-search`                | Search            | Search                     |
+| `fa-unlink`                | LinkOff           | Unlink                     |
+| `fa-link`                  | Link              | Link                       |
+| `fa-search-location`       | NotListedLocation | Search location / identify |
+| `fa-play`                  | PlayArrow         | Play                       |
+| `fa-stop`                  | Stop              | Stop                       |
+| `fa-pause`                 | Pause             | Pause                      |
+
 ## Changelog
 
 <!--
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- (UncleSamSwiss) Fixed export of `ACTIONS` constants
+- (UncleSamSwiss) Added exports for refresh response types
+
 ### 3.0.15 (2026-03-30)
+
 - (@GermanBluefox) Made the title of the progress dialog multi-language
 
 ### 3.0.14 (2026-03-30)
+
 - (@GermanBluefox) Updated JsonConfig
 - (@GermanBluefox) Added divider, header and group to controls
 
 ### 3.0.9 (2026-03-28)
+
 - (@GermanBluefox) Added description of icons and the possibility to show information directly on the card
 - (@GermanBluefox) Added style property for action and control buttons
 
