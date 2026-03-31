@@ -978,7 +978,9 @@ export type BackEndCommandJsonFormOptions = {
     minWidth?: number;
     /** Do not translate a title */
     noTranslation?: boolean;
-    /** Always allow the apply button. Even when nothing was changed */
+    /** Execute this JS formula to enable or disable the Apply button. It will be ignored if `ignoreApplyDisabled` is true. Example: "!data.requiredAttribute" */
+    applyDisabledRule?: string;
+    /** Always allow the Apply button. Even when nothing was changed */
     ignoreApplyDisabled?: boolean;
 };
 export type JsonFormSchema = ConfigItemPanel | ConfigItemTabs;
