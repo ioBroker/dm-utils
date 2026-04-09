@@ -452,6 +452,9 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Updated Json-Config types
+
 ### 3.0.17 (2026-03-31)
 
 - (@UncleSamSwiss) Fixed type of `log` property in `DeviceManagement` class

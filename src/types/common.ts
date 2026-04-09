@@ -72,6 +72,7 @@ export type ConfigItemType =
     | 'checkbox'
     | 'chips'
     | 'color'
+    | 'component'
     | 'coordinates'
     | 'cron'
     | 'custom'
@@ -299,6 +300,8 @@ export interface ConfigItemSelectOption {
     hidden?: string | boolean;
     /** Description for the value */
     description?: ioBroker.StringOrTranslated;
+    /** Icon URL or base64 to display next to the option */
+    icon?: string;
 }
 
 export interface ConfigItemPanel extends ConfigItem {
@@ -317,7 +320,7 @@ export interface ConfigItemPanel extends ConfigItem {
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
     // If defined, the tab will send a message by initializing to backend with command with string contained in "command"
     command?: string;
-    /** Filter states for the custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
+    /** Filter states for the custom editor dialog. If true, only states of this adapter instance can be edited. If the string, it is a regex to filter state IDs. */
     statesFilter?: true | string;
 }
 
@@ -327,6 +330,12 @@ export interface ConfigItemPattern extends ConfigItem {
     copyToClipboard?: boolean;
     /** pattern like 'https://${data.ip}:${data.port}' */
     pattern: string;
+}
+
+export interface ConfigItemComponent extends ConfigItem {
+    type: 'component';
+    subType?: string;
+    [key: string]: any;
 }
 
 export interface ConfigItemChip extends ConfigItem {
@@ -542,11 +551,11 @@ export interface ConfigItemStaticImage extends ConfigItem {
     src: string;
     /** optional HTTP link */
     href?: string;
-    /** It will be shown small image 100px, and by click on it the dialog will be opened with a bigger image */
+    /** It will be shown small image 100px, and by click on it the dialog will be opened with bigger image */
     showInDialog?: boolean;
     /** If showInDialog, the label for the button */
     showInDialogButtonLabel?: ioBroker.StringOrTranslated;
-    /** If showInDialog, the size of a small image (default 100px) */
+    /** If showInDialog, the size of small image (default 100px) */
     showInDialogSmallSize?: number;
 }
 
@@ -653,9 +662,12 @@ export interface ConfigItemSelect extends ConfigItem {
               color?: string;
               hidden?: string | boolean;
               description?: ioBroker.StringOrTranslated;
+              icon?: string;
           }
     )[];
-    format: 'dropdown' | 'radio';
+    format?: 'dropdown' | 'radio';
+    /** If radio buttons shown horizontally */
+    horizontal?: boolean;
     attr?: string;
     /** If multiple selection is possible. In this case, the value will be an array */
     multiple?: boolean;
@@ -1201,6 +1213,7 @@ export type ConfigItemAny =
     | ConfigItemPattern
     | ConfigItemChip
     | ConfigItemCRON
+    | ConfigItemComponent
     | ConfigItemFile
     | ConfigItemFileSelector
     | ConfigItemIFrame

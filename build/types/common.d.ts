@@ -44,7 +44,7 @@ interface ObjectBrowserCustomFilter {
     };
 }
 export type ObjectBrowserType = 'state' | 'instance' | 'channel' | 'device' | 'chart';
-export type ConfigItemType = 'accordion' | 'alive' | 'autocomplete' | 'autocompleteSendTo' | 'certCollection' | 'certificate' | 'certificates' | 'checkDocker' | 'checkLicense' | 'checkbox' | 'chips' | 'color' | 'coordinates' | 'cron' | 'custom' | 'datePicker' | 'deviceManager' | 'divider' | 'file' | 'fileSelector' | 'func' | 'header' | 'iframe' | 'iframeSendTo' | 'image' | 'imageSendTo' | 'infoBox' | 'instance' | 'interface' | 'ip' | 'jsonEditor' | 'language' | 'license' | 'number' | 'oauth2' | 'objectId' | 'panel' | 'password' | 'pattern' | 'port' | 'qrCode' | 'qrCodeSendTo' | 'room' | 'select' | 'selectSendTo' | 'sendto' | 'setState' | 'slider' | 'state' | 'staticImage' | 'staticInfo' | 'staticLink' | 'staticText' | 'table' | 'tabs' | 'text' | 'textSendTo' | 'timePicker' | 'topic' | 'user' | 'uuid' | 'yamlEditor';
+export type ConfigItemType = 'accordion' | 'alive' | 'autocomplete' | 'autocompleteSendTo' | 'certCollection' | 'certificate' | 'certificates' | 'checkDocker' | 'checkLicense' | 'checkbox' | 'chips' | 'color' | 'component' | 'coordinates' | 'cron' | 'custom' | 'datePicker' | 'deviceManager' | 'divider' | 'file' | 'fileSelector' | 'func' | 'header' | 'iframe' | 'iframeSendTo' | 'image' | 'imageSendTo' | 'infoBox' | 'instance' | 'interface' | 'ip' | 'jsonEditor' | 'language' | 'license' | 'number' | 'oauth2' | 'objectId' | 'panel' | 'password' | 'pattern' | 'port' | 'qrCode' | 'qrCodeSendTo' | 'room' | 'select' | 'selectSendTo' | 'sendto' | 'setState' | 'slider' | 'state' | 'staticImage' | 'staticInfo' | 'staticLink' | 'staticText' | 'table' | 'tabs' | 'text' | 'textSendTo' | 'timePicker' | 'topic' | 'user' | 'uuid' | 'yamlEditor';
 export type ConfigIconType = 'add' | 'backlight' | 'book' | 'delete' | 'dimmer' | 'edit' | 'error' | 'group' | 'help' | 'identify' | 'info' | 'light' | 'lines' | 'next' | 'pair' | 'pause' | 'play' | 'previous' | 'qrcode' | 'refresh' | 'search' | 'send' | 'settings' | 'socket' | 'stop' | 'unpair' | 'upload' | 'user' | 'warning' | 'web' | string;
 export interface ConfigItemConfirmData {
     condition: string;
@@ -152,6 +152,8 @@ export interface ConfigItemSelectOption {
     hidden?: string | boolean;
     /** Description for the value */
     description?: ioBroker.StringOrTranslated;
+    /** Icon URL or base64 to display next to the option */
+    icon?: string;
 }
 export interface ConfigItemPanel extends ConfigItem {
     type: 'panel' | never;
@@ -167,7 +169,7 @@ export interface ConfigItemPanel extends ConfigItem {
     /** i18n definitions: true - load from a file, string - name of subdirectory, object - translations */
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
     command?: string;
-    /** Filter states for custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
+    /** Filter states for the custom editor dialog. If true, only states of this adapter instance can be edited. If the string, it is a regex to filter state IDs. */
     statesFilter?: true | string;
 }
 export interface ConfigItemPattern extends ConfigItem {
@@ -176,6 +178,11 @@ export interface ConfigItemPattern extends ConfigItem {
     copyToClipboard?: boolean;
     /** pattern like 'https://${data.ip}:${data.port}' */
     pattern: string;
+}
+export interface ConfigItemComponent extends ConfigItem {
+    type: 'component';
+    subType?: string;
+    [key: string]: any;
 }
 export interface ConfigItemChip extends ConfigItem {
     type: 'chips';
@@ -193,7 +200,7 @@ export interface ConfigItemTabs extends ConfigItem {
     /** i18n definitions: true - load from a file, string - name of subdirectory, object - translations */
     i18n?: boolean | string | Record<string, Record<ioBroker.Languages, string>>;
     command?: string;
-    /** Filter states for custom editor dialog. If true, only states of this adapter instance can be edited. If string, it is a regex to filter state IDs. */
+    /** Filter states for the custom editor dialog. If true, only states of this adapter instance can be edited. If the string, it is a regex to filter state IDs. */
     statesFilter?: true | string;
 }
 export interface ConfigItemText extends ConfigItem {
@@ -301,7 +308,7 @@ export interface ConfigItemObjectId extends ConfigItem {
      *  - `{common: {custom: true}}` - show only objects with some custom settings
      *  - `{common: {custom: 'sql.0'}}` - show only objects with sql.0 custom settings (only of the specific instance)
      *  - `{common: {custom: '_dataSources'}}` - show only objects of adapters `influxdb` or `sql` or `history`
-     *  - `{common: {custom: 'adapterName.'}}` - show only objects of custom settings of specific adapter (all instances)
+     *  - `{common: {custom: 'adapterName.'}}` - show only objects of custom settings of a specific adapter (all instances)
      *  - `{type: 'channel'}` - show only channels
      *  - `{type: ['channel', 'device']}` - show only channels and devices
      *  - `{common: {type: 'number'}` - show only states of type 'number
@@ -322,7 +329,7 @@ export interface ConfigItemObjectId extends ConfigItem {
     };
     /** Cannot be used together with `type` settings. It is a function that will be called for every object and must return true or false. Example: `obj.common.type === 'number'` */
     filterFunc?: (obj: ioBroker.Object) => boolean;
-    /** Special case to fill other field, when the ID is selected. Example "common.name=>name,common.color=>color(X)" - fills the field name and color with object name and colors. The color will be overwritten with the new value event when it is not empty */
+    /** Special case to fill another field, when the ID is selected. Example "common.name=>name,common.color=>color(X)" - fills the field name and color with object name and colors. The color will be overwritten with the new value event when it is not empty */
     fillOnSelect?: string;
 }
 export interface ConfigItemSlider extends ConfigItem {
@@ -472,8 +479,11 @@ export interface ConfigItemSelect extends ConfigItem {
         color?: string;
         hidden?: string | boolean;
         description?: ioBroker.StringOrTranslated;
+        icon?: string;
     })[];
-    format: 'dropdown' | 'radio';
+    format?: 'dropdown' | 'radio';
+    /** If radio buttons shown horizontally */
+    horizontal?: boolean;
     attr?: string;
     /** If multiple selection is possible. In this case, the value will be an array */
     multiple?: boolean;
@@ -950,7 +960,7 @@ export interface ConfigItemFileSelector extends ConfigItem {
     /** Do not show the size of files */
     noSize?: boolean;
 }
-export type ConfigItemAny = ConfigItemAlive | ConfigItemAutocomplete | ConfigItemAutocompleteSendTo | ConfigItemPanel | ConfigItemTabs | ConfigItemText | ConfigItemNumber | ConfigItemOAuth2 | ConfigItemColor | ConfigItemCheckbox | ConfigItemSlider | ConfigItemIP | ConfigItemInfoBox | ConfigItemUser | ConfigItemRoom | ConfigItemFunc | ConfigItemSelect | ConfigItemAccordion | ConfigItemCoordinates | ConfigItemDivider | ConfigItemHeader | ConfigItemCustom | ConfigItemDatePicker | ConfigItemDeviceManager | ConfigItemLanguage | ConfigItemPort | ConfigItemSendTo | ConfigItemState | ConfigItemTable | ConfigItemTimePicker | ConfigItemTextSendTo | ConfigItemSelectSendTo | ConfigItemCertCollection | ConfigItemCertificateSelect | ConfigItemCertificates | ConfigItemUUID | ConfigItemCheckDocker | ConfigItemCheckLicense | ConfigItemPattern | ConfigItemChip | ConfigItemCRON | ConfigItemFile | ConfigItemFileSelector | ConfigItemIFrame | ConfigItemIFrameSendTo | ConfigItemImageSendTo | ConfigItemInstanceSelect | ConfigItemImageUpload | ConfigItemInterface | ConfigItemJsonEditor | ConfigItemYamlEditor | ConfigItemLicense | ConfigItemPassword | ConfigItemSetState | ConfigItemStaticDivider | ConfigItemStaticHeader | ConfigItemStaticInfo | ConfigItemStaticImage | ConfigItemStaticText | ConfigItemTopic | ConfigItemObjectId | ConfigItemQrCode | ConfigItemQrCodeSendTo;
+export type ConfigItemAny = ConfigItemAlive | ConfigItemAutocomplete | ConfigItemAutocompleteSendTo | ConfigItemPanel | ConfigItemTabs | ConfigItemText | ConfigItemNumber | ConfigItemOAuth2 | ConfigItemColor | ConfigItemCheckbox | ConfigItemSlider | ConfigItemIP | ConfigItemInfoBox | ConfigItemUser | ConfigItemRoom | ConfigItemFunc | ConfigItemSelect | ConfigItemAccordion | ConfigItemCoordinates | ConfigItemDivider | ConfigItemHeader | ConfigItemCustom | ConfigItemDatePicker | ConfigItemDeviceManager | ConfigItemLanguage | ConfigItemPort | ConfigItemSendTo | ConfigItemState | ConfigItemTable | ConfigItemTimePicker | ConfigItemTextSendTo | ConfigItemSelectSendTo | ConfigItemCertCollection | ConfigItemCertificateSelect | ConfigItemCertificates | ConfigItemUUID | ConfigItemCheckDocker | ConfigItemCheckLicense | ConfigItemPattern | ConfigItemChip | ConfigItemCRON | ConfigItemComponent | ConfigItemFile | ConfigItemFileSelector | ConfigItemIFrame | ConfigItemIFrameSendTo | ConfigItemImageSendTo | ConfigItemInstanceSelect | ConfigItemImageUpload | ConfigItemInterface | ConfigItemJsonEditor | ConfigItemYamlEditor | ConfigItemLicense | ConfigItemPassword | ConfigItemSetState | ConfigItemStaticDivider | ConfigItemStaticHeader | ConfigItemStaticInfo | ConfigItemStaticImage | ConfigItemStaticText | ConfigItemTopic | ConfigItemObjectId | ConfigItemQrCode | ConfigItemQrCodeSendTo;
 export type ActionButton = {
     label: ioBroker.StringOrTranslated;
     type: 'apply' | 'cancel' | 'copyToClipboard';
