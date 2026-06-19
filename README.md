@@ -460,7 +460,7 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.1.0 (2026-06-19)
 - (@GermanBluefox) Added possibility to filter the devices with updates available
 
 ### 3.0.19 (2026-04-09)
