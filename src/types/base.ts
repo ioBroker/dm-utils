@@ -367,6 +367,15 @@ export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId =
     /** Background color of card header (you can use primary, secondary or color rgb value or hex) */
     backgroundColor?: ValueOrState<Color>;
     status?: DeviceStatus | DeviceStatus[];
+    /** Firmware/software update information for the device. If `available` is true, the GUI shows an update indicator and the device can be filtered by "update available" */
+    update?: {
+        /** true if an update is available for the device. Can be a literal value or read live from a state */
+        available: ValueOrState<boolean>;
+        /** Currently installed version */
+        version?: ValueOrStateOrObject<string>;
+        /** Version that is offered for installation */
+        newVersion?: ValueOrStateOrObject<string>;
+    };
     /** Connection type, how the device is connected */
     connectionType?: ValueOrStateOrObject<ConfigConnectionType>;
     /** If this flag is true or false, the according indication will be shown. Additionally, if ACTIONS.ENABLE_DISABLE is implemented, this action will be sent to the backend by clicking on this indication */

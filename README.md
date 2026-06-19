@@ -135,6 +135,11 @@ Every item is an object of type `DeviceInfo` which has the following properties:
     - `rssi` (number): rssi value of the connection
     - `battery` (boolean / number): if boolean: false - the battery is empty. If number: the battery level of the device (shows also a battery symbol on the card)
     - `warning` (boolean / string): if boolean: true indicates a warning. If a string: shows also the warning with mouseover
+- `update` (object, optional): firmware/software update information. If an update is available, an update indicator is shown on the card and the device can be filtered by "update available" in the GUI:
+    - `available` (boolean): `true` if an update is available for the device. Can be a literal value or read live from a state (`{ stateId: 'my.0.device.updateAvailable' }`)
+    - `version` (string, optional): the currently installed version
+    - `newVersion` (string, optional): the version that is offered for installation (shown in the tooltip)
+    - To make the update indicator clickable (e.g. to start the update), add a device action with the reserved id `update` (see [reserved action names](#reserved-action-names))
 - `actions` (array, optional): an array of actions that can be performed on the device; each object contains:
     - `id` (string): unique identifier to recognize an action (never shown to the user)
     - `icon` (string): an icon shown on the button (see below for details)
@@ -257,11 +262,14 @@ As described above, there are actions on the instance and on devices. The behavi
 Inside an action method (`handleInstanceAction()` or `handleDeviceAction()`) you can perform arbitrary actions, like talking to a device or API, and you can interact with the user.
 For interactions, there are methods you can call on `context`:
 
+#### Reserved action names
+
 There are some reserved action names, you can find the list below:
 
 - `status` - This action is called when the user clicks on the status icon. So to implement the "click-on-status" functionality, the developer has to implement this action.
 - `disable` - This action will be called when the user clicks on the `enabled` icon. `disable` and `enable` actions cannot be together.
 - `enable` - This action will be called when the user clicks on the `disabled` icon. `disable` and `enable` actions cannot be together.
+- `update` - This action will be called when the user clicks on the update indicator (shown when `DeviceInfo.update.available` is `true`). Use it to start the firmware/software update of the device.
 
 ### `showMessage(text: ioBroker.StringOrTranslated)`
 
@@ -452,7 +460,11 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added possibility to filter the devices with updates available
+
 ### 3.0.19 (2026-04-09)
+
 - (@GermanBluefox) Updated Json-Config types
 
 ### 3.0.17 (2026-03-31)
