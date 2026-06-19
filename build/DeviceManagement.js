@@ -20,6 +20,9 @@ class DeviceManagement {
         }
     }
     async ensureCommunicationState() {
+        if (!this.communicationStateId) {
+            throw new Error('Communication state ID is not set');
+        }
         let stateObj = await this.adapter.getObjectAsync(this.communicationStateId);
         if (!stateObj) {
             stateObj = {
@@ -269,6 +272,9 @@ class DeviceManagement {
             }
             case 'dm:deviceDetails': {
                 const details = await this.getDeviceDetails(msg.message);
+                if (!details) {
+                    throw new Error(`Missing device details ${msg.message}`);
+                }
                 this.sendReply(details, msg);
                 return;
             }
@@ -521,7 +527,7 @@ function convertActions(actions) {
         ids.add(a.id);
     });
     // remove a handler function to send it as JSON
-    return actions.map((a) => (Object.assign(Object.assign({}, a), { handler: undefined, disabled: !a.handler && !a.url })));
+    return actions.map(a => (Object.assign(Object.assign({}, a), { handler: undefined, disabled: !('handler' in a && a.handler) && !('url' in a && a.url) })));
 }
 function convertControls(controls) {
     if (!controls) {
@@ -536,5 +542,5 @@ function convertControls(controls) {
         ids.add(a.id);
     });
     // remove handler function to send it as JSON
-    return controls.map((a) => (Object.assign(Object.assign({}, a), { handler: undefined, getStateHandler: undefined })));
+    return controls.map(a => (Object.assign(Object.assign({}, a), { handler: undefined, getStateHandler: undefined })));
 }

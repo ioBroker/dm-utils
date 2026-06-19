@@ -39,7 +39,7 @@ export abstract class DeviceManagement<
 > {
     private instanceInfo?: InstanceDetails;
     private devices?: Map<string, DeviceInfo<TId>>;
-    private readonly communicationStateId: string;
+    private readonly communicationStateId: string | undefined;
 
     private readonly deviceLoadContexts = new Map<number, DeviceLoadContextImpl<TId>>();
     private readonly messageContexts = new Map<number, MessageContext<TId>>();
@@ -61,6 +61,9 @@ export abstract class DeviceManagement<
     }
 
     private async ensureCommunicationState(): Promise<void> {
+        if (!this.communicationStateId) {
+            throw new Error('Communication state ID is not set');
+        }
         let stateObj = await this.adapter.getObjectAsync(this.communicationStateId);
         if (!stateObj) {
             stateObj = {
@@ -114,7 +117,7 @@ export abstract class DeviceManagement<
 
     private handleInstanceAction(
         actionId: string,
-        context?: ActionContext,
+        context: ActionContext,
         options?: { value?: number | string | boolean; [key: string]: any },
     ): RetVal<ErrorResponse> | RetVal<InstanceRefreshResponse> {
         if (!this.instanceInfo) {
@@ -151,7 +154,7 @@ export abstract class DeviceManagement<
     private handleDeviceAction(
         deviceId: TId,
         actionId: string,
-        context?: ActionContext,
+        context: ActionContext,
         options?: { value?: number | string | boolean; [key: string]: any },
     ): RetVal<ErrorResponse> | RetVal<DeviceRefreshResponse<'adapter', TId>> {
         if (!this.devices) {
@@ -202,7 +205,7 @@ export abstract class DeviceManagement<
         deviceId: TId,
         controlId: string,
         newState: ControlState,
-        context?: MessageContext<TId>,
+        context: MessageContext<TId>,
     ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
             this.log.warn(`Device control ${controlId} was called before loadDevices()`);
@@ -252,7 +255,7 @@ export abstract class DeviceManagement<
     private handleDeviceControlState(
         deviceId: TId,
         controlId: string,
-        context?: MessageContext<TId>,
+        context: MessageContext<TId>,
     ): RetVal<ErrorResponse | ioBroker.State> {
         if (!this.devices) {
             this.log.warn(`Device get state ${controlId} was called before loadDevices()`);
@@ -353,12 +356,15 @@ export abstract class DeviceManagement<
             }
             case 'dm:deviceDetails': {
                 const details = await this.getDeviceDetails(msg.message as TId);
+                if (!details) {
+                    throw new Error(`Missing device details ${msg.message}`);
+                }
                 this.sendReply<DeviceDetails | { error: string }>(details, msg);
                 return;
             }
             case 'dm:instanceAction': {
                 const action = msg.message as { actionId: string; value: number | string | boolean };
-                const context = new MessageContext(msg, this.adapter);
+                const context = new MessageContext<TId>(msg, this.adapter);
                 this.messageContexts.set(msg._id, context);
                 const result = await this.handleInstanceAction(action.actionId, context, { value: action.value });
                 this.messageContexts.delete(msg._id);
@@ -367,7 +373,7 @@ export abstract class DeviceManagement<
             }
             case 'dm:deviceAction': {
                 const action = msg.message as { actionId: string; deviceId: TId; value: number | string | boolean };
-                const context = new MessageContext(msg, this.adapter);
+                const context = new MessageContext<DeviceId>(msg, this.adapter);
                 this.messageContexts.set(msg._id, context);
                 const result = await this.handleDeviceAction(action.deviceId, action.actionId, context, {
                     value: action.value,
@@ -592,7 +598,7 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
         return promise;
     }
 
-    sendFinalResult(result: ErrorResponse | DeviceRefreshResponse<'api', TId> | InstanceRefreshResponse): void {
+    sendFinalResult(result: ErrorResponse | DeviceRefreshResponse<'api'> | InstanceRefreshResponse): void {
         this.send({ type: 'result', result });
     }
 
@@ -658,7 +664,7 @@ export class MessageContext<TId extends DeviceId> implements ActionContext {
     }
 }
 
-function convertActions<T extends ActionBase, U extends api.ActionBase>(actions?: T[]): undefined | U[] {
+function convertActions<T extends ActionBase>(actions?: T[]): undefined | api.ActionBase[] {
     if (!actions) {
         return undefined;
     }
@@ -674,12 +680,16 @@ function convertActions<T extends ActionBase, U extends api.ActionBase>(actions?
     });
 
     // remove a handler function to send it as JSON
-    return actions.map((a: any) => ({ ...a, handler: undefined, disabled: !a.handler && !a.url }));
+    return actions.map(a => ({
+        ...a,
+        handler: undefined,
+        disabled: !('handler' in a && a.handler) && !('url' in a && a.url),
+    }));
 }
 
-function convertControls<T extends DeviceControl<'adapter'>, U extends DeviceControl<'api'>>(
-    controls?: T[],
-): undefined | U[] {
+function convertControls<TId extends DeviceId>(
+    controls?: DeviceControl<'adapter', TId>[],
+): undefined | DeviceControl<'api'>[] {
     if (!controls) {
         return undefined;
     }
@@ -695,5 +705,5 @@ function convertControls<T extends DeviceControl<'adapter'>, U extends DeviceCon
     });
 
     // remove handler function to send it as JSON
-    return controls.map((a: any) => ({ ...a, handler: undefined, getStateHandler: undefined }));
+    return controls.map(a => ({ ...a, handler: undefined, getStateHandler: undefined }));
 }

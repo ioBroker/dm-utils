@@ -48,7 +48,7 @@ export declare class MessageContext<TId extends DeviceId> implements ActionConte
         buttons?: (ActionButton | 'apply' | 'cancel' | 'close')[];
     }): Promise<JsonFormData | undefined>;
     openProgress(title: ioBroker.StringOrTranslated, options?: ProgressOptions): Promise<ProgressDialog>;
-    sendFinalResult(result: ErrorResponse | DeviceRefreshResponse<'api', TId> | InstanceRefreshResponse): void;
+    sendFinalResult(result: ErrorResponse | DeviceRefreshResponse<'api'> | InstanceRefreshResponse): void;
     sendControlResult(deviceId: TId, controlId: string, result: ErrorResponse | ioBroker.State): void;
     handleProgress(message: ioBroker.Message): void;
     private checkPreconditions;
