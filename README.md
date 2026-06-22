@@ -369,9 +369,100 @@ class MyAdapterDeviceManagement extends DeviceManagement<MyAdapter> {
 }
 ```
 
-## Migration from 2.x to 3.x
+## Device updates
 
-Between versions 2.x and 3.x, there are some breaking changes. Please also have a look at the changelog below for more information.
+If a device supports firmware/software updates, you can let the GUI show an update indicator on the device card and offer the user a way to start the update.
+
+### 1. Declare the update on the device
+
+Add the optional `update` property to the `DeviceInfo` you create in `loadDevices()`:
+
+```ts
+const deviceInfo: DeviceInfo = {
+    id: 'myDevice',
+    name: 'My device',
+    update: {
+        // true if an update is available -> shows the update indicator on the card
+        available: true,
+        version: '1.2.0', // currently installed version (optional)
+        newVersion: '1.3.0', // version offered for installation, shown in the tooltip (optional)
+    },
+    // ... other properties
+};
+context.addDevice(deviceInfo);
+```
+
+- `available` (boolean, required): if `true`, the GUI shows an update indicator. As soon as at least one device has `available: true`, the user can also filter the list by **"update available"** in the GUI (since 3.1.1).
+- `version` (string, optional): the currently installed version.
+- `newVersion` (string, optional): the version that is offered for installation (shown in the tooltip).
+
+All three fields can be a literal value **or** read live from a state/object, so you don't have to push updates manually whenever the value changes:
+
+```ts
+update: {
+    available: { stateId: 'my-adapter.0.myDevice.updateAvailable' },
+    version: { stateId: 'my-adapter.0.myDevice.fwVersion' },
+    newVersion: { objectId: 'my-adapter.0.myDevice', property: 'native.latestVersion' },
+},
+```
+
+### 2. Make the indicator clickable (start the update)
+
+By itself the indicator is only informational. To let the user start the update by clicking on it, add a device action with the reserved id `update` (use the `ACTIONS.UPDATE` constant). Its `handler` is called when the user clicks the indicator:
+
+```ts
+import { ACTIONS } from '@iobroker/dm-utils';
+
+const deviceInfo: DeviceInfo = {
+    id: 'myDevice',
+    name: 'My device',
+    update: { available: true, version: '1.2.0', newVersion: '1.3.0' },
+    actions: [
+        {
+            id: ACTIONS.UPDATE, // === 'update'
+            icon: 'update',
+            description: 'Update firmware',
+            handler: async (deviceId, context) => {
+                const confirmed = await context.showConfirmation(`Update ${deviceId} to 1.3.0?`);
+                if (!confirmed) {
+                    return { refresh: 'none' };
+                }
+
+                const progress = await context.openProgress('Updating...', { indeterminate: true });
+                try {
+                    await this.startFirmwareUpdate(deviceId); // your own update logic
+                } finally {
+                    await progress.close();
+                }
+
+                // reload the device list so the new version / cleared indicator is shown
+                return { refresh: 'devices' };
+            },
+        },
+    ],
+};
+```
+
+The handler follows the same rules as any other device action handler (see [DeviceInfo action handlers](#deviceinfo-action-handlers)): it may run asynchronously and returns a refresh response (e.g. `{ refresh: 'devices' }`) to reload the list once the update has finished.
+
+## Migration from 1.x/2.x to 3.x
+
+Between versions 1.x/2.x and 3.x, there are some breaking changes. Please also have a look at the changelog below for more information.
+
+### API version
+
+This one is easy to miss: you **must** bump the `apiVersion` returned from `getInstanceInfo()` from `'v1'` (used in 1.x and 2.x) to `'v3'`.
+
+```ts
+protected getInstanceInfo(): RetVal<InstanceDetails> {
+    return {
+        apiVersion: 'v3', // was 'v1' in 1.x/2.x
+        // ...
+    };
+}
+```
+
+If you don't override `getInstanceInfo()`, the base class already returns `'v3'` for you and there is nothing to do. But if you do override it and forget to update this value, the GUI will not communicate with your instance correctly.
 
 ### Incremental loading of devices
 
