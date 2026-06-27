@@ -551,6 +551,9 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Catch serialization errors by `sendTo`
+
 ### 3.1.1 (2026-06-19)
 - (@GermanBluefox) Added possibility to filter the devices with updates available
 - (@GermanBluefox) Updated packages

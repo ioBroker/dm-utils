@@ -449,7 +449,11 @@ export abstract class DeviceManagement<
     }
 
     private sendReply<T>(reply: T, msg: ioBroker.Message): void {
-        this.adapter.sendTo(msg.from, msg.command, reply, msg.callback);
+        try {
+            this.adapter.sendTo(msg.from, msg.command, reply, msg.callback);
+        } catch (e) {
+            this.adapter.log.error(`Cannot send message: ${e}`);
+        }
     }
 }
 
