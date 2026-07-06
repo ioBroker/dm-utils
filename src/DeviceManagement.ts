@@ -452,7 +452,7 @@ export abstract class DeviceManagement<
         try {
             this.adapter.sendTo(msg.from, msg.command, reply, msg.callback);
         } catch (e) {
-            this.adapter.log.error(`Cannot send message: ${e}`);
+            this.adapter.log.error(`Cannot send message: ${e as Error}`);
         }
     }
 }
