@@ -6,4 +6,6 @@ export const ACTIONS = {
     ENABLE_DISABLE: 'enable/disable',
     /** This action will be called when the user clicks on the update indicator. The update indicator is shown only if `DeviceInfo.update.available` is true */
     UPDATE: 'update',
+    /** This action will be called when the user clicks on the battery indicator. The battery indicator is shown only if the node status has the "battery" property */
+    BATTERY: 'battery',
 };

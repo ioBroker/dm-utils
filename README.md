@@ -445,6 +445,55 @@ const deviceInfo: DeviceInfo = {
 
 The handler follows the same rules as any other device action handler (see [DeviceInfo action handlers](#deviceinfo-action-handlers)): it may run asynchronously and returns a refresh response (e.g. `{ refresh: 'devices' }`) to reload the list once the update has finished.
 
+## Clickable battery indicator
+
+If the device status contains a `battery` property, the GUI shows a battery indicator on the device card. By itself this indicator is only informational.
+
+To let the user click on it (e.g. to open your own dialog with the battery history or the battery type), add a device action with the reserved id `battery` (use the `ACTIONS.BATTERY` constant):
+
+```ts
+import { ACTIONS } from '@iobroker/dm-utils';
+
+const deviceInfo: DeviceInfo = {
+    id: 'myDevice',
+    name: 'My device',
+    status: { battery: 42 },
+    actions: [
+        {
+            id: ACTIONS.BATTERY, // === 'battery'
+            description: 'Show battery details',
+            handler: async (deviceId, context) => {
+                await context.showMessage(`The battery of ${deviceId} was changed on 2026-01-15`);
+                return { refresh: 'none' };
+            },
+        },
+    ],
+};
+```
+
+The indicator becomes a button for all battery representations (percentage, voltage, `'charging'` and boolean). The action itself is **not** shown as a normal action button on the card, exactly like the reserved `status` and `update` actions. The `description` is appended to the tooltip of the indicator.
+
+## Text buttons instead of icons
+
+Every action (instance action as well as device action) can be rendered as a text button instead of an icon button. Just set a `title`; then no icon is required and no "question mark" fallback icon is shown:
+
+```ts
+actions: [
+    {
+        id: 'reboot',
+        title: 'Reboot', // rendered as a text button
+        variant: 'outlined', // 'text' (default), 'outlined' or 'contained'
+        description: 'Reboot the device', // shown as tooltip
+        handler: async deviceId => {
+            await this.reboot(deviceId);
+            return { refresh: 'none' };
+        },
+    },
+],
+```
+
+`title` and `description` may also be translated objects (`{ en: 'Reboot', de: 'Neustart' }`). If you provide both `title` and `icon`, the icon is shown in front of the text.
+
 ## Migration from 1.x/2.x to 3.x
 
 Between versions 1.x/2.x and 3.x, there are some breaking changes. Please also have a look at the changelog below for more information.
@@ -518,8 +567,12 @@ Icons are resolved by the action/control `id` or by the `icon` property. You can
 | `info`                    | Info              | Information                    |
 | `lines`                   | Article           | Text lines / log               |
 | `web`                     | Launch            | Open web link                  |
+| `battery`                 | BatteryFull       | Battery                        |
+| `batteryLow`              | BatteryAlert      | Empty / low battery            |
+| `batteryAlert`            | BatteryAlert      | Empty / low battery            |
+| `batteryCharging`         | BatteryChargingFull | Charging battery             |
 
-Any unrecognized name renders a **QuestionMark** icon as fallback.
+Any unrecognized name renders a **QuestionMark** icon as fallback, except if the action has a `title` (see [Text buttons instead of icons](#text-buttons-instead-of-icons)) — in that case no icon is shown at all.
 
 ### Legacy Font Awesome icons
 
@@ -551,6 +604,11 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added reserved action `ACTIONS.BATTERY` to make the battery indicator clickable
+- (@GermanBluefox) Allowed `title` and `variant` for device actions to render them as text buttons
+- (@GermanBluefox) Added battery icon names
+
 ### 3.1.3 (2026-07-06)
 - (@GermanBluefox) Catch serialization errors by `sendTo`
 

@@ -9,7 +9,7 @@ export interface ActionBase<T extends ActionType> {
     /**
      * This can either be base64 or the URL to an icon.
      */
-    icon?: 'edit' | 'rename' | 'delete' | 'refresh' | 'newDevice' | 'new' | 'add' | 'discover' | 'search' | 'unpairDevice' | 'pairDevice' | 'identify' | 'play' | 'stop' | 'pause' | 'forward' | 'next' | 'rewind' | 'previous' | 'lamp' | 'light' | 'backlight' | 'dimmer' | 'socket' | 'settings' | 'users' | 'group' | 'user' | 'update' | 'qrcode' | 'info' | 'lines' | 'web' | (string & {});
+    icon?: 'edit' | 'rename' | 'delete' | 'refresh' | 'newDevice' | 'new' | 'add' | 'discover' | 'search' | 'unpairDevice' | 'pairDevice' | 'identify' | 'play' | 'stop' | 'pause' | 'forward' | 'next' | 'rewind' | 'previous' | 'lamp' | 'light' | 'backlight' | 'dimmer' | 'socket' | 'settings' | 'users' | 'group' | 'user' | 'update' | 'qrcode' | 'info' | 'lines' | 'web' | 'battery' | 'batteryLow' | 'batteryAlert' | 'batteryCharging' | (string & {});
     description?: ioBroker.StringOrTranslated;
     disabled?: T extends 'api' ? boolean : never;
     color?: Color;
@@ -42,6 +42,10 @@ export interface ActionBase<T extends ActionType> {
     timeout?: number;
     /** Sx Style for button */
     style?: Record<string, unknown>;
+    /** If defined, the action is rendered as a text button with this label instead of an icon button. No icon is required in this case */
+    title?: ioBroker.StringOrTranslated;
+    /** Type of button if the title is used */
+    variant?: 'text' | 'outlined' | 'contained';
 }
 export interface ChannelInfo {
     name: ioBroker.StringOrTranslated;
@@ -226,11 +230,7 @@ export type WithHandlerOrUrl<TType extends ActionType, THandler> = {
 } | {
     url: ioBroker.StringOrTranslated;
 };
-export type InstanceAction<T extends ActionType = 'api'> = ActionBase<T> & WithHandlerOrUrl<T, (context: ActionContext, options?: Record<string, any>) => RetVal<InstanceRefreshResponse>> & {
-    title?: ioBroker.StringOrTranslated;
-    /** Type of button if the title is used */
-    variant?: 'text' | 'outlined' | 'contained';
-};
+export type InstanceAction<T extends ActionType = 'api'> = ActionBase<T> & WithHandlerOrUrl<T, (context: ActionContext, options?: Record<string, any>) => RetVal<InstanceRefreshResponse>>;
 export type DeviceUpdate<T extends ActionType = 'api', TId extends DeviceId = DeviceId> = {
     update: DeviceInfo<T, TId>;
 };
