@@ -604,7 +604,7 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.1.4 (2026-07-25)
 - (@GermanBluefox) Added reserved action `ACTIONS.BATTERY` to make the battery indicator clickable
 - (@GermanBluefox) Allowed `title` and `variant` for device actions to render them as text buttons
 - (@GermanBluefox) Added battery icon names
