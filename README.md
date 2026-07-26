@@ -473,6 +473,74 @@ const deviceInfo: DeviceInfo = {
 
 The indicator becomes a button for all battery representations (percentage, voltage, `'charging'` and boolean). The action itself is **not** shown as a normal action button on the card, exactly like the reserved `status` and `update` actions. The `description` is appended to the tooltip of the indicator.
 
+## Custom status indicators
+
+Besides the built-in indicators (connection, RSSI, battery, warning, update, enabled), you can add your own entries to the status line of a device card and to the toolbar of the instance.
+
+### Actions in the status line
+
+Any action can be moved from the button row at the bottom of the card into the status line with `placement: 'status'`. It keeps all its features (`icon`, `color`, `title`, `confirmation`, `inputBefore`, `url`, …) and is not rendered a second time in the footer:
+
+```ts
+actions: [{ id: 'openLog', icon: 'lines', placement: 'status', handler: ... }],
+```
+
+### Indicators
+
+`DeviceInfo.indicators` (device card) and `InstanceDetails.indicators` (toolbar) describe indicators whose appearance follows a state or object value live. Every visual property accepts either a literal value or a `{ stateId }` / `{ objectId, property }` reference, so the GUI updates without any interaction of the adapter:
+
+```ts
+const deviceInfo: DeviceInfo = {
+    id: 'sensor-1',
+    name: 'Window sensor kitchen',
+    actions: [{ id: 'openLog', icon: 'lines', description: 'Open device log', handler: ... }],
+    indicators: [
+        {
+            id: 'linkQuality',
+            value: { stateId: 'zigbee.0.abc.link_quality' },
+            icon: 'fa-wifi',
+            showValue: true,
+            unit: 'lqi',
+            tooltip: { en: 'Link quality', de: 'Verbindungsqualität' },
+            // the first matching level wins and overrides icon, color and text
+            levels: [{ max: 50, color: 'error' }, { max: 100, color: 'warning' }, { color: 'ok' }],
+            // a click triggers the action 'openLog' - it is not shown as a button anymore
+            actionId: 'openLog',
+        },
+        {
+            id: 'tamper',
+            value: { stateId: 'zigbee.0.abc.tamper' },
+            icon: 'fa-eye',
+            colorOn: 'error',
+            tooltip: 'Tamper contact triggered',
+            // hidden as long as the value is falsy (default of hideIfEmpty)
+        },
+    ],
+};
+```
+
+Colors may be an explicit CSS color, `primary`, `secondary` or one of the semantic tokens `ok`, `warning`, `error`, `info` and `inactive`. The tokens are resolved against the current theme, so your indicators look the same as the built-in ones in the light and in the dark theme.
+
+If `actionId` is given, the click runs through the normal action flow, including `confirmation`, `inputBefore`, `url`, the progress dialog and the `refresh` handling.
+
+### Indicators the user can switch off
+
+An indicator marked with `configurable: true` can be shown or hidden by the user in the toolbar. The choice is stored in the browser per instance and never reaches the adapter. Use `defaultVisible: false` for rarely needed information, so it does not clutter the cards of everybody:
+
+```ts
+{
+    id: 'tamper',
+    value: { stateId: 'zigbee.0.abc.tamper' },
+    icon: 'fa-eye',
+    colorOn: 'error',
+    label: { en: 'Tamper contact', de: 'Sabotagekontakt' },
+    configurable: true,
+    defaultVisible: false,
+}
+```
+
+Indicators with the same `id` — typically the same indicator on many devices — are configured together, so use stable IDs. If a hidden indicator references an action, that action is hidden as well.
+
 ## Text buttons instead of icons
 
 Every action (instance action as well as device action) can be rendered as a text button instead of an icon button. Just set a `title`; then no icon is required and no "question mark" fallback icon is shown:
@@ -604,6 +672,11 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- (@GermanBluefox) Added `placement: 'status'` to render an action in the status line
+- (@GermanBluefox) Added custom status indicators for devices (`DeviceInfo.indicators`) and instances (`InstanceDetails.indicators`)
+- (@GermanBluefox) Added user-configurable visibility of indicators
+
 ### 3.1.4 (2026-07-25)
 - (@GermanBluefox) Added reserved action `ACTIONS.BATTERY` to make the battery indicator clickable
 - (@GermanBluefox) Allowed `title` and `variant` for device actions to render them as text buttons

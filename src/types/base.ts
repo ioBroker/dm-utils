@@ -15,6 +15,13 @@ export type Color = 'primary' | 'secondary' | (string & {}); // color (you can u
 
 export type ControlState = string | number | boolean | null;
 
+/**
+ * Where an action button is rendered on the device card.
+ * - `footer` (default): in the button row at the bottom of the card
+ * - `status`: in the status line at the top of the card, next to connection/battery
+ */
+export type ActionPlacement = 'footer' | 'status';
+
 export interface ActionBase<T extends ActionType> {
     /** Unique (for this adapter) action ID. It could be the name from ACTIONS too, but in this case some predefined appearance will be applied */
     id: string;
@@ -93,6 +100,96 @@ export interface ActionBase<T extends ActionType> {
     title?: ioBroker.StringOrTranslated;
     /** Type of button if the title is used */
     variant?: 'text' | 'outlined' | 'contained';
+    /** Where the button is rendered. Default `footer` */
+    placement?: ActionPlacement;
+}
+
+/**
+ * Color of a status indicator.
+ *
+ * Besides `primary`, `secondary` and an explicit CSS color, the semantic tokens `ok`, `warning`,
+ * `error`, `info` and `inactive` are supported. They are resolved against the current theme, so the
+ * indicators look the same as the built-in ones (connection, battery, warning, update) in both the
+ * light and the dark theme.
+ */
+export type IndicatorColor = 'ok' | 'warning' | 'error' | 'info' | 'inactive' | Color;
+
+/**
+ * One entry of the `levels` list of a status indicator.
+ *
+ * The first matching entry wins and its properties override the ones of the indicator itself.
+ * A level matches if
+ * - `value` is defined and strictly equals the current value, or
+ * - `min` and/or `max` are defined and the numeric value lies within (inclusive), or
+ * - neither `value`, `min` nor `max` is defined (catch-all, use it as the last entry)
+ */
+export interface StatusIndicatorLevel {
+    /** Exact value this level applies to */
+    value?: string | number | boolean;
+    /** Lower bound (inclusive) for numeric values */
+    min?: number;
+    /** Upper bound (inclusive) for numeric values */
+    max?: number;
+    icon?: string;
+    color?: IndicatorColor;
+    text?: ioBroker.StringOrTranslated;
+    tooltip?: ioBroker.StringOrTranslated;
+}
+
+/**
+ * A custom indicator in the status line of a device card or in the toolbar of the instance.
+ *
+ * All visual properties may either be a literal value or a reference to a state/object, so the
+ * indicator follows the value live without any interaction of the backend.
+ */
+export interface StatusIndicator {
+    /** Unique ID of the indicator within the device or the instance */
+    id: string;
+    /**
+     * Live value of the indicator. It controls the visibility (see `hideIfEmpty`), the selection of
+     * `iconOn`/`colorOn`, the matching `levels` entry and — with `showValue` — the shown text.
+     * If not defined, the indicator is a static icon and is always visible.
+     */
+    value?: ValueOrStateOrObject<string | number | boolean>;
+    /** Icon: a reserved name, a `fa-*` name, a `data:image/...` string or a URL */
+    icon?: ValueOrState<string>;
+    /** Icon used instead of `icon` while the value is truthy */
+    iconOn?: ValueOrState<string>;
+    color?: ValueOrState<IndicatorColor>;
+    /** Color used instead of `color` while the value is truthy */
+    colorOn?: ValueOrState<IndicatorColor>;
+    /** Text below the icon. Overrides `showValue` */
+    text?: ValueOrStateOrObject<ioBroker.StringOrTranslated>;
+    /** Show the current value as text below the icon */
+    showValue?: boolean;
+    /** Unit appended to the text */
+    unit?: string;
+    tooltip?: ioBroker.StringOrTranslated;
+    /** Value ranges mapped to icon/color/text. The first match wins and overrides `icon`, `color` and `text` */
+    levels?: StatusIndicatorLevel[];
+    /**
+     * ID of an action of the same device (`DeviceInfo.actions`) or instance (`InstanceDetails.actions`).
+     * If given, the indicator becomes clickable and triggers that action with all its features
+     * (`confirmation`, `inputBefore`, `url`, progress dialog, refresh handling).
+     * The referenced action is not rendered a second time as a normal button.
+     */
+    actionId?: string;
+    /**
+     * Hide the indicator while the value is `undefined`, `null`, `''` or `false`. Default `true`.
+     * The numeric value `0` counts as a value and stays visible.
+     */
+    hideIfEmpty?: boolean;
+    /** Sort order within the indicator line. Default 100 */
+    order?: number;
+    /**
+     * If true, the user can show or hide this indicator in the toolbar. The choice is stored in the
+     * browser per instance. Indicators with the same `id` are configured together.
+     */
+    configurable?: boolean;
+    /** Visibility of a configurable indicator as long as the user did not decide otherwise. Default `true` */
+    defaultVisible?: boolean;
+    /** Name of the indicator in the visibility settings. Falls back to `tooltip` and then to `id` */
+    label?: ioBroker.StringOrTranslated;
 }
 
 export interface ChannelInfo {
@@ -353,6 +450,8 @@ export interface InstanceDetails<T extends ActionType = 'api'> {
     identifierLabel?: ioBroker.StringOrTranslated;
     /** Force the compact cards representation */
     smallCards?: boolean;
+    /** Custom indicators, shown in the toolbar next to the instance actions */
+    indicators?: StatusIndicator[];
 }
 
 export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId = DeviceId> {
@@ -371,6 +470,8 @@ export interface DeviceInfo<T extends ActionType = 'api', TId extends DeviceId =
     /** Background color of card header (you can use primary, secondary or color rgb value or hex) */
     backgroundColor?: ValueOrState<Color>;
     status?: DeviceStatus | DeviceStatus[];
+    /** Custom indicators, shown in the status line of the card below the built-in status icons */
+    indicators?: StatusIndicator[];
     /** Firmware/software update information for the device. If `available` is true, the GUI shows an update indicator and the device can be filtered by "update available" */
     update?: {
         /** true if an update is available for the device. Can be a literal value or read live from a state */
