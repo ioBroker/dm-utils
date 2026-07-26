@@ -482,7 +482,7 @@ Besides the built-in indicators (connection, RSSI, battery, warning, update, ena
 Any action can be moved from the button row at the bottom of the card into the status line with `placement: 'status'`. It keeps all its features (`icon`, `color`, `title`, `confirmation`, `inputBefore`, `url`, …) and is not rendered a second time in the footer:
 
 ```ts
-actions: [{ id: 'openLog', icon: 'lines', placement: 'status', handler: ... }],
+const actions = [{ id: 'openLog', icon: 'lines', placement: 'status', handler: openLogHandler }];
 ```
 
 ### Indicators
@@ -493,7 +493,7 @@ actions: [{ id: 'openLog', icon: 'lines', placement: 'status', handler: ... }],
 const deviceInfo: DeviceInfo = {
     id: 'sensor-1',
     name: 'Window sensor kitchen',
-    actions: [{ id: 'openLog', icon: 'lines', description: 'Open device log', handler: ... }],
+    actions: [{ id: 'openLog', icon: 'lines', description: 'Open device log', handler: openLogHandler }],
     indicators: [
         {
             id: 'linkQuality',
@@ -528,7 +528,7 @@ If `actionId` is given, the click runs through the normal action flow, including
 An indicator marked with `configurable: true` can be shown or hidden by the user in the toolbar. The choice is stored in the browser per instance and never reaches the adapter. Use `defaultVisible: false` for rarely needed information, so it does not clutter the cards of everybody:
 
 ```ts
-{
+const indicator: StatusIndicator = {
     id: 'tamper',
     value: { stateId: 'zigbee.0.abc.tamper' },
     icon: 'fa-eye',
@@ -536,7 +536,7 @@ An indicator marked with `configurable: true` can be shown or hidden by the user
     label: { en: 'Tamper contact', de: 'Sabotagekontakt' },
     configurable: true,
     defaultVisible: false,
-}
+};
 ```
 
 Indicators with the same `id` — typically the same indicator on many devices — are configured together, so use stable IDs. If a hidden indicator references an action, that action is hidden as well.
