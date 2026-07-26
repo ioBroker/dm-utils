@@ -672,7 +672,7 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.2.0 (2026-07-26)
 - (@GermanBluefox) Added `placement: 'status'` to render an action in the status line
 - (@GermanBluefox) Added custom status indicators for devices (`DeviceInfo.indicators`) and instances (`InstanceDetails.indicators`)
 - (@GermanBluefox) Added user-configurable visibility of indicators
