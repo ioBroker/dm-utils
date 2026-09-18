@@ -672,7 +672,7 @@ These names are supported for backward compatibility. Prefer the names from the 
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 3.2.1 (2026-09-18)
 - (@GermanBluefox) Updated packages
 
 ### 3.2.0 (2026-07-26)
