@@ -2,6 +2,19 @@ export type ApiVersion = 'v3';
 
 export type ConfigConnectionType = 'lan' | 'wifi' | 'bluetooth' | 'thread' | 'z-wave' | 'zigbee' | 'other';
 
+export type ConfigItemOs =
+    | 'aix'
+    | 'android'
+    | 'cygwin'
+    | 'darwin'
+    | 'freebsd'
+    | 'haiku'
+    | 'linux'
+    | 'netbsd'
+    | 'openbsd'
+    | 'sunos'
+    | 'win32';
+
 export interface ComplexDeviceId {
     [key: string | number]: string | number | ComplexDeviceId;
 }
@@ -74,6 +87,7 @@ export type ConfigItemType =
     | 'color'
     | 'component'
     | 'coordinates'
+    | 'credential'
     | 'cron'
     | 'custom'
     | 'datePicker'
@@ -106,6 +120,7 @@ export type ConfigItemType =
     | 'room'
     | 'select'
     | 'selectSendTo'
+    | 'sendTo'
     | 'sendto'
     | 'setState'
     | 'slider'
@@ -124,68 +139,53 @@ export type ConfigItemType =
     | 'uuid'
     | 'yamlEditor';
 
-export type ConfigIconType =
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+/**
+ * Named icons, which are rendered by `ConfigGeneric.getIcon()`. Every name listed here must have an entry in the
+ * `NAMED_ICONS` map there - TypeScript enforces that - otherwise it would silently be treated as an image path.
+ */
+export type ConfigNamedIcon =
     | 'add'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'auth'
     | 'backlight'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'book'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'delete'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'dimmer'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'edit'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'error'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'group'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'help'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'identify'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'info'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'light'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'lines'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'next'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'open'
     | 'pair'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'pause'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'play'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'previous'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'qrcode'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'refresh'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    | 'save'
     | 'search'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'send'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'settings'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'socket'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'stop'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'unpair'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'upload'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'user'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     | 'warning'
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    | 'web'
-    | string; // base 64 string
+    | 'web';
+
+/**
+ * A named icon, or a URL / path relative to `./adapter/NAME` / base64 string of an image.
+ *
+ * `string & {}` instead of a plain `string`: a plain `string` would swallow the literals of `ConfigNamedIcon`, so
+ * editors would stop suggesting the icon names. The intersection keeps them as distinct constituents while still
+ * accepting any string.
+ */
+export type ConfigIconType = ConfigNamedIcon | (string & {});
 
 export interface ConfigItemConfirmData {
     condition: string;
@@ -220,8 +220,41 @@ export interface ConfigItem {
     hidden?: string | boolean;
     /** If true and the control is hidden, the place of the control will be still reserved for it */
     hideOnlyControl?: boolean;
+    /**
+     * Show this element only on the given operating system(s) of the host, on which the instance runs:
+     * e.g. `"win32"` or `["linux", "darwin"]`. If the OS cannot be detected, the element will be shown.
+     */
+    os?: ConfigItemOs | ConfigItemOs[];
+    /**
+     * Do not show this element on the given operating system(s) of the host, on which the instance runs:
+     * e.g. `"win32"` or `["linux", "darwin"]`. If the OS cannot be detected, the element will be shown.
+     */
+    notOs?: ConfigItemOs | ConfigItemOs[];
+    /**
+     * Show this element only if the ioBroker runs in a docker container (`true`) or only if it does not
+     * run in a docker container (`false`). If the docker state cannot be detected (the host must run for
+     * that), the element will be shown.
+     */
+    docker?: boolean;
     /** JS function to calculate if the control is disabled. You can write "true" too */
     disabled?: string | boolean;
+    /**
+     * ioBroker states, on which this element depends: `{ "<alias>": "<state ID>" }`.
+     *
+     * The states are subscribed, and if one of them changes, `hidden`, `disabled`, `label`, `help`, `validator`
+     * and `defaultFunc` will be calculated anew. The values are available in all JS functions and in all
+     * `${...}` patterns as `_states.<alias>`, and they contain the whole state object (`_states.running?.val`,
+     * `_states.running?.ts`, ...). `_states.<alias>` is `null` if the state does not exist.
+     *
+     * A state ID, that starts with a dot, addresses the own instance: `.info.connection` => `adapter.0.info.connection`.
+     * Every other ID is used as it is, so states of other adapters can be used too. `${data.xxx}` patterns
+     * are allowed in the ID, wildcards are not.
+     *
+     * The short array form `["adapter.0.info.connection"]` uses the ID itself as an alias.
+     *
+     * @example { "running": ".info.running" } together with `disabled: "_states.running?.val === true"`
+     */
+    dependsOnStates?: Record<string, string> | string[];
     /** Help text of the control */
     help?: ioBroker.StringOrTranslated;
     /** Link that will be opened by clicking on the help text */
@@ -253,6 +286,11 @@ export interface ConfigItem {
     /** If the control should be shown ONLY in the expert mode */
     expertMode?: boolean;
     noMultiEdit?: boolean;
+    /**
+     * If true, the evaluation of JS functions of this element (`hidden`, `disabled`, `validator`,
+     * `defaultFunc`, `onChange.calculateFunc`, `confirm.condition`) is logged to the browser console.
+     */
+    debug?: boolean;
     confirm?: ConfigItemConfirmData;
     icon?: ConfigIconType;
     width?: string | number;
@@ -298,10 +336,18 @@ export interface ConfigItemSelectOption {
     color?: string;
     /** Formula or boolean value to show or hide the option */
     hidden?: string | boolean;
+    /** Show this option only on the given operating system(s) of the host, on which the instance runs */
+    os?: ConfigItemOs | ConfigItemOs[];
+    /** Do not show this option on the given operating system(s) of the host, on which the instance runs */
+    notOs?: ConfigItemOs | ConfigItemOs[];
+    /** Show this option only if the ioBroker runs (`true`) or does not run (`false`) in a docker container */
+    docker?: boolean;
     /** Description for the value */
     description?: ioBroker.StringOrTranslated;
     /** Icon URL or base64 to display next to the option */
     icon?: string;
+    /** Do not translate this option */
+    noTranslation?: boolean;
 }
 
 export interface ConfigItemPanel extends ConfigItem {
@@ -447,6 +493,8 @@ export interface ConfigItemQrCodeSendTo extends Omit<ConfigItem, 'data'> {
     bgColor?: string;
     /** QR code level */
     level?: 'L' | 'M' | 'Q' | 'H';
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemPassword extends ConfigItem {
@@ -466,6 +514,7 @@ export interface ConfigItemPassword extends ConfigItem {
 export interface ConfigItemObjectId extends ConfigItem {
     type: 'objectId';
     /** Desired type: `channel`, `device`, ... (has only `state` by default). It is plural, because `type` is already occupied. */
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     types?: ObjectBrowserType | ObjectBrowserType[];
     /** Show only this root object and its children */
     root?: string;
@@ -660,7 +709,14 @@ export interface ConfigItemSelect extends ConfigItem {
               value?: number | string;
               color?: string;
               hidden?: string | boolean;
+              /** Show this group only on the given operating system(s) of the host, on which the instance runs */
+              os?: ConfigItemOs | ConfigItemOs[];
+              /** Do not show this group on the given operating system(s) of the host, on which the instance runs */
+              notOs?: ConfigItemOs | ConfigItemOs[];
+              /** Show this group only if the ioBroker runs (`true`) or does not run (`false`) in a docker container */
+              docker?: boolean;
               description?: ioBroker.StringOrTranslated;
+              noTranslation?: boolean;
               icon?: string;
           }
     )[];
@@ -706,8 +762,10 @@ export interface ConfigItemAutocompleteSendTo extends Omit<ConfigItem, 'data'> {
     /** max length of the text in the field */
     maxLength?: number;
     /** @deprecated use maxLength */
-    max?: string;
+    max?: number;
     alsoDependsOn?: string[];
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemAccordion extends ConfigItem {
@@ -757,10 +815,22 @@ export interface ConfigItemCustom extends ConfigItem {
     type: 'custom';
     /** location of Widget, like "custom/customComponents.js" */
     url: string;
-    /** New format for components written in TypeScript */
+    /**
+     * @deprecated Ignored since GUI API generation 2 - such components are always built as ES
+     * modules. Still accepted so existing configurations stay valid, and can be removed.
+     */
     bundlerType?: 'module';
     /** Component name, like "ConfigCustomBackItUpSet/Components/AdapterExist" */
     name: string;
+    /**
+     * Generation of the GUI API this component was built against.
+     *
+     * `2` means it uses `@iobroker/gui-components` (React 19 / MUI 9). Omitted or `1` means it was
+     * built against the legacy `@iobroker/adapter-react-v5` (React 18 / MUI 6). A component that
+     * declares an older generation than the admin provides is not loaded at all, because the shared
+     * React/MUI singletons it was built against no longer exist.
+     */
+    guiApi?: number;
     /** i18n */
     i18n: boolean | Record<string, string>;
     /** custom properties */
@@ -813,6 +883,8 @@ export interface ConfigItemIFrameSendTo extends Omit<ConfigItemIFrame, 'data' | 
     command?: string;
     alsoDependsOn?: string[];
     data?: Record<string, any>;
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
@@ -822,10 +894,13 @@ export interface ConfigItemImageSendTo extends Omit<ConfigItem, 'data'> {
     height?: number | string;
     data?: Record<string, any>;
     sendFirstByClick?: boolean | ioBroker.StringOrTranslated;
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
-    type: 'sendto';
+    /** `sendto` is a backwards compatible alias of `sendTo` */
+    type: 'sendTo' | 'sendto';
     command?: string;
     jsonData?: string;
     data?: Record<string, any>;
@@ -850,6 +925,8 @@ export interface ConfigItemSendTo extends Omit<ConfigItem, 'data'> {
     copyToClipboard?: boolean;
     /** Styles for the button itself */
     controlStyle?: CustomCSSProperties;
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemState extends ConfigItem {
@@ -910,6 +987,13 @@ export interface ConfigItemState extends ConfigItem {
     options?: (string | ConfigItemSelectOption)[];
     /** Number of decimal places to display for numeric values in text/html mode */
     digits?: number;
+    /**
+     * Write the value as acknowledged. A control writes a command by default (`false`), so that the
+     * adapter reacts to it.
+     */
+    ack?: boolean;
+    /** Highlight line on mouse over */
+    highlight?: boolean;
 }
 
 export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
@@ -925,6 +1009,8 @@ export interface ConfigItemTextSendTo extends Omit<ConfigItem, 'data'> {
     jsonData?: string;
     /** object - `{"subject1": 1, "data": "static"}`. You can specify jsonData or data, but not both. This data will be sent to the backend if jsonData is not defined. */
     data?: Record<string, any>;
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemSelectSendTo extends Omit<ConfigItem, 'data'> {
@@ -945,6 +1031,8 @@ export interface ConfigItemSelectSendTo extends Omit<ConfigItem, 'data'> {
     data?: Record<string, any>;
     /** by change of which attributes, the command must be resent */
     alsoDependsOn?: string[];
+    /** Instance where to send the request to. Overrides the value of `oContext.instance` */
+    instance?: string;
 }
 
 export interface ConfigItemTable extends ConfigItem {
@@ -1008,6 +1096,14 @@ export interface ConfigItemCRON extends ConfigItem {
 
 export interface ConfigItemCertificateSelect extends ConfigItem {
     type: 'certificate';
+}
+
+export interface ConfigItemCredentialSelect extends ConfigItem {
+    type: 'credential';
+    /** Show only credentials of this type, e.g. 'email', 'cloud', 'ai', 'aws', 'azure' or 'custom'. If not defined, all credentials are listed. */
+    credentialType?: 'email' | 'cloud' | 'ai' | 'aws' | 'azure' | 'custom';
+    /** Do not allow creation of credentials, just selection */
+    disableCreation?: boolean;
 }
 
 export interface ConfigItemLicense extends ConfigItem {
@@ -1206,6 +1302,7 @@ export type ConfigItemAny =
     | ConfigItemCertCollection
     | ConfigItemCertificateSelect
     | ConfigItemCertificates
+    | ConfigItemCredentialSelect
     | ConfigItemUUID
     | ConfigItemCheckDocker
     | ConfigItemCheckLicense
